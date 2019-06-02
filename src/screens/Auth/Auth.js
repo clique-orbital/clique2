@@ -2,17 +2,18 @@ import React, { Component } from "react";
 import { View, Button, Text, TextInput, Image } from "react-native";
 import { SafeAreaView } from "react-navigation";
 
+import { connect } from "react-redux";
+import { setUserDetails } from "../../store/actions/auth";
 import firebase from "react-native-firebase";
 
-export default class PhoneAuthTest extends Component {
+class Auth extends Component {
   constructor(props) {
     super(props);
     this.unsubscribe = null;
     this.state = {
-      user: null,
       message: "",
       codeInput: "",
-      phoneNumber: "+65",
+      phoneNumber: "+65", // need to change
       confirmResult: null
     };
   }
@@ -20,14 +21,15 @@ export default class PhoneAuthTest extends Component {
   componentDidMount() {
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({ user: user.toJSON() });
+        this.props.setUserDetails(user.toJSON());
+        this.props.navigation.navigate("App");
       } else {
         // User has been signed out, reset the state
+        this.props.setUserDetails(null);
         this.setState({
-          user: null,
           message: "",
           codeInput: "",
-          phoneNumber: "+65",
+          phoneNumber: "+65", // need to change
           confirmResult: null
         });
       }
@@ -62,16 +64,13 @@ export default class PhoneAuthTest extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
-          this.setState({ message: "Code Confirmed!" });
+          console.log(this.props.user);
+          this.props.navigation.navigate("App");
         })
-        .catch(error =>
-          this.setState({ message: `Code Confirm Error: ${error.message}` })
-        );
+        .catch(error => {
+          this.setState({ message: `Code Confirm Error: ${error.message}` });
+        });
     }
-  };
-
-  signOut = () => {
-    firebase.auth().signOut();
   };
 
   renderPhoneNumberInput() {
@@ -84,7 +83,7 @@ export default class PhoneAuthTest extends Component {
           autoFocus
           style={{ height: 40, marginTop: 15, marginBottom: 15 }}
           onChangeText={value => this.setState({ phoneNumber: value })}
-          placeholder={"Phone number ... "}
+          placeholder={"Phone number"}
           value={phoneNumber}
         />
         <Button title="Sign In" color="green" onPress={this.signIn} />
@@ -127,9 +126,10 @@ export default class PhoneAuthTest extends Component {
   }
 
   render() {
-    const { user, confirmResult } = this.state;
+    const { confirmResult } = this.state;
+    const user = this.props.user;
     return (
-      <View style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         {!user && !confirmResult && this.renderPhoneNumberInput()}
 
         {this.renderMessage()}
@@ -137,7 +137,16 @@ export default class PhoneAuthTest extends Component {
         {!user && confirmResult && this.renderVerificationCodeInput()}
 
         {user && this.props.navigation.navigate("App")}
-      </View>
+      </SafeAreaView>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return { user: state.user };
+};
+
+export default connect(
+  mapStateToProps,
+  { setUserDetails }
+)(Auth);

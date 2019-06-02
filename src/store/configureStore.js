@@ -1,8 +1,7 @@
-import { createStore, combineReducers, compose, applyMiddleware } from "redux";
+import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
-/**
-const rootReducer = combineReducers();
+import rootReducer from "./reducers";
 
 let composeEnhancers = compose;
 
@@ -15,5 +14,3 @@ const configureStore = () => {
 };
 
 export default configureStore;
-
-*/
