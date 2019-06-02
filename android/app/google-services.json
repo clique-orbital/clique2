@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "654951934306",
+    "firebase_url": "https://clique-c1fd6.firebaseio.com",
+    "project_id": "clique-c1fd6",
+    "storage_bucket": "clique-c1fd6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654951934306:android:8b5eda8931dfd8d5",
+        "android_client_info": {
+          "package_name": "org.reactjs.native.example.CliqueOrbital"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654951934306-ck7rjpmcvvhhrfugnr7fmug5238m357q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnRhz83PVSR9RxRs0KMQ2yiaj1WfowYm4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654951934306-ck7rjpmcvvhhrfugnr7fmug5238m357q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "654951934306-u812skkn1db19je3bdg0bht698ssfgkj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.CliqueOrbital"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
