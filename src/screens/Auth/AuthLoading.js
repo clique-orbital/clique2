@@ -3,11 +3,19 @@ import { View, Text, StyleSheet, Image } from "react-native";
 
 import { cliqueBlue } from "../../assets/constants";
 import icon from "../../assets/icon.png";
+import firebase from "react-native-firebase";
 
 class AuthLoading extends React.Component {
   // preload data (loading screen)
   async componentDidMount() {
-    setTimeout(() => this.props.navigation.navigate("App"), 200); // simulate loading
+    await firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.props.setUserDetails(user.toJSON());
+        this.props.navigation.navigate("App");
+      } else {
+        this.props.navigation.navigate("Auth");
+      }
+    });
   }
 
   render() {
