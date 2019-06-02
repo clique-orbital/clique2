@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:654951934306:android:8b5eda8931dfd8d5",
+        "mobilesdk_app_id": "1:654951934306:android:8d4e41f333ad27fa",
         "android_client_info": {
-          "package_name": "org.reactjs.native.example.CliqueOrbital"
+          "package_name": "com.invertase.rnfirebasestarter"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "654951934306-2qn8f00mc09eohh32dh9inp0in9el1ba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invertase.rnfirebasestarter",
+            "certificate_hash": "82c1898d63745cd90d3113fd6af73aa7545b75a4"
+          }
+        },
         {
           "client_id": "654951934306-ck7rjpmcvvhhrfugnr7fmug5238m357q.apps.googleusercontent.com",
           "client_type": 3
