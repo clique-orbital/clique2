@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Button, Text, TextInput, Image } from "react-native";
+import { View, Button, Text, TextInput, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 
 import { connect } from "react-redux";
@@ -42,17 +42,13 @@ class Auth extends Component {
 
   signIn = () => {
     const { phoneNumber } = this.state;
-    this.setState({ message: "Sending code ..." });
-
     firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber)
-      .then(confirmResult =>
-        this.setState({ confirmResult, message: "Code has been sent!" })
-      )
+      .then(confirmResult => this.setState({ confirmResult, message: "" }))
       .catch(error =>
         this.setState({
-          message: `Sign In With Phone Number Error: ${error.message}`
+          message: `${error.message}`
         })
       );
   };
@@ -96,11 +92,7 @@ class Auth extends Component {
 
     if (!message.length) return null;
 
-    return (
-      <Text style={{ padding: 5, backgroundColor: "#000", color: "#fff" }}>
-        {message}
-      </Text>
-    );
+    return <Text style={styles.message}>{message}</Text>;
   }
 
   renderVerificationCodeInput() {
@@ -108,12 +100,14 @@ class Auth extends Component {
 
     return (
       <View style={{ marginTop: 25, padding: 25 }}>
-        <Text>Enter verification code below:</Text>
+        <Text style={{ textAlign: "center" }}>
+          Enter verification code below:
+        </Text>
         <TextInput
           autoFocus
           style={{ height: 40, marginTop: 15, marginBottom: 15 }}
           onChangeText={value => this.setState({ codeInput: value })}
-          placeholder={"Code ... "}
+          placeholder={"Code"}
           value={codeInput}
         />
         <Button
@@ -128,23 +122,40 @@ class Auth extends Component {
   render() {
     const { confirmResult } = this.state;
     const user = this.props.user;
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        {!user && !confirmResult && this.renderPhoneNumberInput()}
+    let currentRender;
 
-        {this.renderMessage()}
+    if (!user && !confirmResult) {
+      currentRender = (
+        <View>
+          {this.renderPhoneNumberInput()}
+          {this.renderMessage()}
+        </View>
+      );
+    } else if (!user && confirmResult) {
+      currentRender = (
+        <View>
+          {this.renderVerificationCodeInput()}
+          {this.renderMessage()}
+        </View>
+      );
+    } else {
+      this.props.navigation.navigate("App");
+    }
 
-        {!user && confirmResult && this.renderVerificationCodeInput()}
-
-        {user && this.props.navigation.navigate("App")}
-      </SafeAreaView>
-    );
+    return <SafeAreaView style={{ flex: 1 }}>{currentRender}</SafeAreaView>;
   }
 }
 
 const mapStateToProps = state => {
   return { user: state.user };
 };
+
+const styles = StyleSheet.create({
+  message: {
+    margin: "5%",
+    textAlign: "center"
+  }
+});
 
 export default connect(
   mapStateToProps,

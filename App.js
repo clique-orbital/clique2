@@ -55,7 +55,7 @@ const InitialNavigator = createSwitchNavigator(
     Auth: Auth
   },
   {
-    initialRouteName: "Auth"
+    initialRouteName: "AuthLoading"
   }
 );
 
