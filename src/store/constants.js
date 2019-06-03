@@ -1,1 +1,2 @@
 export const USER_DETAILS = "USER_DETAILS";
+export const SET_USERNAME_AND_PICTURE = "SET_USER";
