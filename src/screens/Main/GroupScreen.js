@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-navigation";
 import firebase from "react-native-firebase";
 
 class GroupScreen extends React.Component {
+  /*
   componentDidMount() {
     const dbref = firebase.database().ref("users/");
     dbref
@@ -15,6 +16,7 @@ class GroupScreen extends React.Component {
       })
       .then(res => console.log(res));
   }
+  */
   onPress = () => {
     firebase.auth().signOut();
     this.props.navigation.navigate("Auth");

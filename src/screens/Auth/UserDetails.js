@@ -10,13 +10,31 @@ import {
 import { SafeAreaView } from "react-navigation";
 import ImagePicker from "../../components/ImagePickerComponent";
 import { connect } from "react-redux";
+import { Field, reduxForm } from "redux-form";
 
 import MyIcon from "../../components/MyIcon";
-import { setUsernameAndProfile } from "../../store/actions/auth";
+import { setUsername } from "../../store/actions/auth";
+import defaultPicture from "../../assets/default_profile.png";
 
 class UserDetails extends React.Component {
-  setImage = image => {
-    this.setState({ profilePicture: image });
+  handleSubmit = values => {
+    this.props.setUsername(values.username);
+  };
+
+  renderInput = ({ input, label }) => {
+    return (
+      <TextInput {...input} style={styles.textInput} placeholder={label} />
+    );
+  };
+
+  renderImagePicker = props => {
+    return (
+      <ImagePicker
+        width={Dimensions.get("window").width}
+        {...props.input}
+        value={defaultPicture}
+      />
+    );
   };
 
   render() {
@@ -25,13 +43,17 @@ class UserDetails extends React.Component {
         <Text style={styles.text}>
           Enter your username and profile picture!
         </Text>
-        <ImagePicker
-          width={Dimensions.get("window").width}
-          profilePicture={this.props.profilePicture}
-          setImage={this.setImage}
+        <Field name="profilepicture" component={this.renderImagePicker} />
+        <Field
+          name="username"
+          component={props => this.renderInput(props)}
+          label="Enter username"
         />
-        <TextInput style={styles.textInput} placeholder="Enter username" />
-        <TouchableHighlight title="Continue" style={styles.button}>
+        <TouchableHighlight
+          title="Continue"
+          style={styles.button}
+          onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+        >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text style={{ color: "blue", marginRight: 7 }}>Continue</Text>
             <View style={{ marginTop: 1 }}>
@@ -67,13 +89,8 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
-  const { username, profilePicture } = state;
-  console.log(state);
-  return { username, profilePicture };
-};
-
+let form = reduxForm({ form: "userDetails" })(UserDetails);
 export default connect(
-  mapStateToProps,
-  { setUsernameAndProfile }
-)(UserDetails);
+  null,
+  { setUsername }
+)(form);
