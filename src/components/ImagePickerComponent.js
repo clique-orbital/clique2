@@ -1,7 +1,8 @@
 import React from "react";
-import { View, TouchableHighlight, Image, StyleSheet } from "react-native";
+import { View, TouchableHighlight, StyleSheet } from "react-native";
 import ImagePicker from "react-native-image-picker";
 
+import ProfilePicture from "../components/ProfilePicture";
 // takes in prop: width
 class ImagePickerComponent extends React.Component {
   constructor(props) {
@@ -12,19 +13,13 @@ class ImagePickerComponent extends React.Component {
         width: this.props.width / 2,
         height: this.props.width / 2
       },
-      profilePicture: {
-        borderRadius: this.props.width / 4,
-        width: this.props.width / 2,
-        height: this.props.width / 2,
-        justifyContent: "center",
-        alignItems: "center"
-      },
       container: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center"
       }
     });
+    this.state = { profilePicture: this.props.value };
   }
 
   pickImageHandler = () => {
@@ -48,18 +43,10 @@ class ImagePickerComponent extends React.Component {
         console.log("User tapped custom button: ", response.customButton);
       } else {
         const source = { uri: response.uri };
-        this.props.setImage(source);
+        this.setState({ profilePicture: source });
+        this.props.onChange(source);
       }
     });
-  };
-
-  renderImage = () => {
-    return (
-      <Image
-        style={this.styles.profilePicture}
-        source={this.state.profilePicture}
-      />
-    );
   };
 
   render() {
@@ -69,7 +56,10 @@ class ImagePickerComponent extends React.Component {
           style={this.styles.touchable}
           onPress={this.pickImageHandler}
         >
-          <View>{this.renderImage()}</View>
+          <ProfilePicture
+            profilePicture={this.state.profilePicture}
+            width={this.props.width}
+          />
         </TouchableHighlight>
       </View>
     );
