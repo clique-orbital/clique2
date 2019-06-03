@@ -63,11 +63,10 @@ const InitialNavigator = createSwitchNavigator(
   {
     AuthLoading: AuthLoading,
     App: AppNavigator,
-    Auth: AuthNavigator,
-    UserDetails: UserDetails
+    Auth: AuthNavigator
   },
   {
-    initialRouteName: "UserDetails"
+    initialRouteName: "AuthLoading"
   }
 );
 

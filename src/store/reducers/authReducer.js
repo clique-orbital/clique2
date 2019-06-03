@@ -1,20 +1,19 @@
-import { USER_DETAILS, SET_PICTURE, SET_USERNAME } from "../constants";
-
-import defaultPicture from "../../assets/default_profile.png";
+import { USER_DETAILS, UPDATE_USER } from "../constants";
 
 const INITIAL_STATE = {
   user: null,
   username: "",
-  profilePicture: defaultPicture
+  pictureUrl: ""
 };
 
 export const authReducer = (state = INITIAL_STATE, action) => {
   if (action.type === USER_DETAILS) {
     return { ...state, user: action.payload };
-  } else if (action.type === SET_USERNAME) {
+  } else if (action.type === UPDATE_USER) {
     return {
       ...state,
-      username: action.payload
+      username: action.payload.username,
+      pictureUrl: action.payload.pictureUrl
     };
   }
   return state;

@@ -13,12 +13,13 @@ import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 
 import MyIcon from "../../components/MyIcon";
-import { setUsername } from "../../store/actions/auth";
+import { createAccount } from "../../store/actions/auth";
 import defaultPicture from "../../assets/default_profile.png";
 
 class UserDetails extends React.Component {
-  handleSubmit = values => {
-    this.props.setUsername(values.username);
+  handleSubmit = async values => {
+    await this.props.createAccount(values.username, values.profilepicture.uri);
+    this.props.navigation.navigate("App");
   };
 
   renderInput = ({ input, label }) => {
@@ -92,5 +93,5 @@ const styles = StyleSheet.create({
 let form = reduxForm({ form: "userDetails" })(UserDetails);
 export default connect(
   null,
-  { setUsername }
+  { createAccount }
 )(form);
