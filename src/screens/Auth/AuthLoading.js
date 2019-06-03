@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
+import firebase from "react-native-firebase";
+import { connect } from "react-redux";
 
 import { cliqueBlue } from "../../assets/constants";
 import icon from "../../assets/icon.png";
-import firebase from "react-native-firebase";
+import { setUserDetails } from "../../store/actions/auth";
 
 class AuthLoading extends React.Component {
   // preload data (loading screen)
@@ -42,4 +44,11 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AuthLoading;
+const mapStateToProps = state => {
+  return { user: state.user };
+};
+
+export default connect(
+  mapStateToProps,
+  { setUserDetails }
+)(AuthLoading);
