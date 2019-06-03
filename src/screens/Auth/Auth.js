@@ -60,8 +60,10 @@ class Auth extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
-          console.log(this.props.user);
-          this.props.navigation.navigate("App");
+          const currentUser = firebase.auth().currentUser;
+          const dbref = firebase.database().ref();
+          console.log(dbref);
+          this.props.navigation.navigate("UserDetails");
         })
         .catch(error => {
           this.setState({ message: `Code Confirm Error: ${error.message}` });
@@ -139,7 +141,7 @@ class Auth extends Component {
         </View>
       );
     } else {
-      this.props.navigation.navigate("App");
+      this.props.navigation.navigate("UserDetails");
     }
 
     return <SafeAreaView style={{ flex: 1 }}>{currentRender}</SafeAreaView>;

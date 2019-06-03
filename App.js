@@ -11,6 +11,7 @@ import SettingsScreen from "./src/screens/Main/SettingsScreen";
 import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
 import AuthLoading from "./src/screens/Auth/AuthLoading";
 import Auth from "./src/screens/Auth/Auth";
+import UserDetails from "./src/screens/Auth/UserDetails";
 
 import MyIcon from "./src/components/MyIcon";
 import IconWithBadge from "./src/components/IconWithBadge";
@@ -48,14 +49,25 @@ const AppNavigator = createBottomTabNavigator(
   }
 );
 
+const AuthNavigator = createSwitchNavigator(
+  {
+    Auth: Auth,
+    UserDetails: UserDetails
+  },
+  {
+    initialRouteName: "Auth"
+  }
+);
+
 const InitialNavigator = createSwitchNavigator(
   {
     AuthLoading: AuthLoading,
     App: AppNavigator,
-    Auth: Auth
+    Auth: AuthNavigator,
+    UserDetails: UserDetails
   },
   {
-    initialRouteName: "AuthLoading"
+    initialRouteName: "UserDetails"
   }
 );
 
