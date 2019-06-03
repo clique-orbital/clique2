@@ -3,6 +3,7 @@ package com.invertase.rnfirebasestarter;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -45,6 +46,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new ImagePickerPackage(),
             new VectorIconsPackage(),
             new SplashScreenReactPackage(),
             new RNGestureHandlerPackage(),
