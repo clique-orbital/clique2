@@ -5,7 +5,7 @@ import {
   createSwitchNavigator
 } from "react-navigation";
 
-import GroupScreen from "./src/screens/Main/GroupScreen";
+import GroupScreenStack from "./src/screens/Main/GroupScreen";
 import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
 import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
@@ -19,7 +19,7 @@ import { cliqueBlue } from "./src/assets/constants";
 
 const AppNavigator = createBottomTabNavigator(
   {
-    Group: GroupScreen,
+    Groups: GroupScreenStack,
     Calendar: PersonalCalendar,
     Notifications: NotificationsScreen,
     Profile: SettingsScreen
@@ -30,7 +30,7 @@ const AppNavigator = createBottomTabNavigator(
         const { routeName } = navigation.state;
         let IconComponent = MyIcon;
         let iconName;
-        if (routeName === "Group") {
+        if (routeName === "Groups") {
           iconName = `md-chatboxes`;
         } else if (routeName === "Calendar") {
           iconName = `md-calendar`;
@@ -38,6 +38,7 @@ const AppNavigator = createBottomTabNavigator(
           iconName = `md-notifications`;
         } else if (routeName === "Profile") {
           iconName = `md-contact`;
+          // return <ProfilePicture value={this.props.user.photoURL} width={28} />;
         }
         return <IconComponent name={iconName} size={28} color={tintColor} />;
       }
@@ -64,6 +65,7 @@ const InitialNavigator = createSwitchNavigator(
     AuthLoading: AuthLoading,
     App: AppNavigator,
     Auth: AuthNavigator
+    // UserDetails: UserDetails
   },
   {
     initialRouteName: "AuthLoading"

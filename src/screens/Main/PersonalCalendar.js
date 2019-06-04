@@ -1,8 +1,17 @@
 import React from "react";
 import { Text } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, createStackNavigator } from "react-navigation";
+import HeaderTitle from "../../components/HeaderTitle";
+import { cliqueBlue } from "../../assets/constants";
 
 class PersonalCalendar extends React.Component {
+  static navigationOptions = {
+    headerTitle: <HeaderTitle title="Calendar" />,
+    headerStyle: {
+      backgroundColor: cliqueBlue
+    }
+  };
+
   render() {
     return (
       <SafeAreaView>
@@ -12,4 +21,8 @@ class PersonalCalendar extends React.Component {
   }
 }
 
-export default PersonalCalendar;
+const CalendarStack = createStackNavigator({
+  Main: PersonalCalendar
+});
+
+export default CalendarStack;

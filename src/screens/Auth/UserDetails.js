@@ -15,7 +15,6 @@ import { Field, reduxForm } from "redux-form";
 import MyIcon from "../../components/MyIcon";
 import { createAccount } from "../../store/actions/auth";
 import defaultPicture from "../../assets/default_profile.png";
-import firebase from "react-native-firebase";
 
 class UserDetails extends React.Component {
   handleSubmit = async values => {
@@ -23,7 +22,7 @@ class UserDetails extends React.Component {
     this.props.navigation.navigate("App");
   };
 
-  renderInput = ({ input, label }) => {
+  renderInput = ({ input, label, meta }) => {
     return (
       <TextInput {...input} style={styles.textInput} placeholder={label} />
     );
