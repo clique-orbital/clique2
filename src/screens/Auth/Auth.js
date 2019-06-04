@@ -60,9 +60,12 @@ class Auth extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
-          const currentUser = firebase.auth().currentUser;
-          const dbref = firebase.database().ref();
-          console.log(dbref);
+          const dbref = firebase.database().ref("users");
+          const uid = user._user.uid;
+          console.log(user);
+          console.log(dbref.equalTo("asdasd"));
+          console.log(dbref.equalTo(uid));
+
           this.props.navigation.navigate("UserDetails");
         })
         .catch(error => {

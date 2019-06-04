@@ -12,8 +12,8 @@ class AuthLoading extends React.Component {
   async componentDidMount() {
     await firebase.auth().onAuthStateChanged(user => {
       if (user) {
+        // update user auth details in redux store
         this.props.setUserDetails(user.toJSON());
-        // update username and picture url in redux store
         this.props.navigation.navigate("App");
       } else {
         this.props.navigation.navigate("Auth");
@@ -45,11 +45,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
-  return { user: state.user };
-};
-
 export default connect(
-  mapStateToProps,
+  null,
   { setUserDetails }
 )(AuthLoading);

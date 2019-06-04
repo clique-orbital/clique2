@@ -15,6 +15,7 @@ import { Field, reduxForm } from "redux-form";
 import MyIcon from "../../components/MyIcon";
 import { createAccount } from "../../store/actions/auth";
 import defaultPicture from "../../assets/default_profile.png";
+import firebase from "react-native-firebase";
 
 class UserDetails extends React.Component {
   handleSubmit = async values => {
@@ -53,6 +54,7 @@ class UserDetails extends React.Component {
         <TouchableHighlight
           title="Continue"
           style={styles.button}
+          // weird syntax to get redux-form to bind submit this.handleSubmit() function to the designated form submit
           onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>

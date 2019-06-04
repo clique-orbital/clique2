@@ -3,7 +3,7 @@ import { View, TouchableHighlight, StyleSheet } from "react-native";
 import ImagePicker from "react-native-image-picker";
 
 import ProfilePicture from "../components/ProfilePicture";
-// takes in prop: width
+// takes in prop: width, image
 class ImagePickerComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -44,6 +44,7 @@ class ImagePickerComponent extends React.Component {
       } else {
         const source = { uri: response.uri };
         this.setState({ profilePicture: source });
+        // for redux-form to know that there is an input/value change
         this.props.onChange(source);
       }
     });
