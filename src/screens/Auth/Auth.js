@@ -1,10 +1,21 @@
 import React, { Component } from "react";
-import { View, Button, Text, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Button,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  Dimensions
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 
 import { connect } from "react-redux";
 import { setUserDetails } from "../../store/actions/auth";
 import firebase from "react-native-firebase";
+import cliqueBlue from "../../assets/constants";
+
+import icon from "../../assets/icon.png";
 
 class Auth extends Component {
   constructor(props) {
@@ -60,13 +71,18 @@ class Auth extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
-          const dbref = firebase.database().ref("users");
-          const uid = user._user.uid;
-          console.log(user);
-          console.log(dbref.equalTo("asdasd"));
-          console.log(dbref.equalTo(uid));
-
-          this.props.navigation.navigate("UserDetails");
+          const ref = firebase.database().ref("users");
+          ref.on(
+            "value",
+            snapshot => {
+              this.props.navigation.navigate(
+                snapshot.val()[user._user.uid] ? "App" : "UserDetails"
+              );
+            },
+            err => {
+              console.log("the read failed " + err.code);
+            }
+          );
         })
         .catch(error => {
           this.setState({ message: `Code Confirm Error: ${error.message}` });
@@ -78,16 +94,45 @@ class Auth extends Component {
     const { phoneNumber } = this.state;
 
     return (
-      <SafeAreaView style={{ padding: 25 }}>
-        <Text>Enter phone number:</Text>
+      <SafeAreaView
+        style={{
+          padding: 25,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <Image
+          source={icon}
+          style={{
+            width: Dimensions.get("window").width / 2,
+            height: Dimensions.get("window").width / 2,
+            borderRadius: Dimensions.get("window").width / 4
+          }}
+        />
+        <Text style={styles.welcome}>Welcome to Clique</Text>
+        <Text style={styles.text}>
+          What number can people use to reach you?
+        </Text>
         <TextInput
           autoFocus
-          style={{ height: 40, marginTop: 15, marginBottom: 15 }}
+          style={{
+            width: "70%",
+            height: 40,
+            marginTop: 15,
+            marginBottom: 15,
+            borderBottomColor: "grey",
+            borderBottomWidth: StyleSheet.hairlineWidth
+          }}
           onChangeText={value => this.setState({ phoneNumber: value })}
           placeholder={"Phone number"}
           value={phoneNumber}
         />
-        <Button title="Sign In" color="green" onPress={this.signIn} />
+        <Button title="Continue" color="blue" onPress={this.signIn} />
+        <Text style={styles.fineprint}>
+          Press continue to verify your account through a SMS code sent to your
+          phone number. Message and data rates may apply.
+        </Text>
       </SafeAreaView>
     );
   }
@@ -104,15 +149,33 @@ class Auth extends Component {
     const { codeInput } = this.state;
 
     return (
-      <View style={{ marginTop: 25, padding: 25 }}>
+      <SafeAreaView
+        style={{
+          marginTop: 25,
+          padding: 25,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
         <Text style={{ textAlign: "center" }}>
-          Enter verification code below:
+          A six digit verification code has been sent to
         </Text>
+        <Text style={{ fontSize: 20, fontWeight: "400", marginBottom: "10%" }}>
+          {this.state.phoneNumber}
+        </Text>
+        <Text> Please enter it below:</Text>
         <TextInput
           autoFocus
-          style={{ height: 40, marginTop: 15, marginBottom: 15 }}
+          style={{
+            height: 40,
+            marginTop: "10%",
+            marginBottom: "15%",
+            fontSize: 40
+          }}
+          color={cliqueBlue}
           onChangeText={value => this.setState({ codeInput: value })}
-          placeholder={"Code"}
+          placeholder={"_ _ _ _ _ _"}
           value={codeInput}
         />
         <Button
@@ -120,7 +183,7 @@ class Auth extends Component {
           color="#841584"
           onPress={this.confirmCode}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -159,6 +222,21 @@ const styles = StyleSheet.create({
   message: {
     margin: "5%",
     textAlign: "center"
+  },
+  welcome: {
+    margin: "10%",
+    textAlign: "center",
+    fontSize: 40,
+    fontWeight: "300"
+  },
+  text: {
+    textAlign: "center",
+    color: "grey"
+  },
+  fineprint: {
+    color: "grey",
+    fontSize: 10,
+    marginTop: 10
   }
 });
 
