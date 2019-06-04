@@ -1,8 +1,17 @@
 import React from "react";
 import { Text } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, createStackNavigator } from "react-navigation";
+import HeaderTitle from "../../components/HeaderTitle";
+import { cliqueBlue } from "../../assets/constants";
 
 class NotificationsScreen extends React.Component {
+  static navigationOptions = {
+    headerTitle: <HeaderTitle title="Notifications" />,
+    headerStyle: {
+      backgroundColor: cliqueBlue
+    }
+  };
+
   render() {
     return (
       <SafeAreaView>
@@ -12,4 +21,8 @@ class NotificationsScreen extends React.Component {
   }
 }
 
-export default NotificationsScreen;
+const NotificationsStack = createStackNavigator({
+  Main: NotificationsScreen
+});
+
+export default NotificationsStack;
