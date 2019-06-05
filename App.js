@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import {
   createBottomTabNavigator,
   createAppContainer,
@@ -40,7 +41,11 @@ const AppNavigator = createBottomTabNavigator(
           iconName = `md-contact`;
           // return <ProfilePicture value={this.props.user.photoURL} width={28} />;
         }
-        return <IconComponent name={iconName} size={28} color={tintColor} />;
+        return (
+          <View style={{ paddingTop: 5 }}>
+            <IconComponent name={iconName} size={28} color={tintColor} />
+          </View>
+        );
       }
     }),
     tabBarOptions: {

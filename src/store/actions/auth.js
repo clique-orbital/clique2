@@ -48,6 +48,7 @@ export const createAccount = (username, pictureUri) => async dispatch => {
 
 const userDetailsToDatabase = user => async dispatch => {
   // add new user to database
+  user.groups = {};
   await firebase
     .database()
     .ref(`users/${user._user.uid}`)

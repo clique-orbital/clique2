@@ -12,10 +12,16 @@ class AuthLoading extends React.Component {
   async componentDidMount() {
     await firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        // update user auth details in redux store
-        this.props.setUserDetails(user.toJSON());
-        this.props.navigation.navigate("App");
+        if (user.displayName && user.photoURL) {
+          // update user auth details in redux store
+          this.props.setUserDetails(user.toJSON());
+          this.props.navigation.navigate("App");
+        } else {
+          // get user to set username and profile picture
+          this.props.navigation.navigate("UserDetails");
+        }
       } else {
+        // go to authentication if user is not signed in
         this.props.navigation.navigate("Auth");
       }
     });
