@@ -7,7 +7,7 @@ Many of our group chats we create involve some form of event that will be planne
 ### Installation
 1. Clone the repository to your local computer
 
-`git clone `
+  ` git clone `
 
 2. Change directory to ios folder
 
