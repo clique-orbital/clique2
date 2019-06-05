@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  Image,
+  Button,
   StyleSheet,
   TouchableOpacity,
   FlatList
@@ -10,39 +10,43 @@ import {
 import { SafeAreaView } from "react-navigation";
 import firebase from "react-native-firebase";
 import { createStackNavigator } from "react-navigation";
+
 import { cliqueBlue } from "../../assets/constants";
 import HeaderTitle from "../../components/HeaderTitle";
+import MyIcon from "../../components/MyIcon";
+import CreateGroups from "./Groups/CreateGroups";
+import ChatScreen from "./Groups/ChatScreen";
 
 class GroupScreen extends Component {
-  static navigationOptions = {
-    headerTitle: <HeaderTitle title="Groups" />,
-    headerStyle: {
-      backgroundColor: cliqueBlue
-    }
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle: <HeaderTitle title="Groups" />,
+      headerRight: (
+        <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+          <MyIcon
+            name="ios-add"
+            size={32}
+            color="white"
+            style={{ marginRight: 20 }}
+          />
+        </TouchableOpacity>
+      )
+    };
   };
 
-  state = { users: [] };
-
-  componentWillMount() {
-    //const user = firebase.auth().currentUser;
-    //let dbRef = firebase.database().ref("users");
-    //dbRef.on("child_added", snapshot => {
-    //let person = snapshot.val();
-    //person.phoneNumber = snapshot.phoneNumber;
-    //if (person.phoneNumber === user.phoneNumber) {
-    //person.displayName = "Saved Messages";
-    //}
-    //this.setState(prevState => {
-    //return {
-    //users: [...prevState.users, person]
-    //};
-    //});
-    //});
-  }
+  state = { users: [firebase.auth().currentUser] };
 
   renderRow = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.chatList} onPress={() => alert("HELOO")}>
+      <TouchableOpacity
+        style={styles.chatList}
+        onPress={() =>
+          this.props.navigation.navigate("Chat", {
+            username: item.displayName,
+            user: item
+          })
+        }
+      >
         <Text style={{ fontSize: 16 }}>{item.displayName}</Text>
       </TouchableOpacity>
     );
@@ -56,6 +60,7 @@ class GroupScreen extends Component {
           renderItem={this.renderRow}
           keyExtractor={item => item.uid}
         />
+        <Button title="sign out" onPress={() => firebase.auth().signOut()} />
       </SafeAreaView>
     );
   }
@@ -69,8 +74,20 @@ const styles = StyleSheet.create({
   }
 });
 
-const GroupStack = createStackNavigator({
-  Main: GroupScreen
-});
+const GroupStack = createStackNavigator(
+  {
+    Main: GroupScreen,
+    Create: CreateGroups,
+    Chat: ChatScreen
+  },
+  {
+    initialRouteName: "Main",
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: cliqueBlue
+      }
+    }
+  }
+);
 
 export default GroupStack;
