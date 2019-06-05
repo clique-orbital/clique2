@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, Image } from "react-native";
 import { SafeAreaView, createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";

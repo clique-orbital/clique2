@@ -1,5 +1,5 @@
 import firebase from "react-native-firebase";
-import { USER_DETAILS } from "../constants";
+import { USER_DETAILS, SIGN_OUT } from "../constants";
 
 // action creator for authDetails for the phone authentication
 // response from sign in after code is sent
@@ -9,6 +9,16 @@ export const setUserDetails = userDetails => {
     payload: userDetails
   };
 };
+
+// export const signOutUser = dispatch => {
+//   dispatch({ type: SIGN_OUT });
+// }
+
+// export const signOutUser = () => {
+//   return {
+//     type: SIGN_OUT,
+//   }
+// }
 
 export const createAccount = (username, pictureUri) => async dispatch => {
   //upload picture to firebase storage
