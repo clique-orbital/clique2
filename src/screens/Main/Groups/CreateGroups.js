@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList
-} from "react-native";
+import { Text } from "react-native";
 import firebase from "react-native-firebase";
 
 class CreateGroups extends React.Component {
