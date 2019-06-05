@@ -32,9 +32,9 @@ class CreateGroups extends React.Component {
     let dbRef = firebase.database().ref("users");
     dbRef.on("child_added", snapshot => {
       let person = snapshot.val();
-      if (person.phoneNumber === user.phoneNumber) {
-        person.displayName = "Saved Messages";
-      }
+      // if (person.phoneNumber === user.phoneNumber) {
+      //   person.displayName = "Saved Messages";
+      // }
       this.setState(prevState => {
         return {
           users: [...prevState.users, person]
