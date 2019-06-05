@@ -10,7 +10,6 @@ import { SIGN_OUT } from "../../store/constants";
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
-    // this.signOut = this.signOut.bind(this); 
   }
 
   static navigationOptions = {
@@ -26,8 +25,6 @@ class SettingsScreen extends React.Component {
     this.props.dispatch({ type: SIGN_OUT });
     this.props.navigation.navigate("Auth");
   }
-
-// onPress={() => this.props.dispatch({ type: SIGN_OUT })}
 
   render() {
     return (
