@@ -60,7 +60,6 @@ class GroupScreen extends Component {
           renderItem={this.renderRow}
           keyExtractor={item => item.uid}
         />
-        <Button title="sign out" onPress={() => firebase.auth().signOut()} />
       </SafeAreaView>
     );
   }
