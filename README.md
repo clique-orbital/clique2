@@ -7,7 +7,7 @@ Many of our group chats we create involve some form of event that will be planne
 ### Installation
 Clone the repository to your local computer
 
-` git clone `
+` git clone git@github.com:clique-orbital/clique2.git`
 
 Change directory to ios folder
 
