@@ -7,7 +7,7 @@ const HeaderTitle = props => {
       style={{
         fontWeight: "400",
         color: "white",
-        fontSize: 25,
+        fontSize: 20,
         textAlign: "left"
       }}
     >

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  Image,
+  Button,
   StyleSheet,
   TouchableOpacity,
   FlatList
@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import firebase from "react-native-firebase";
 import { createStackNavigator } from "react-navigation";
+
 import { cliqueBlue } from "../../assets/constants";
 import HeaderTitle from "../../components/HeaderTitle";
 import MyIcon from "../../components/MyIcon";
@@ -29,36 +30,22 @@ class GroupScreen extends Component {
             style={{ marginRight: 20 }}
           />
         </TouchableOpacity>
-      ),
-      headerStyle: {
-        backgroundColor: cliqueBlue
-      }
+      )
     };
   };
 
-  state = { users: [] };
-
-  componentWillMount() {
-    const user = firebase.auth().currentUser;
-    let dbRef = firebase.database().ref("users");
-    dbRef.on("child_added", snapshot => {
-      let person = snapshot.val();
-      if (person.phoneNumber === user.phoneNumber) {
-        person.displayName = "Saved Messages";
-      }
-      this.setState(prevState => {
-        return {
-          users: [...prevState.users, person]
-        };
-      });
-    });
-  }
+  state = { users: [firebase.auth().currentUser] };
 
   renderRow = ({ item }) => {
     return (
       <TouchableOpacity
         style={styles.chatList}
-        onPress={() => this.props.navigation.navigate("Chat")}
+        onPress={() =>
+          this.props.navigation.navigate("Chat", {
+            username: item.displayName,
+            user: item
+          })
+        }
       >
         <Text style={{ fontSize: 16 }}>{item.displayName}</Text>
       </TouchableOpacity>
@@ -73,6 +60,7 @@ class GroupScreen extends Component {
           renderItem={this.renderRow}
           keyExtractor={item => item.uid}
         />
+        <Button title="sign out" onPress={() => firebase.auth().signOut()} />
       </SafeAreaView>
     );
   }
@@ -93,7 +81,12 @@ const GroupStack = createStackNavigator(
     Chat: ChatScreen
   },
   {
-    initialRouteName: "Main"
+    initialRouteName: "Main",
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: cliqueBlue
+      }
+    }
   }
 );
 
