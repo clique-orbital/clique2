@@ -17,6 +17,7 @@
     "react-native-elements": "^1.1.0",
     "react-native-firebase": "^5.4.0",
     "react-native-gesture-handler": "^1.2.2",
+    "react-native-gifted-chat": "^0.9.3",
     "react-native-image-picker": "^0.28.1",
     "react-native-splash-screen": "^3.2.0",
     "react-native-vector-icons": "^6.4.2",
@@ -26,7 +27,8 @@
     "redux-form": "^8.2.3",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
-    "rn-fetch-blob": "^0.10.15"
+    "rn-fetch-blob": "^0.10.15",
+    "tslib": "^1.9.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
