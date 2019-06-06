@@ -98,9 +98,11 @@ class CreateGroups extends React.Component {
             username: item.displayName,
             user: item
           })
-        }
+      }
       >
-        <Text style= {{ fontSize: 16 }}>{item.givenName + " " + item.familyName}</Text>
+        <Text style= {{ fontSize: 16 }}>
+          {item.givenName + " " + item.familyName}
+        </Text>
       </TouchableOpacity>
     );
   };

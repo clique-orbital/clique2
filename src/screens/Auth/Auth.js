@@ -116,6 +116,7 @@ class Auth extends Component {
         </Text>
         <TextInput
           autoFocus
+          keyboardType='phone-pad'
           style={{
             width: "70%",
             height: 40,
@@ -167,6 +168,7 @@ class Auth extends Component {
         <Text> Please enter it below:</Text>
         <TextInput
           autoFocus
+          keyboardType='phone-pad'
           style={{
             height: 40,
             marginTop: "10%",

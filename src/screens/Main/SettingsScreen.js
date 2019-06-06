@@ -6,10 +6,15 @@ import { cliqueBlue } from "../../assets/constants";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
 import { SIGN_OUT } from "../../store/constants";
+import defaultPicture from "../../assets/default_profile.png";
+import AsyncStorage from '@react-native-community/async-storage';
 
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      uri: ""
+    }
   }
 
   static navigationOptions = {
@@ -19,6 +24,27 @@ class SettingsScreen extends React.Component {
     }
   };
 
+  componentDidMount() {
+    this.retrieveItem('profilePicture').then(uri => {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          uri
+        }
+      })
+    }).catch(e => console.log(e));
+  }
+
+  async retrieveItem(key) {
+    try {
+      const retrievedItem =  await AsyncStorage.getItem(key);
+      const item = JSON.parse(retrievedItem);
+      return item;
+    } catch (error) {
+      console.log(error.message);
+    }
+    return
+  }
 
   signOut = () => {
     firebase.auth().signOut();
@@ -26,13 +52,18 @@ class SettingsScreen extends React.Component {
     this.props.navigation.navigate("Auth");
   }
 
+  renderProfilePic() {
+    if(this.state.uri === "") {
+      return <Image source={defaultPicture} style={styles.profilePic} />
+    } else {
+      return <Image source={{uri: this.state.uri}} style={styles.profilePic} />
+    }
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <Image 
-          source={{uri: this.props.profilePic}}
-          style={styles.profilePic}
-        />
+        {this.renderProfilePic()}
         <Text>Your name: { this.props.username }</Text>
         <Text>Your phone number: { this.props.phoneNumber }</Text>
         <Button
@@ -66,7 +97,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     phoneNumber: state.authReducer.user.phoneNumber,
     username: state.authReducer.user.displayName,
-    profilePic: state.authReducer.user.photoURL
   }
 }
 

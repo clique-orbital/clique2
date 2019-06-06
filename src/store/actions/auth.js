@@ -10,16 +10,6 @@ export const setUserDetails = userDetails => {
   };
 };
 
-// export const signOutUser = dispatch => {
-//   dispatch({ type: SIGN_OUT });
-// }
-
-// export const signOutUser = () => {
-//   return {
-//     type: SIGN_OUT,
-//   }
-// }
-
 export const createAccount = (username, pictureUri) => async dispatch => {
   //upload picture to firebase storage
   let user = firebase.auth().currentUser;
