@@ -31,6 +31,7 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.perf.RNFirebasePerformancePackage;
 import io.invertase.firebase.storage.RNFirebaseStoragePackage;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts; 
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +48,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new ReactNativeContacts(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
             new VectorIconsPackage(),

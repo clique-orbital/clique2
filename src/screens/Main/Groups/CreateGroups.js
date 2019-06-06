@@ -8,6 +8,7 @@ import {
   FlatList
 } from "react-native";
 import firebase from "react-native-firebase";
+import Contacts from "react-native-contacts";
 
 import HeaderTitle from "../../../components/HeaderTitle";
 
@@ -27,20 +28,66 @@ class CreateGroups extends React.Component {
 
   state = { users: [] };
 
+  checkAndGetPermissionForContacts() {
+    Contacts.checkPermission((err, permission) => {
+      if (err) throw err;
+    
+      // Contacts.PERMISSION_AUTHORIZED || Contacts.PERMISSION_UNDEFINED || Contacts.PERMISSION_DENIED
+      if (permission === 'undefined') {
+        console.log("requesting");
+        Contacts.requestPermission((err, permission) => {
+          if(err) console.log(err);
+
+          if (permission === 'authorized') {
+            console.log("requesting permission successful");
+          } else if (permission === 'denied') {
+            console.log("requesting permission denied");
+          }
+        })
+      }
+      if (permission === 'authorized') {
+        console.log("Permission already authorized");
+      }
+      if (permission === 'denied') {
+        console.log("Permission already denied");        
+      }
+    })
+  } 
+
+  getContacts() {
+    Contacts.getAll((err, contacts) => {
+      if (err) {
+        throw err;
+      }
+      let dbRef = firebase.database().ref("phoneNumbers");
+      dbRef.once('value')
+        .then(snapshot => {
+          this.setState(prevState => {
+            contacts = contacts.filter(contact => {
+              const contactPhoneNumbers =  contact.phoneNumbers.map(phoneNumber => phoneNumber.number);
+              for(let phoneNumber of contactPhoneNumbers){
+                if(snapshot.child(`${phoneNumber}`.replace(/\s/g, '')).exists()) {
+                  return true;
+                }
+                console.log(phoneNumber);
+              }
+              return false;
+            })
+      
+            return {
+              ...prevState,
+              contacts,
+            }
+          })
+        })
+    })
+
+  }
+
+
   componentWillMount() {
-    const user = firebase.auth().currentUser;
-    let dbRef = firebase.database().ref("users");
-    dbRef.on("child_added", snapshot => {
-      let person = snapshot.val();
-      // if (person.phoneNumber === user.phoneNumber) {
-      //   person.displayName = "Saved Messages";
-      // }
-      this.setState(prevState => {
-        return {
-          users: [...prevState.users, person]
-        };
-      });
-    });
+    this.checkAndGetPermissionForContacts();
+    this.getContacts();
   }
 
   renderRow = ({ item }) => {
@@ -54,18 +101,20 @@ class CreateGroups extends React.Component {
           })
         }
       >
-        <Text style={{ fontSize: 16 }}>{item.displayName}</Text>
+        {/* <Text style={{ fontSize: 16 }}>{item.displayName}</Text> */}
+        <Text style= {{ fontSize: 16 }}>{item.familyName}</Text>
       </TouchableOpacity>
     );
   };
 
   render() {
+    console.log(this.state.contacts)
     return (
       <View>
         <FlatList
-          data={this.state.users}
+          data={this.state.contacts}
           renderItem={this.renderRow}
-          keyExtractor={item => item.uid}
+          keyExtractor={item => item.recordID}
         />
       </View>
     );
