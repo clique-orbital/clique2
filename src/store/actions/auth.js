@@ -66,8 +66,7 @@ const userDetailsToDatabase = user => async dispatch => {
     .push(savedMessagesGroup)
     .then(async res => {
       const groups = {};
-      console.log(res.path);
-      groups.savedMessages = res.path;
+      groups[res.path] = true;
       const user2 = { ...user._user, groups };
       await firebase
         .database()
