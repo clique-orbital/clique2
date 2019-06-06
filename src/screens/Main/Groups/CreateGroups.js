@@ -136,12 +136,13 @@ class CreateGroups extends React.Component {
               width: 46,
               borderRadius: 23,
               flex: 1,
-              justifyContent: "center"
+              justifyContent: "center",
+              alignItems: "center"
             }}
           >
             <MyIcon
               name="arrow-forward"
-              size={35}
+              size={30}
               color="white"
               type="material"
             />
