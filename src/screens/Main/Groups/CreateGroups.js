@@ -12,6 +12,8 @@ import Contacts from "react-native-contacts";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 
+import cliqueBlue from "../../../assets/constants";
+import MyIcon from "../../../components/MyIcon";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
 import HeaderTitle from "../../../components/HeaderTitle";
@@ -116,7 +118,7 @@ class CreateGroups extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={{ display: "flex", height: "100%" }}>
         <FlatList
           data={this.state.contacts}
           renderItem={this.renderRow}
@@ -125,8 +127,25 @@ class CreateGroups extends React.Component {
         <TouchableOpacity
           title="Create"
           onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+          style={{ position: "absolute", top: "90%", left: "80%" }}
         >
-          <Text>Create</Text>
+          <View
+            style={{
+              backgroundColor: "#134782",
+              height: 46,
+              width: 46,
+              borderRadius: 23,
+              flex: 1,
+              justifyContent: "center"
+            }}
+          >
+            <MyIcon
+              name="arrow-forward"
+              size={35}
+              color="white"
+              type="material"
+            />
+          </View>
         </TouchableOpacity>
       </View>
     );

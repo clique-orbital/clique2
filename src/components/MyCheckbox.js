@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderColor: "#eee",
-    borderBottomWidth: StyleSheet.hairlineWidth
+    borderBottomWidth: 1
   },
   text: {
     paddingLeft: "5%",
