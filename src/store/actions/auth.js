@@ -47,14 +47,41 @@ export const createAccount = (username, pictureUri) => async dispatch => {
 };
 
 const userDetailsToDatabase = user => async dispatch => {
-  // add new user to database
-  user.groups = {};
+  const savedMessagesGroup = {
+    last_message: {
+      data: "",
+      image: "",
+      timestamp: "",
+      user_id: "",
+      video: ""
+    },
+    users_info: {
+      user_id: user._user.uid
+    }
+  };
+
   await firebase
     .database()
-    .ref(`users/${user._user.uid}`)
-    .set(user);
-  await firebase
-    .database()
+<<<<<<< HEAD
     .ref(`phoneNumbers/${user._user.phoneNumber}`)
     .set(user)
+=======
+    .ref(`groups`)
+    .push(savedMessagesGroup)
+    .then(async res => {
+      const groups = {};
+      console.log(res.path);
+      groups.savedMessages = res.path;
+      const user2 = { ...user._user, groups };
+      await firebase
+        .database()
+        .ref(`users/${user._user.uid}`)
+        .set(user2);
+      await firebase
+        .database()
+        .ref(`phoneNumbers/${user._user.phoneNumber}`)
+        .set(user2);
+    })
+    .catch(err => console.log(err));
+>>>>>>> 18a91db97f2449389687846a6973285a43f19093
 };
