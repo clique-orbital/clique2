@@ -31,28 +31,28 @@ class CreateGroups extends React.Component {
   checkAndGetPermissionForContacts() {
     Contacts.checkPermission((err, permission) => {
       if (err) throw err;
-
+    
       // Contacts.PERMISSION_AUTHORIZED || Contacts.PERMISSION_UNDEFINED || Contacts.PERMISSION_DENIED
-      if (permission === "undefined") {
+      if (permission === 'undefined') {
         console.log("requesting");
         Contacts.requestPermission((err, permission) => {
-          if (err) console.log(err);
+          if(err) console.log(err);
 
-          if (permission === "authorized") {
+          if (permission === 'authorized') {
             console.log("requesting permission successful");
-          } else if (permission === "denied") {
+          } else if (permission === 'denied') {
             console.log("requesting permission denied");
           }
-        });
+        })
       }
-      if (permission === "authorized") {
+      if (permission === 'authorized') {
         console.log("Permission already authorized");
       }
-      if (permission === "denied") {
-        console.log("Permission already denied");
+      if (permission === 'denied') {
+        console.log("Permission already denied");        
       }
-    });
-  }
+    })
+  } 
 
   getContacts() {
     Contacts.getAll((err, contacts) => {
@@ -60,30 +60,29 @@ class CreateGroups extends React.Component {
         throw err;
       }
       let dbRef = firebase.database().ref("phoneNumbers");
-      dbRef.once("value").then(snapshot => {
-        this.setState(prevState => {
-          contacts = contacts.filter(contact => {
-            const contactPhoneNumbers = contact.phoneNumbers.map(
-              phoneNumber => phoneNumber.number
-            );
-            for (let phoneNumber of contactPhoneNumbers) {
-              if (
-                snapshot.child(`${phoneNumber}`.replace(/\s/g, "")).exists()
-              ) {
-                return true;
+      dbRef.once('value')
+        .then(snapshot => {
+          this.setState(prevState => {
+            contacts = contacts.filter(contact => {
+              const contactPhoneNumbers =  contact.phoneNumbers.map(phoneNumber => phoneNumber.number);
+              for(let phoneNumber of contactPhoneNumbers){
+                if(snapshot.child(`${phoneNumber}`.replace(/\s/g, '')).exists()) {
+                  return true;
+                }
               }
+              return false;
+            })
+      
+            return {
+              ...prevState,
+              contacts,
             }
-            return false;
-          });
+          })
+        })
+    })
 
-          return {
-            ...prevState,
-            contacts
-          };
-        });
-      });
-    });
   }
+
 
   componentWillMount() {
     this.checkAndGetPermissionForContacts();
@@ -101,9 +100,7 @@ class CreateGroups extends React.Component {
           })
         }
       >
-        <Text style={{ fontSize: 16 }}>
-          {item.givenName + " " + item.familyName}
-        </Text>
+        <Text style= {{ fontSize: 16 }}>{item.givenName + " " + item.familyName}</Text>
       </TouchableOpacity>
     );
   };
