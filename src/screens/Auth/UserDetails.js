@@ -15,9 +15,27 @@ import { Field, reduxForm } from "redux-form";
 import MyIcon from "../../components/MyIcon";
 import { createAccount } from "../../store/actions/auth";
 import defaultPicture from "../../assets/default_profile.png";
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 class UserDetails extends React.Component {
+  storeData = async (key, val) => {
+    try {
+      val = JSON.stringify(val);
+      if(val) {
+        await AsyncStorage.setItem(key, val);
+      } else { 
+        console.log("no value");
+      }
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  }
+
+
   handleSubmit = async values => {
+    this.storeData('profilePicture', values.profilepicture.uri);
     await this.props.createAccount(values.username, values.profilepicture.uri);
     this.props.navigation.navigate("App");
   };
