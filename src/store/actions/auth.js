@@ -53,4 +53,8 @@ const userDetailsToDatabase = user => async dispatch => {
     .database()
     .ref(`users/${user._user.uid}`)
     .set(user);
+  await firebase
+    .database()
+    .ref(`phoneNumbers/${user._user.metadata.phoneNumber}`)
+    .set(user)
 };
