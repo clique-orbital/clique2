@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,10 +9,25 @@ import {
 } from "react-native";
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
+import { connect } from "react-redux";
+import { Field, reduxForm } from "redux-form";
 
+import MyCheckBox from "../../../components/MyCheckbox";
+import { createGroup } from "../../../store/actions/groups";
 import HeaderTitle from "../../../components/HeaderTitle";
 
 class CreateGroups extends React.Component {
+  state = { users: [] };
+
+  componentWillMount() {
+    this.checkAndGetPermissionForContacts();
+    this.getContacts();
+  }
+
+  handleSubmit = values => {
+    console.log(values);
+  };
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: (
@@ -26,8 +41,6 @@ class CreateGroups extends React.Component {
     };
   };
 
-  state = { users: [] };
-
   checkAndGetPermissionForContacts() {
     Contacts.checkPermission((err, permission) => {
       if (err) throw err;
@@ -37,7 +50,6 @@ class CreateGroups extends React.Component {
         console.log("requesting");
         Contacts.requestPermission((err, permission) => {
           if (err) console.log(err);
-
           if (permission === "authorized") {
             console.log("requesting permission successful");
           } else if (permission === "denied") {
@@ -85,26 +97,20 @@ class CreateGroups extends React.Component {
     });
   }
 
-  componentWillMount() {
-    this.checkAndGetPermissionForContacts();
-    this.getContacts();
-  }
+  renderCheckBox = props => {
+    return (
+      <MyCheckBox {...props.input} title={props.label} value={props.user} />
+    );
+  };
 
   renderRow = ({ item }) => {
     return (
-      <TouchableOpacity
-        style={styles.chatList}
-        onPress={() =>
-          this.props.navigation.navigate("Chat", {
-            username: item.displayName,
-            user: item
-          })
-        }
-      >
-        <Text style={{ fontSize: 16 }}>
-          {item.givenName + " " + item.familyName}
-        </Text>
-      </TouchableOpacity>
+      <Field
+        name={`contact${item.givenName}`}
+        component={this.renderCheckBox}
+        user={item}
+        label={item.givenName + " " + item.familyName}
+      />
     );
   };
 
@@ -116,17 +122,19 @@ class CreateGroups extends React.Component {
           renderItem={this.renderRow}
           keyExtractor={item => item.recordID}
         />
+        <TouchableOpacity
+          title="Create"
+          onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+        >
+          <Text>Create</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  chatList: {
-    padding: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#CCC"
-  }
-});
-
-export default CreateGroups;
+let form = reduxForm({ form: "createGroups" })(CreateGroups);
+export default connect(
+  null,
+  { createGroup }
+)(form);

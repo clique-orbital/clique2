@@ -15,6 +15,7 @@ import { Field, reduxForm } from "redux-form";
 import MyIcon from "../../components/MyIcon";
 import { createAccount } from "../../store/actions/auth";
 import defaultPicture from "../../assets/default_profile.png";
+import CreateGroups from "../Main/Groups/CreateGroups";
 
 class UserDetails extends React.Component {
   handleSubmit = async values => {
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   }
 });
 
-let form = reduxForm({ form: "userDetails" })(UserDetails);
+let form = reduxForm({ form: "GroupCreation" })(CreateGroups);
 export default connect(
   null,
   { createAccount }
