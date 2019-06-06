@@ -53,6 +53,7 @@ const userDetailsToDatabase = user => async dispatch => {
     .database()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     .ref(`phoneNumbers/${user._user.phoneNumber}`)
     .set(user)
 =======
@@ -75,11 +76,16 @@ const userDetailsToDatabase = user => async dispatch => {
     .catch(err => console.log(err));
 >>>>>>> 18a91db97f2449389687846a6973285a43f19093
 =======
+=======
+>>>>>>> parent of 18a91db... Add groups object
     .ref(`users/${user._user.uid}`)
     .set(user);
   await firebase
     .database()
     .ref(`phoneNumbers/${user._user.metadata.phoneNumber}`)
     .set(user)
+<<<<<<< HEAD
+>>>>>>> parent of 18a91db... Add groups object
+=======
 >>>>>>> parent of 18a91db... Add groups object
 };
