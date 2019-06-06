@@ -46,17 +46,23 @@ export const createAccount = (username, pictureUri) => async dispatch => {
     });
 };
 
+
 const userDetailsToDatabase = user => async dispatch => {
-  // add new user to database
-  user.groups = {};
+  const savedMessagesGroup = {
+    last_message: {
+      data: "",
+      image: "",
+      timestamp: "",
+      user_id: "",
+      video: ""
+    },
+    users_info: {
+      user_id: user._user.uid
+    }
+  };
+
   await firebase
     .database()
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    .ref(`phoneNumbers/${user._user.phoneNumber}`)
-    .set(user)
-=======
     .ref(`groups`)
     .push(savedMessagesGroup)
     .then(async res => {
@@ -74,18 +80,4 @@ const userDetailsToDatabase = user => async dispatch => {
         .set(user2);
     })
     .catch(err => console.log(err));
->>>>>>> 18a91db97f2449389687846a6973285a43f19093
-=======
-=======
->>>>>>> parent of 18a91db... Add groups object
-    .ref(`users/${user._user.uid}`)
-    .set(user);
-  await firebase
-    .database()
-    .ref(`phoneNumbers/${user._user.metadata.phoneNumber}`)
-    .set(user)
-<<<<<<< HEAD
->>>>>>> parent of 18a91db... Add groups object
-=======
->>>>>>> parent of 18a91db... Add groups object
 };
