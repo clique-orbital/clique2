@@ -69,7 +69,6 @@ class CreateGroups extends React.Component {
                 if(snapshot.child(`${phoneNumber}`.replace(/\s/g, '')).exists()) {
                   return true;
                 }
-                console.log(phoneNumber);
               }
               return false;
             })
@@ -101,14 +100,12 @@ class CreateGroups extends React.Component {
           })
         }
       >
-        {/* <Text style={{ fontSize: 16 }}>{item.displayName}</Text> */}
-        <Text style= {{ fontSize: 16 }}>{item.familyName}</Text>
+        <Text style= {{ fontSize: 16 }}>{item.givenName + " " + item.familyName}</Text>
       </TouchableOpacity>
     );
   };
 
   render() {
-    console.log(this.state.contacts)
     return (
       <View>
         <FlatList
