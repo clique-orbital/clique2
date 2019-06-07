@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, Image } from "react-native";
-import { SafeAreaView, createStackNavigator } from "react-navigation";
+import { View, Text, Image } from "react-native";
+import { createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
 
@@ -14,9 +14,9 @@ class NotificationsScreen extends React.Component {
 
   render() {
     return (
-      <SafeAreaView>
+      <View>
         <Text>This is the notifications screen!</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 }

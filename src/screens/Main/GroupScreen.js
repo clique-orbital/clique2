@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
 import firebase from "react-native-firebase";
 import { createStackNavigator } from "react-navigation";
 import _ from "lodash";
@@ -16,6 +15,7 @@ import HeaderTitle from "../../components/HeaderTitle";
 import MyIcon from "../../components/MyIcon";
 import CreateGroups from "./Groups/CreateGroups";
 import ChatScreen from "./Groups/ChatScreen";
+import GroupDetails from "./Groups/GroupDetails";
 
 class GroupScreen extends Component {
   state = { groups: [] };
@@ -74,14 +74,14 @@ class GroupScreen extends Component {
 
   render() {
     return (
-      <SafeAreaView>
+      <View>
         <FlatList
           extraData={this.state.groups}
           data={this.state.groups.slice()}
           renderItem={this.renderRow}
           keyExtractor={item => item}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -98,7 +98,8 @@ const GroupStack = createStackNavigator(
   {
     Main: GroupScreen,
     Create: CreateGroups,
-    Chat: ChatScreen
+    Chat: ChatScreen,
+    GroupDetails: GroupDetails
   },
   {
     initialRouteName: "Main",

@@ -1,20 +1,20 @@
 import React from "react";
-import { Text, Button, StyleSheet, Image } from "react-native";
-import { SafeAreaView, createStackNavigator } from "react-navigation";
+import { View, Text, Button, StyleSheet, Image } from "react-native";
+import { createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
 import { SIGN_OUT } from "../../store/constants";
 import defaultPicture from "../../assets/default_profile.png";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-community/async-storage";
 
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       uri: ""
-    }
+    };
   }
 
   static navigationOptions = {
@@ -25,52 +25,53 @@ class SettingsScreen extends React.Component {
   };
 
   componentDidMount() {
-    this.retrieveItem('profilePicture').then(uri => {
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          uri
-        }
+    this.retrieveItem("profilePicture")
+      .then(uri => {
+        this.setState(prevState => {
+          return {
+            ...prevState,
+            uri
+          };
+        });
       })
-    }).catch(e => console.log(e));
+      .catch(e => console.log(e));
   }
 
   async retrieveItem(key) {
     try {
-      const retrievedItem =  await AsyncStorage.getItem(key);
+      const retrievedItem = await AsyncStorage.getItem(key);
       const item = JSON.parse(retrievedItem);
       return item;
     } catch (error) {
       console.log(error.message);
     }
-    return
+    return;
   }
 
   signOut = () => {
     firebase.auth().signOut();
     this.props.dispatch({ type: SIGN_OUT });
     this.props.navigation.navigate("Auth");
-  }
+  };
 
   renderProfilePic() {
-    if(this.state.uri === "") {
-      return <Image source={defaultPicture} style={styles.profilePic} />
+    if (this.state.uri === "") {
+      return <Image source={defaultPicture} style={styles.profilePic} />;
     } else {
-      return <Image source={{uri: this.state.uri}} style={styles.profilePic} />
+      return (
+        <Image source={{ uri: this.state.uri }} style={styles.profilePic} />
+      );
     }
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         {this.renderProfilePic()}
-        <Text>Your name: { this.props.username }</Text>
-        <Text>Your phone number: { this.props.phoneNumber }</Text>
-        <Button
-          title="Sign Out"
-          onPress={this.signOut}
-        />
-      </SafeAreaView>
+        <Text>Your name: {this.props.username}</Text>
+        <Text>Your phone number: {this.props.phoneNumber}</Text>
+        <Button title="Sign Out" onPress={this.signOut} />
+      </View>
     );
   }
 }
@@ -96,9 +97,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, ownProps) => {
   return {
     phoneNumber: state.authReducer.user.phoneNumber,
-    username: state.authReducer.user.displayName,
-  }
-}
+    username: state.authReducer.user.displayName
+  };
+};
 
 export default connect(
   mapStateToProps,

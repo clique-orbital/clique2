@@ -13,11 +13,13 @@ export const addGroupToUser = (groupID, uid) => async () => {
 export const newGroupCreator = (
   groupName,
   groupID,
+  photoURL,
   users,
   data
 ) => async () => {
   const newGroup = {
     groupName,
+    photoURL,
     last_message: {
       data,
       image: "",
@@ -36,17 +38,34 @@ export const newGroupCreator = (
     .catch(err => console.log(err));
 };
 
+const addGroupPicture = pictureUri => async () => {
+  //upload picture to firebase storage
+  let url;
+  await firebase
+    .storage()
+    .ref(`images/group_pictures/${new Date().getTime()}`)
+    .put(pictureUri)
+    .then(snapshot => {
+      if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+        url = snapshot.downloadURL;
+      }
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
+  return url;
+};
+
 export const createGroup = (
   groupName,
-  user,
+  groupPicture,
+  myuser,
   data,
   users = []
 ) => async dispatch => {
-  let users_info = { [user]: true };
+  let users_info = { [myuser]: true };
   const groupID = uuidv4();
-
-  await dispatch(addGroupToUser(groupID, user));
-
+  await dispatch(addGroupToUser(groupID, myuser));
   for (let user of users) {
     await db
       .ref("phoneNumbers")
@@ -58,5 +77,7 @@ export const createGroup = (
       });
   }
 
-  await dispatch(newGroupCreator(groupName, groupID, users_info, data));
+  const url = await dispatch(addGroupPicture(groupPicture));
+
+  await dispatch(newGroupCreator(groupName, groupID, url, users_info, data));
 };
