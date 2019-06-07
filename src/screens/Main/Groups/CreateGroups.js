@@ -12,7 +12,6 @@ import Contacts from "react-native-contacts";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 
-import cliqueBlue from "../../../assets/constants";
 import MyIcon from "../../../components/MyIcon";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
@@ -26,8 +25,13 @@ class CreateGroups extends React.Component {
     this.getContacts();
   }
 
-  handleSubmit = values => {
-    console.log(values);
+  handleSubmit = v => {
+    this.props.createGroup(
+      "asd",
+      this.props.user.uid,
+      "This is a new clique!",
+      Object.values(v)
+    );
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -153,8 +157,12 @@ class CreateGroups extends React.Component {
   }
 }
 
+const mapStateToProps = state => {
+  return { user: state.authReducer.user };
+};
+
 let form = reduxForm({ form: "createGroups" })(CreateGroups);
 export default connect(
-  null,
+  mapStateToProps,
   { createGroup }
 )(form);
