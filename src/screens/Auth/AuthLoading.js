@@ -6,13 +6,30 @@ import { connect } from "react-redux";
 import { cliqueBlue } from "../../assets/constants";
 import icon from "../../assets/icon.png";
 import { setUserDetails } from "../../store/actions/auth";
+import AsyncStorage from "@react-native-community/async-storage";
 
 class AuthLoading extends React.Component {
+  storeData = async (key, val) => {
+    try {
+      val = JSON.stringify(val);
+      if (val) {
+        await AsyncStorage.setItem(key, val);
+      } else {
+        console.log("no value");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   // preload data (loading screen)
   async componentDidMount() {
+    
     await firebase.auth().onAuthStateChanged(user => {
       if (user) {
         if (user.displayName && user.photoURL) {
+          this.storeData("profilePicture", user.photoURL);
+          // AsyncStorage.setItem("profilePicture", JSON.stringify(user.photoURL));
           // update user auth details in redux store
           this.props.setUserDetails(user.toJSON());
           this.props.navigation.navigate("App");
