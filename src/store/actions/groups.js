@@ -27,7 +27,8 @@ export const newGroupCreator = (
       user_id: "",
       video: ""
     },
-    users
+    users,
+    groupID
   };
 
   await firebase
