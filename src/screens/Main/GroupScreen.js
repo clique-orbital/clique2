@@ -79,7 +79,7 @@ class GroupScreen extends Component {
           extraData={this.state.groups}
           data={this.state.groups.slice()}
           renderItem={this.renderRow}
-          keyExtractor={item => item}
+          keyExtractor={item => item.groupID}
         />
       </View>
     );
