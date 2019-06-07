@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,10 +9,31 @@ import {
 } from "react-native";
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
+import { connect } from "react-redux";
+import { Field, reduxForm } from "redux-form";
 
+import MyIcon from "../../../components/MyIcon";
+import MyCheckBox from "../../../components/MyCheckbox";
+import { createGroup } from "../../../store/actions/groups";
 import HeaderTitle from "../../../components/HeaderTitle";
 
 class CreateGroups extends React.Component {
+  state = { users: [] };
+
+  componentWillMount() {
+    this.checkAndGetPermissionForContacts();
+    this.getContacts();
+  }
+
+  handleSubmit = v => {
+    this.props.createGroup(
+      "asd",
+      this.props.user.uid,
+      "This is a new clique!",
+      Object.values(v)
+    );
+  };
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: (
@@ -26,33 +47,30 @@ class CreateGroups extends React.Component {
     };
   };
 
-  state = { users: [] };
-
   checkAndGetPermissionForContacts() {
     Contacts.checkPermission((err, permission) => {
       if (err) throw err;
-    
+
       // Contacts.PERMISSION_AUTHORIZED || Contacts.PERMISSION_UNDEFINED || Contacts.PERMISSION_DENIED
-      if (permission === 'undefined') {
+      if (permission === "undefined") {
         console.log("requesting");
         Contacts.requestPermission((err, permission) => {
-          if(err) console.log(err);
-
-          if (permission === 'authorized') {
+          if (err) console.log(err);
+          if (permission === "authorized") {
             console.log("requesting permission successful");
-          } else if (permission === 'denied') {
+          } else if (permission === "denied") {
             console.log("requesting permission denied");
           }
-        })
+        });
       }
-      if (permission === 'authorized') {
+      if (permission === "authorized") {
         console.log("Permission already authorized");
       }
-      if (permission === 'denied') {
-        console.log("Permission already denied");        
+      if (permission === "denied") {
+        console.log("Permission already denied");
       }
-    })
-  } 
+    });
+  }
 
   getContacts() {
     Contacts.getAll((err, contacts) => {
@@ -60,72 +78,91 @@ class CreateGroups extends React.Component {
         throw err;
       }
       let dbRef = firebase.database().ref("phoneNumbers");
-      dbRef.once('value')
-        .then(snapshot => {
-          this.setState(prevState => {
-            contacts = contacts.filter(contact => {
-              const contactPhoneNumbers =  contact.phoneNumbers.map(phoneNumber => phoneNumber.number);
-              for(let phoneNumber of contactPhoneNumbers){
-                if(snapshot.child(`${phoneNumber}`.replace(/\s/g, '')).exists()) {
-                  return true;
-                }
+      dbRef.once("value").then(snapshot => {
+        this.setState(prevState => {
+          contacts = contacts.filter(contact => {
+            const contactPhoneNumbers = contact.phoneNumbers.map(
+              phoneNumber => phoneNumber.number
+            );
+            for (let phoneNumber of contactPhoneNumbers) {
+              if (
+                snapshot.child(`${phoneNumber}`.replace(/\s/g, "")).exists()
+              ) {
+                return true;
               }
-              return false;
-            })
-      
-            return {
-              ...prevState,
-              contacts,
             }
-          })
-        })
-    })
+            return false;
+          });
 
+          return {
+            ...prevState,
+            contacts
+          };
+        });
+      });
+    });
   }
 
-
-  componentWillMount() {
-    this.checkAndGetPermissionForContacts();
-    this.getContacts();
-  }
+  renderCheckBox = props => {
+    return (
+      <MyCheckBox {...props.input} title={props.label} value={props.user} />
+    );
+  };
 
   renderRow = ({ item }) => {
     return (
-      <TouchableOpacity
-        style={styles.chatList}
-        onPress={() =>
-          this.props.navigation.navigate("Chat", {
-            username: item.displayName,
-            user: item
-          })
-      }
-      >
-        <Text style= {{ fontSize: 16 }}>
-          {item.givenName + " " + item.familyName}
-        </Text>
-      </TouchableOpacity>
+      <Field
+        name={`contact${item.givenName}`}
+        component={this.renderCheckBox}
+        user={item}
+        label={item.givenName + " " + item.familyName}
+      />
     );
   };
 
   render() {
     return (
-      <View>
+      <View style={{ display: "flex", height: "100%" }}>
         <FlatList
           data={this.state.contacts}
           renderItem={this.renderRow}
           keyExtractor={item => item.recordID}
         />
+        <TouchableOpacity
+          title="Create"
+          onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+          style={{ position: "absolute", top: "90%", left: "80%" }}
+        >
+          <View
+            style={{
+              backgroundColor: "#134782",
+              height: 46,
+              width: 46,
+              borderRadius: 23,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <MyIcon
+              name="arrow-forward"
+              size={30}
+              color="white"
+              type="material"
+            />
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  chatList: {
-    padding: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#CCC"
-  }
-});
+const mapStateToProps = state => {
+  return { user: state.authReducer.user };
+};
 
-export default CreateGroups;
+let form = reduxForm({ form: "createGroups" })(CreateGroups);
+export default connect(
+  mapStateToProps,
+  { createGroup }
+)(form);
