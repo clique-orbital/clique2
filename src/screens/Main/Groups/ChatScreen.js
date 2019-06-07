@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { SafeAreaView, Text, View, TextInput, Dimensions, StyleSheet, KeyboardAvoidingView } from "react-native";
-import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
+import { SafeAreaView, Text, View, TextInput, Dimensions, StyleSheet, KeyboardAvoidingView, Keyboard } from "react-native";
+import { TouchableOpacity, FlatList, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import firebase from "react-native-firebase";
 
 export default class ChatScreen extends Component {
@@ -100,15 +100,17 @@ export default class ChatScreen extends Component {
   render() {
     let { height, width } = Dimensions.get('window');
     return (
-      <KeyboardAvoidingView behavior="padding">
-        <SafeAreaView style={styles.container}>
-          <FlatList
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} style={{ flex: 1 }}>
+        <SafeAreaView>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.inner}>
+            <FlatList
               style={{padding:10, height: height * 0.8}}
               data={this.state.messageList}
               renderItem={this.renderRow}
               keyExtractor={(item, index) => index.toString()}
             />
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={styles.chatBox}>
                 <TextInput
                   style={styles.chatInput}
                   value={this.state.textMessage}
@@ -119,6 +121,9 @@ export default class ChatScreen extends Component {
                   <Text style={styles.sendBtn}>Send</Text>
                 </TouchableOpacity>
             </View>
+            <View style={{flex: 1}}/>
+          </View>
+          </TouchableWithoutFeedback>
         </SafeAreaView>
       </KeyboardAvoidingView>
     );
@@ -126,8 +131,12 @@ export default class ChatScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  container:{
+  inner:{
     justifyContent: "flex-end",
+  },
+  chatBox:{
+    flexDirection: "row", 
+    alignItems: "center" ,
   },
   chatInput: {
     borderWidth: 1,
