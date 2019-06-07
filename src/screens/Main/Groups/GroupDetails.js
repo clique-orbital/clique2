@@ -30,14 +30,15 @@ class GroupDetails extends React.Component {
     };
   };
 
-  handleSubmit = values => {
-    this.props.createGroup(
+  handleSubmit = async values => {
+    await this.props.createGroup(
       values.groupname,
-      values.grouppicture,
+      values.grouppicture.uri,
       this.props.user.uid,
       "This is a new clique!",
-      Object.keys(this.props.navigation.getParam("users"))
+      Object.values(this.props.navigation.getParam("users"))
     );
+    this.props.navigation.navigate("Main");
   };
 
   renderImagePicker = props => {
