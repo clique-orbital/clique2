@@ -6,6 +6,13 @@ import HeaderTitle from "../../../components/HeaderTitle";
 import cliqueBlue from "../../../assets/constants";
 
 class ChatScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      messages: []
+    }
+  }
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: (
@@ -14,25 +21,17 @@ class ChatScreen extends React.Component {
     };
   };
 
-  state = {
-    messages: []
-  };
-
   componentWillMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: "Hello asdasdasd",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: "React Native",
-            avatar: "https://placeimg.com/140/140/any"
-          }
-        }
-      ]
-    });
+    const { navigation } = this.props;
+    const groupID = navigation.getParam('groudID');
+    firebase.database().ref('messages').child(User.phoneNumber).child(this.state.person.phoneNumber)
+    .on("child_added", (value)=> {
+        this.setState((prevState) => {
+            return {
+                messageList: [...prevState.messageList, value.val()]
+            }
+        })
+    })
   }
 
   onSend(messages = []) {
