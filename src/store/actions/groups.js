@@ -40,19 +40,20 @@ export const newGroupCreator = (
 
 const addGroupPicture = pictureUri => async () => {
   //upload picture to firebase storage
+  let url;
   await firebase
     .storage()
     .ref(`images/group_pictures/${new Date().getTime()}`)
     .put(pictureUri)
     .then(snapshot => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-        const url = snapshot.downloadURL;
-        return url;
+        url = snapshot.downloadURL;
       }
     })
     .catch(err => {
       console.log(err.message);
     });
+  return url;
 };
 
 export const createGroup = (
@@ -65,8 +66,7 @@ export const createGroup = (
   let users_info = { [myuser]: true };
   const groupID = uuidv4();
 
-  addGroupToUser(groupID, myuser);
-
+  await dispatch(addGroupToUser(groupID, myuser));
   for (let user of users) {
     await db
       .ref("phoneNumbers")
@@ -78,7 +78,7 @@ export const createGroup = (
       });
   }
 
-  const url = addGroupPicture(groupPicture);
+  const url = await dispatch(addGroupPicture(groupPicture));
 
   await dispatch(newGroupCreator(groupName, groupID, url, users_info, data));
 };
