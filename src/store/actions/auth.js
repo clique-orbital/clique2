@@ -1,5 +1,6 @@
 import firebase from "react-native-firebase";
-import { USER_DETAILS, SIGN_OUT } from "../constants";
+import { USER_DETAILS } from "../constants";
+import { createGroup } from "./groups";
 
 // action creator for authDetails for the phone authentication
 // response from sign in after code is sent
@@ -9,16 +10,6 @@ export const setUserDetails = userDetails => {
     payload: userDetails
   };
 };
-
-// export const signOutUser = dispatch => {
-//   dispatch({ type: SIGN_OUT });
-// }
-
-// export const signOutUser = () => {
-//   return {
-//     type: SIGN_OUT,
-//   }
-// }
 
 export const createAccount = (username, pictureUri) => async dispatch => {
   //upload picture to firebase storage
@@ -47,35 +38,14 @@ export const createAccount = (username, pictureUri) => async dispatch => {
 };
 
 const userDetailsToDatabase = user => async dispatch => {
-  const savedMessagesGroup = {
-    last_message: {
-      data: "",
-      image: "",
-      timestamp: "",
-      user_id: "",
-      video: ""
-    },
-    users_info: {
-      user_id: user._user.uid
-    }
-  };
-
+  const uid = user._user.uid;
   await firebase
     .database()
-    .ref(`groups`)
-    .push(savedMessagesGroup)
-    .then(async res => {
-      const groups = {};
-      groups[res.path] = true;
-      const user2 = { ...user._user, groups };
-      await firebase
-        .database()
-        .ref(`users/${user._user.uid}`)
-        .set(user2);
-      await firebase
-        .database()
-        .ref(`phoneNumbers/${user._user.phoneNumber}`)
-        .set(user2);
-    })
-    .catch(err => console.log(err));
+    .ref(`users/${uid}`)
+    .set(user2);
+  await firebase
+    .database()
+    .ref(`phoneNumbers/${user._user.phoneNumber}`)
+    .set(user2);
+  createGroup("Saved Messages", uid, "This is your saved messages!");
 };
