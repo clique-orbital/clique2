@@ -22,10 +22,12 @@ export default class MyCheckBox extends React.Component {
         this.props.onChange(this.state.value);
         name = "ios-checkmark-circle";
         color = "#134782";
+        this.props.callback(true);
       } else {
         this.props.onChange("");
         name = "ios-radio-button-off";
         color = "grey";
+        this.props.callback(false);
       }
       return { ...prevState, checked, color, name };
     });
@@ -67,19 +69,3 @@ const styles = StyleSheet.create({
     paddingTop: "3%"
   }
 });
-
-/**
- * <CheckBox
-        {...this.props}
-        title={this.props.title}
-        left
-        iconRight
-        iconType="ionicon"
-        uncheckedIcon="ios-radio-button-off"
-        checkedColor={cliqueBlue}
-        checkedIcon="ios-checkmark-circle"
-        checked={this.state.checked}
-        onPress={this.check}
-
-      />
- */
