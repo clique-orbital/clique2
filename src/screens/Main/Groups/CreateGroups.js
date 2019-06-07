@@ -2,40 +2,35 @@ import React from "react";
 import {
   View,
   Text,
-  Button,
-  StyleSheet,
+  TextInput,
   TouchableOpacity,
   FlatList
 } from "react-native";
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
 import { connect } from "react-redux";
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, formValueSelector } from "redux-form";
 
 import ContinueButton from "../../../components/ContinueButton";
-import MyIcon from "../../../components/MyIcon";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
 import HeaderTitle from "../../../components/HeaderTitle";
 
-class CreateGroups extends React.Component {
-  state = { users: [] };
+class GroupMembersSelect extends React.Component {
+  state = { users: [], count: 0 };
 
   componentWillMount() {
     this.checkAndGetPermissionForContacts();
     this.getContacts();
   }
 
-  handleSubmit = v => {
-    this.props.createGroup(
-      "asd",
-      this.props.user.uid,
-      "This is a new clique!",
-      Object.values(v)
-    );
+  handleSubmit = formValues => {
+    this.props.navigation.navigate("GroupDetails", {
+      users: formValues
+    });
   };
 
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
       headerTitle: (
         <View style={{ bottom: 5 }}>
@@ -104,9 +99,26 @@ class CreateGroups extends React.Component {
     });
   }
 
+  count = increase => {
+    if (increase) {
+      this.setState(prevState => {
+        return { ...prevState, count: prevState.count + 1 };
+      });
+    } else {
+      this.setState(prevState => {
+        return { ...prevState, count: prevState.count - 1 };
+      });
+    }
+  };
+
   renderCheckBox = props => {
     return (
-      <MyCheckBox {...props.input} title={props.label} value={props.user} />
+      <MyCheckBox
+        {...props.input}
+        title={props.label}
+        value={props.user}
+        callback={this.count}
+      />
     );
   };
 
@@ -121,7 +133,19 @@ class CreateGroups extends React.Component {
     );
   };
 
-  render() {
+  renderButton = () => {
+    return (
+      <TouchableOpacity
+        title="Create"
+        onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+        style={{ position: "absolute", top: "90%", left: "80%" }}
+      >
+        <ContinueButton />
+      </TouchableOpacity>
+    );
+  };
+
+  renderFlatList = () => {
     return (
       <View style={{ display: "flex", height: "100%" }}>
         <FlatList
@@ -129,24 +153,22 @@ class CreateGroups extends React.Component {
           renderItem={this.renderRow}
           keyExtractor={item => item.recordID}
         />
-        <TouchableOpacity
-          title="Create"
-          onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
-          style={{ position: "absolute", top: "90%", left: "80%" }}
-        >
-          <ContinueButton />
-        </TouchableOpacity>
+        {this.state.count > 0 ? this.renderButton() : null}
+      </View>
+    );
+  };
+
+  render() {
+    return (
+      <View style={{ display: "flex", height: "100%" }}>
+        {this.renderFlatList()}
       </View>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return { user: state.authReducer.user };
-};
-
-let form = reduxForm({ form: "createGroups" })(CreateGroups);
+let form = reduxForm({ form: "groupMembersSelector" })(GroupMembersSelect);
 export default connect(
-  mapStateToProps,
+  null,
   { createGroup }
 )(form);
