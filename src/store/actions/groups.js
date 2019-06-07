@@ -45,7 +45,7 @@ export const createGroup = (
   let users_info = { [user]: true };
   const groupID = uuidv4();
 
-  addGroupToUser(groupID, user);
+  await dispatch(addGroupToUser(groupID, user));
 
   for (let user of users) {
     await db
