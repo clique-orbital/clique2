@@ -97,8 +97,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginTop: "10%",
-    width: "70%",
-    height: 15,
+    height: 16,
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth
   },

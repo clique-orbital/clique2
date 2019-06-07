@@ -104,9 +104,8 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   textInput: {
-    marginTop: "10%",
-    width: "70%",
-    height: 15,
+    top: "20%",
+    height: 30,
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth
   }
