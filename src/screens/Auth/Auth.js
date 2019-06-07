@@ -31,19 +31,14 @@ class Auth extends Component {
 
   componentDidMount() {
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.props.setUserDetails(user.toJSON());
-        this.props.navigation.navigate("App");
-      } else {
-        // User has been signed out, reset the state
-        this.props.setUserDetails(null);
-        this.setState({
-          message: "",
-          codeInput: "",
-          phoneNumber: "+65", // need to change
-          confirmResult: null
-        });
-      }
+      // User has been signed out, reset the state
+      this.props.setUserDetails(null);
+      this.setState({
+        message: "",
+        codeInput: "",
+        phoneNumber: "+65", // need to change
+        confirmResult: null
+      });
     });
   }
 
