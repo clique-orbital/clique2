@@ -12,6 +12,7 @@ import Contacts from "react-native-contacts";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 
+import ContinueButton from "../../../components/ContinueButton";
 import MyIcon from "../../../components/MyIcon";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
@@ -133,24 +134,7 @@ class CreateGroups extends React.Component {
           onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
           style={{ position: "absolute", top: "90%", left: "80%" }}
         >
-          <View
-            style={{
-              backgroundColor: "#134782",
-              height: 46,
-              width: 46,
-              borderRadius: 23,
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <MyIcon
-              name="arrow-forward"
-              size={30}
-              color="white"
-              type="material"
-            />
-          </View>
+          <ContinueButton />
         </TouchableOpacity>
       </View>
     );
