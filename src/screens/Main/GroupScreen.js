@@ -16,7 +16,6 @@ import { connect } from "react-redux";
 class GroupScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = { groups: [{ groupName: "hell", groupID: "1"}] };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -56,7 +55,7 @@ class GroupScreen extends Component {
         style={styles.chatList}
         onPress={() =>
           this.props.navigation.navigate("Chat", {
-            group: item
+            group: item,
           })
         }
       >
@@ -66,13 +65,12 @@ class GroupScreen extends Component {
   };
 
   render() {
-    console.log(this.props);
-    return (
+    return(
       <View>
         <FlatList
           data={this.props.groups}
           renderItem={this.renderRow}
-          keyExtractor={item => item.groupID}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );
@@ -96,4 +94,3 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps
 )(GroupScreen);
-

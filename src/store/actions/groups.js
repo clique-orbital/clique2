@@ -4,8 +4,6 @@ import { INITIALIZE_GROUPS, ADD_NEW_GROUP } from "../constants";
 const db = firebase.database();
 
 // export const dispatchFetchedGroups = groups => dispatch => {
-//   dispatch(fetchedGroups(groups));
-// }
 
 export const fetchedGroups = (groups) => {
   return {
@@ -100,7 +98,7 @@ export const createGroup = (
   const url = await dispatch(addGroupPicture(groupPicture));
 
   await dispatch(newGroupCreator(groupName, groupID, url, users_info, data));
-  
+
   db.ref("groups").child(`${groupID}`).once('value').then(snapshot => {
     const newGroup = snapshot.val();
     dispatch(addNewGroup(newGroup));
