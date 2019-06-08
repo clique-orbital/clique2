@@ -6,7 +6,7 @@ import {
   createSwitchNavigator
 } from "react-navigation";
 
-import GroupScreenStack from "./src/screens/Main/GroupScreen";
+import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
 import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
 import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
