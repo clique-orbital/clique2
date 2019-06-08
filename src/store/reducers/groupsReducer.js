@@ -5,7 +5,6 @@ const initialState = {
 }
 
 export const groupsReducer = (state = initialState, action) => {
-
     switch(action.type) {
         case INITIALIZE_GROUPS:
             return {
@@ -21,7 +20,3 @@ export const groupsReducer = (state = initialState, action) => {
             return state;
     }
 }
-
-// export {
-//     groupsReducer
-// }

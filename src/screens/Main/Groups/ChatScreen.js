@@ -1,16 +1,19 @@
 import React, { Component } from "react";
-import { SafeAreaView, Text, View, TextInput, Dimensions, StyleSheet, KeyboardAvoidingView, Keyboard } from "react-native";
+import { SafeAreaView, Text, View, TextInput, Dimensions, StyleSheet, KeyboardAvoidingView, Keyboard, Platform } from "react-native";
 import { TouchableOpacity, FlatList, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import firebase from "react-native-firebase";
+import { connect } from "react-redux";
+import { fetchedConversation } from "../../../store/actions/messages"
+import _ from "lodash";
 
-export default class ChatScreen extends Component {
+class ChatScreen extends Component {
   constructor(props) {
+      // this.props has { uid }
       super(props);
       this.state = {
-          uid: firebase.auth().currentUser.uid,
-          groupID: this.props.navigation.groupID,
+          uid: this.props.uid,
+          groupID: this.props.navigation.getParam("group").groupID,
           textMessage: '',
-          messages: []
       }
       this.convertTime = this.convertTime.bind(this);
       this.sendMessage = this.sendMessage.bind(this);
@@ -27,14 +30,10 @@ export default class ChatScreen extends Component {
   };
 
   componentWillMount() {
-      this.messagesRef.child(`${this.state.groupID}`).on('child_added', snapshot => {
-        this.setState(prevState => {
-          return {
-            ...prevState,
-            messages: [...prevState.messages, snapshot.val()]
-          }
-        })
-      })
+    const groupID = this.state.groupID;
+    this.messagesRef.child(`${groupID}`).on('child_added', snapshot => {
+      this.props.dispatch(fetchedConversation(groupID, snapshot.val()));
+    })
   }
 
   handleChange = key => val => {
@@ -55,21 +54,18 @@ export default class ChatScreen extends Component {
     }
 
   sendMessage = async () => {
+      this.setState({textMessage: this.textInput});
       if(this.state.textMessage.length > 0) {
-          let msgID = this.messagesRef.child(`${this.state.groupID}`).push().key;
-          let message = {
-              message: this.state.textMessage,
-              time: firebase.database.ServerValue.TIMESTAMP,
-              from: this.state.uid
-          }
-          this.messagesRef.child(`${this.state.groupID}/${msgID}`).set(message);
-          this.setState(prevState => { 
-            return {
-              ...prevState,
-              textMessage: ''
-            }
-          })
+        let msgID = this.messagesRef.child(`${this.state.groupID}`).push().key;
+        let message = {
+            message: this.state.textMessage,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            from: this.state.uid
         }
+        this.messagesRef.child(`${this.state.groupID}`).child(`${msgID}`).set(message);
+        this.setState({ textMessage: ''})
+        this.textInput = "";
+      }
   };
 
   renderRow = ({ item }) => {
@@ -89,7 +85,7 @@ export default class ChatScreen extends Component {
             </Text>
             <View style={{justifyContent: 'flex-end'}}>
                 <Text style={{color:'#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10}}>
-                    {this.convertTime(item.time)}
+                    {this.convertTime(item.timestamp)}
                 </Text>
             </View>
         </View>
@@ -100,13 +96,14 @@ export default class ChatScreen extends Component {
   render() {
     let { height, width } = Dimensions.get('window');
     return (
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={64} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={Platform.OS === 'ios' ? 64: 0} style={{ flex: 1 }}>
         <SafeAreaView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
             <FlatList
+              inverted
               style={{padding:10, height: height * 0.8}}
-              data={this.state.messageList}
+              data={_.reverse(_.slice(this.props.conversation) )}
               renderItem={this.renderRow}
               keyExtractor={(item, index) => index.toString()}
             />
@@ -129,6 +126,16 @@ export default class ChatScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  const { groupID } = ownProps.navigation.getParam("group");
+  return {
+    uid: state.authReducer.user.uid,
+    conversation: state.messagesReducer[groupID],
+  }
+}
+
+export default connect(mapStateToProps)(ChatScreen);
 
 const styles = StyleSheet.create({
   inner:{
