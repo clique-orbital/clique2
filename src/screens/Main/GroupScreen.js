@@ -2,23 +2,22 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   TouchableOpacity,
   FlatList
 } from "react-native";
 import firebase from "react-native-firebase";
-import { createStackNavigator } from "react-navigation";
 import _ from "lodash";
-import { cliqueBlue } from "../../assets/constants";
 import HeaderTitle from "../../components/HeaderTitle";
 import MyIcon from "../../components/MyIcon";
-import CreateGroups from "./Groups/CreateGroups";
-import ChatScreen from "./Groups/ChatScreen";
-import GroupDetails from "./Groups/GroupDetails";
+import { fetchedGroups } from "../../store/actions/groups";
+import { connect } from "react-redux";
 
 class GroupScreen extends Component {
-  state = { groups: [] };
+  constructor(props) {
+    super(props);
+    this.state = { groups: [{ groupName: "hell", groupID: "1"}] };
+  }
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -41,23 +40,17 @@ class GroupScreen extends Component {
     const ref = firebase.database().ref(`users/${userUID}/groups`);
     const snapshot = await ref.once('value');
     const groupIDs = _.keys(snapshot.val());
+    const groups = [];
     groupIDs.map(groupID => {
       const groupRef = firebase.database().ref(`groups/${groupID}`);
       groupRef.once('value').then(snapshot => {
-        this.setState(prevState => {
-          const groups = prevState.groups;
-          groups.push(snapshot.val());
-          return {
-            ...prevState,
-            groups
-          }
-        })
-      })
+        groups.push(snapshot.val());
+        this.props.dispatch(fetchedGroups(groups));
+      }).catch(e => console.log(e))
     });
   }
 
   renderRow = ({ item }) => {
-    console.log(item);
     return (
       <TouchableOpacity
         style={styles.chatList}
@@ -73,11 +66,11 @@ class GroupScreen extends Component {
   };
 
   render() {
+    console.log(this.props);
     return (
       <View>
         <FlatList
-          extraData={this.state.groups}
-          data={this.state.groups.slice()}
+          data={this.props.groups}
           renderItem={this.renderRow}
           keyExtractor={item => item.groupID}
         />
@@ -94,32 +87,13 @@ const styles = StyleSheet.create({
   }
 });
 
-const GroupStack = createStackNavigator(
-  {
-    Main: GroupScreen,
-    Create: CreateGroups,
-    Chat: ChatScreen,
-    GroupDetails: GroupDetails
-  },
-  {
-    initialRouteName: "Main",
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: cliqueBlue
-      }
-    }
+const mapStateToProps = state => {
+  return { 
+    groups: state.groupsReducer.groups 
   }
-);
+}
 
-GroupStack.navigationOptions = ({ navigation }) => {
-  let tabBarVisible = true;
-  if (navigation.state.index > 0) {
-    tabBarVisible = false;
-  }
+export default connect(
+  mapStateToProps
+)(GroupScreen);
 
-  return {
-    tabBarVisible
-  };
-};
-
-export default GroupStack;
