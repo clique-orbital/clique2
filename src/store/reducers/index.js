@@ -10,12 +10,3 @@ export default combineReducers({
     messagesReducer,
     form: formReducer 
 });
-
-// {this.props.groups
-//     ? <FlatList
-//       data={this.props.groups}
-//       renderItem={this.renderRow}
-//       keyExtractor={(item, index) => index.toString()}
-//     />
-//     : null
-//   }

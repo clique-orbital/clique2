@@ -1,15 +1,21 @@
-import { FETCH_CONVERSATION } from "../constants";
+import { FETCH_CONVERSATION, FETCH_NEW_MESSAGE } from "../constants";
 
 export const messagesReducer = (state = {}, action) => {
-    switch(action.type) {
-        case FETCH_CONVERSATION:
-            const { groupID } = action.payload;
-            const prevConvo = state[groupID]|| [];
-            return {
-                ...state,
-                [groupID] :[...prevConvo, action.payload.messages],
-            }
-        default:
-            return state;
+    if(action.type === FETCH_CONVERSATION){
+        const groupID = action.payload.groupID;
+        console.log(state[groupID]);
+        return {
+            ...state,
+            [groupID] :[...action.payload.messages],
+        }
+    } else if (action.type === FETCH_NEW_MESSAGE) {
+        const groupID = action.payload.groupID;
+        const prevConvo = state[groupID]|| [];
+        return {
+            ...state,
+            [groupID] : prevConvo.concat(action.payload.message) ,
+        }
+    } else {
+        return state;
     }
 }
