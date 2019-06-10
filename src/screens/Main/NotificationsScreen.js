@@ -14,7 +14,7 @@ class NotificationsScreen extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={{justifyContent: "center", alignItems: "center", flex: 1}}>
         <Text>This is the notifications screen!</Text>
       </View>
     );

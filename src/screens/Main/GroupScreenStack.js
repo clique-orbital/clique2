@@ -4,14 +4,17 @@ import CreateGroups from "./Groups/CreateGroups";
 import ChatScreen from "./Groups/ChatScreen";
 import GroupDetails from "./Groups/GroupDetails";
 import GroupScreen from "./GroupScreen";
+import CreateEvents from "./Groups/CreateEvents"
 
 
 const GroupScreenStack = createStackNavigator(
     {
       Main: GroupScreen,
-      Create: CreateGroups,
+      CreateGroups: CreateGroups,
       Chat: ChatScreen,
-      GroupDetails: GroupDetails
+      GroupDetails: GroupDetails,
+      CreateEvents: CreateEvents,
+
     },
     {
       initialRouteName: "Main",
