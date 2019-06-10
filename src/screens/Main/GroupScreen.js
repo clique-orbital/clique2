@@ -22,7 +22,7 @@ class GroupScreen extends Component {
     return {
       headerTitle: <HeaderTitle title="Groups" />,
       headerRight: (
-        <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+        <TouchableOpacity onPress={() => navigation.navigate("CreateGroups")}>
           <MyIcon
             name="ios-add"
             size={32}

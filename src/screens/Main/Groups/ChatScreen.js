@@ -3,17 +3,18 @@ import { SafeAreaView, Text, View, TextInput, Dimensions, StyleSheet, KeyboardAv
 import { TouchableOpacity, FlatList, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
-import { fetchedConversation, fetchNewMessage } from "../../../store/actions/messages"
+import { fetchedConversation } from "../../../store/actions/messages"
+import MyIcon from "../../../components/MyIcon";
 import _ from "lodash";
 
 class ChatScreen extends Component {
   constructor(props) {
-      // this.props has { uid }
       super(props);
       this.state = {
           uid: this.props.uid,
           groupID: this.props.navigation.getParam("group").groupID,
           textMessage: '',
+          prevDay: (new Date()).getDay(),
       }
       this.convertTime = this.convertTime.bind(this);
       this.sendMessage = this.sendMessage.bind(this);
@@ -23,10 +24,20 @@ class ChatScreen extends Component {
   messagesRef = firebase.database().ref('messages');
 
   static navigationOptions = ({ navigation }) => {
-    const { groupName } =  navigation.getParam("group");
     return {
-      title: groupName,
-    };
+      headerTintColor: "#fff",
+      headerTitle: navigation.getParam("group").groupName,
+      headerRight: (
+        <TouchableOpacity onPress={() => navigation.navigate("CreateEvents")}>
+          <MyIcon
+            name="ios-add"
+            size={32}
+            color="white"
+            style={{ marginRight: 20 }}
+          />
+        </TouchableOpacity>
+      )
+    }
   };
 
   componentWillMount() {
@@ -34,6 +45,23 @@ class ChatScreen extends Component {
     this.messagesRef.child(`${groupID}`).on('value', snapshot => {
       this.props.dispatch(fetchedConversation(groupID, _.sortBy(_.values(snapshot.val()), 'timestamp')));
     })
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this.scrollToBottom
+    )
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this.scrollToBottom
+    )
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  scrollToBottom = (contentHeight, contentWidth) => {
+    this.refs.messageList.scrollToEnd({animated: true})
   }
 
   handleChange = key => val => {
@@ -45,13 +73,21 @@ class ChatScreen extends Component {
   convertTime = time => {
       let d = new Date(time);
       let c = new Date();
-      let result = (d.getHours < 10 ? 0 : '') + d.getHours() + ":";
-      result += (d.getMinutes < 10 ? '0' : '') + d.getMinutes();
-      if(c.getDay() !== d.getDay()) {
-          result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
-      }
+      let result = (d.getHours() < 10 ? 0 : '') + d.getHours() + ":";
+      result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
       return result;
-    }
+  }
+
+  // sameDay = (dateOfMessage, message) => {
+  //   console.log("props date = " + this.props.prevDate);
+  //   if(dateOfMessage === this.props.prevDate){
+  //     console.log("in true. day = " + dateOfMessage + ' ' + message)
+  //     return true;
+  //   }
+  //   console.log('in false. day = ' + dateOfMessage + ' ' + message);
+  //   this.props.dispatch(changePrevDate(this.state.groupID, dateOfMessage));
+  //   return false;
+  // }
 
   sendMessage = async () => {
       this.setState({textMessage: this.textInput});
@@ -70,44 +106,34 @@ class ChatScreen extends Component {
 
   renderRow = ({ item }) => {
     return(
-        <View style={{
-            flexDirection:"row",
-            justifyContent: 'space-between',
-            width:"auto",
-            alignSelf: item.from === this.state.uid ? 'flex-end' : 'flex-start',
-            backgroundColor: item.from === this.state.uid ? '#3a8cbc' : '#134782',
-            borderRadius: 20,
-            marginBottom: 8,
-            paddingLeft: 5,
-            marginLeft: item.from === this.state.uid ? 40 : 0,
-            marginRight: item.from === this.state.uid ? 0 : 40,
-        }}>
-          <View style={{flexWrap: "wrap"}}>
-            <Text style={{color: '#fff', padding: 7, fontSize: 16}}>
-              {item.message}
-            </Text>
-          </View>
-          <View style={{justifyContent: 'flex-end'}}>
-            <Text style={{color:'#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10}}>
-              {this.convertTime(item.timestamp)}
-            </Text>
-          </View>
+      <View style={item.from === this.props.uid ? styles.myMessageBubble : styles.yourMessageBubble}>
+        <View style={{flexWrap: "wrap"}}>
+          <Text style={{color: '#fff', padding: 7, fontSize: 16}}>
+            {item.message}
+          </Text>
         </View>
-        
+        <View style={{justifyContent: 'flex-end'}}>
+          <Text style={{color:'#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10}}>
+            {this.convertTime(item.timestamp)}
+          </Text>
+        </View>
+      </View>
     )
   }
 
+
   render() {
-    let { height, width } = Dimensions.get('window');
+    let { height } = Dimensions.get('window');
     return (
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={Platform.OS === 'ios' ? 64: 0} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 85 : 0} style={{ flex: 1 }}>
         <SafeAreaView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
             <FlatList
-              inverted
-              style={{padding:10, height: height * 0.8}}
-              data={_.reverse(this.props.conversation.slice())}
+              ref="messageList"
+              onContentSizeChange={this.scrollToBottom}
+              style={{padding: 10, height: height * 0.8}}
+              data={this.props.conversation.slice()}
               renderItem={this.renderRow}
               keyExtractor={(item, index) => index.toString()}
             />
@@ -133,9 +159,10 @@ class ChatScreen extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const { groupID } = ownProps.navigation.getParam("group");
+  const stateOfGroup = state.messagesReducer[groupID] || {};
   return {
     uid: state.authReducer.user.uid,
-    conversation: state.messagesReducer[groupID] || [],
+    conversation: stateOfGroup.messages || [],
   }
 }
 
@@ -161,7 +188,31 @@ const styles = StyleSheet.create({
   sendBtn: {
     color: '#1d73d6',
     fontSize: 20,
-  }
+  },
+  yourMessageBubble: {
+    flexDirection:"row",
+    justifyContent: 'space-between',
+    width:"auto",
+    alignSelf: 'flex-start',
+    backgroundColor: '#134782',
+    borderRadius: 20,
+    marginBottom: 8,
+    paddingLeft: 5,
+    marginLeft: 0,
+    marginRight: 40,
+  },
+  myMessageBubble: {
+    flexDirection:"row",
+    justifyContent: 'space-between',
+    width:"auto",
+    alignSelf: 'flex-end',
+    backgroundColor: '#3a8cbc',
+    borderRadius: 20,
+    marginBottom: 8,
+    paddingLeft: 5,
+    marginLeft: 40,
+    marginRight: 0,
+  },
 })
 
 // import React from "react";
