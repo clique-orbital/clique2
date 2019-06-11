@@ -19,6 +19,7 @@ class ChatScreen extends Component {
       this.convertTime = this.convertTime.bind(this);
       this.sendMessage = this.sendMessage.bind(this);
       this.handleChange = this.handleChange.bind(this);
+      this.convertDate = this.convertDate.bind(this);
   }
   
   messagesRef = firebase.database().ref('messages');
@@ -28,7 +29,9 @@ class ChatScreen extends Component {
       headerTintColor: "#fff",
       headerTitle: navigation.getParam("group").groupName,
       headerRight: (
-        <TouchableOpacity onPress={() => navigation.navigate("CreateEvents")}>
+        <TouchableOpacity onPress={() => navigation.navigate("CreateEvents", {
+          groupID: navigation.getParam("group").groupID
+        })}>
           <MyIcon
             name="ios-add"
             size={32}
@@ -78,6 +81,85 @@ class ChatScreen extends Component {
       return result;
   }
 
+  convertDate = dateObj => {
+    dateObj = new Date(dateObj);
+    const date = dateObj.getDate();
+    let month = dateObj.getMonth();
+    let hour = dateObj.getHours();
+    hour = hour < 10 ? '0' + hour : hour;
+    let minute = dateObj.getMinutes();
+    minute = minute < 10 ? '0' + minute : minute;
+    let day = dateObj.getDay();
+    switch(day) {
+      case 0:
+        day = "Sunday"
+        break;
+      case 1:
+        day = "Monday"
+        break;
+      case 2:
+        day = "Tuesday"
+        break;
+      case 3:
+        day = "Wednesday"
+        break;
+      case 4:
+        day = "Thursday"
+        break;
+      case 5:
+        day = "Friday"
+        break;
+      case 6:
+        day = "Saturday"
+        break;
+      default:
+        day = "No day defined";
+        break;
+    }
+    switch(month) {
+      case 0:
+        month = "Jan";
+        break;
+      case 1:
+        month = "Feb";
+        break;
+      case 2:
+        month = "Mar";
+        break;
+      case 3:
+        month = "Apr";
+        break;
+      case 4:
+        month = "May";
+        break;
+      case 5:
+        month = "Jun";
+        break;
+      case 6:
+        month = "Jul";
+        break;
+      case 7:
+        month = "Aug";
+        break;
+      case 8:
+        month = "Sep";
+        break;
+      case 9:
+        month = "Oct";
+        break;
+      case 10:
+        month = "Nov";
+        break;
+      case 11:
+        month = "Dec";
+        break;
+      default:
+        month = "No Month Defined";
+        break;
+    }
+    return `${day}, ${date} ${month}, ${hour}:${minute}`;
+  }
+
   // sameDay = (dateOfMessage, message) => {
   //   console.log("props date = " + this.props.prevDate);
   //   if(dateOfMessage === this.props.prevDate){
@@ -89,15 +171,15 @@ class ChatScreen extends Component {
   //   return false;
   // }
 
-  sendMessage = async () => {
-      this.setState({textMessage: this.textInput});
+  sendMessage = () => {
       const groupID = this.state.groupID;
       if(this.state.textMessage.length > 0) {
-        let msgID = this.messagesRef.child(`${groupID}`).push().key;
+        const msgID = this.messagesRef.child(`${groupID}`).push().key;
         let message = {
+            messageType: "text",
             message: this.state.textMessage,
             timestamp: firebase.database.ServerValue.TIMESTAMP,
-            from: this.state.uid
+            sender: this.state.uid
         }
         this.messagesRef.child(`${groupID}`).child(`${msgID}`).set(message);
         this.setState({ textMessage: ''})
@@ -105,20 +187,57 @@ class ChatScreen extends Component {
   };
 
   renderRow = ({ item }) => {
-    return(
-      <View style={item.from === this.props.uid ? styles.myMessageBubble : styles.yourMessageBubble}>
-        <View style={{flexWrap: "wrap"}}>
-          <Text style={{color: '#fff', padding: 7, fontSize: 16}}>
-            {item.message}
-          </Text>
+    if(item.messageType === "text"){
+      return(
+        <View style={item.sender === this.props.uid ? styles.myMessageBubble : styles.yourMessageBubble}>
+          <View style={{flexWrap: "wrap"}}>
+            <Text style={{color: '#fff', padding: 7, fontSize: 16}}>
+              {item.message}
+            </Text>
+          </View>
+          <View style={{justifyContent: 'flex-end'}}>
+            <Text style={{color:'#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10}}>
+              {this.convertTime(item.timestamp)}
+            </Text>
+          </View>
         </View>
-        <View style={{justifyContent: 'flex-end'}}>
-          <Text style={{color:'#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10}}>
-            {this.convertTime(item.timestamp)}
-          </Text>
+      )
+    } else if(item.messageType === "event") {
+      return (
+        <View style={item.sender === this.props.uid ? styles.myEventBubble : styles.yourEventBubble}>
+          <View style={styles.eventBubbleContent}>
+            <View>
+              <Text style={{...styles.eventDetails, fontWeight: "bold"}}>
+                {item.event.title}
+              </Text>
+              <Text style={styles.eventDetails}>
+                {this.convertDate(item.event.from) + " to\n" + this.convertDate(item.event.to)}
+              </Text>
+              <Text style={{...styles.eventDetails, display: item.event.location ? 'flex' : 'none'}}>
+                {item.event.location}
+              </Text>
+            </View>
+            <View style={{justifyContent: 'flex-end'}}>
+              <Text style={{color:'#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10}}>
+                {this.convertTime(item.timestamp)}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.eventBubbleButtons}>
+            <View style={{flex: 1}}>
+              <TouchableOpacity style={styles.acceptButton}>
+                <Text style={styles.invitationButton}>Accept</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{flex: 1}}>
+              <TouchableOpacity style={styles.rejectButton}>
+                <Text style={styles.invitationButton}>Reject</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    )
+      )
+    }
   }
 
 
@@ -138,15 +257,15 @@ class ChatScreen extends Component {
               keyExtractor={(item, index) => index.toString()}
             />
             <View style={styles.chatBox}>
-                <TextInput
-                  style={styles.chatInput}
-                  value={this.state.textMessage}
-                  onChangeText={this.handleChange("textMessage")}
-                  placeholder="Write a message"
-                />
-                <TouchableOpacity onPress={this.sendMessage}>
-                  <Text style={styles.sendBtn}>Send</Text>
-                </TouchableOpacity>
+              <TextInput
+                style={styles.chatInput}
+                value={this.state.textMessage}
+                onChangeText={this.handleChange("textMessage")}
+                placeholder="Write a message"
+              />
+              <TouchableOpacity onPress={this.sendMessage}>
+                <Text style={styles.sendBtn}>Send</Text>
+              </TouchableOpacity>
             </View>
             <View style={{flex: 1}}/>
           </View>
@@ -198,7 +317,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 8,
     paddingLeft: 5,
-    marginLeft: 0,
     marginRight: 40,
   },
   myMessageBubble: {
@@ -211,77 +329,58 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingLeft: 5,
     marginLeft: 40,
-    marginRight: 0,
+  },
+  yourEventBubble: {
+    alignSelf: 'flex-start', 
+    borderRadius: 20, 
+    marginBottom: 8, 
+    backgroundColor:"#134782", 
+    width:"auto",
+    marginRight: 40
+  },
+  myEventBubble: {
+    alignSelf: 'flex-end', 
+    borderRadius: 20, 
+    marginBottom: 8, 
+    backgroundColor:"#3a8cbc", 
+    width:"auto",
+    marginLeft: 50
+  },
+  invitationButton: {
+    textAlign: "center", 
+    color: "#fff", 
+    fontSize: 15,
+    fontWeight: "bold"
+  },
+  eventDetails: {
+    color: '#fff', 
+    padding: 7, 
+    fontSize: 16, 
+    textDecorationLine: 'underline', 
+    flex: 1
+  },
+  eventBubbleContent:{
+    flexWrap: 'nowrap',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 5,
+  },
+  eventBubbleButtons: {
+    height: 40, 
+    flexDirection: "row", 
+    justifyContent: "center", 
+    alignItems: "center"
+  },
+  acceptButton: {
+    backgroundColor:"#2cb768",
+    height: 40,
+    justifyContent: "center",
+    borderBottomLeftRadius: 20
+  },
+  rejectButton: {
+    backgroundColor:"#c13f3f",
+    height: 40,
+    justifyContent: "center",
+    borderBottomRightRadius: 20
   },
 })
-
-// import React from "react";
-// import { GiftedChat } from "react-native-gifted-chat";
-// import firebase from "react-native-firebase";
-// import { fetchedConversation } from "../../../store/actions/messages"
-// import { connect } from "react-redux";
-
-// class ChatScreen extends React.Component {
-//   constructor(props) {
-//       // this.props has { uid }
-//       super(props);
-//       this.state = {
-//           uid: this.props.uid,
-//           groupID: this.props.navigation.getParam("group").groupID,
-//           textMessage: '',
-//       }
-//   }
-
-//   messagesRef = firebase.database().ref('messages');
-
-
-//   static navigationOptions = ({ navigation }) => {
-//     const { groupName } =  navigation.getParam("group");
-//     return {
-//       title: groupName,
-//     };
-//   };
-
-//   componentWillMount() {
-//     const groupID = this.state.groupID;
-//     this.messagesRef.child(`${groupID}`).on('child_added', snapshot => {
-//       this.props.dispatch(fetchedConversation(groupID, snapshot.val()));
-//     })
-//   }
-
-//   onSend = async (messages = []) => {
-//     if(messages.length > 0) {
-//       // console.log(messages);
-//       this.messagesRef.child(`${this.state.groupID}`).child(`${messages[0]._id}`).set(messages);
-//     }
-//   }
-
-//   render() {
-//     console.log(this.props.conversation);
-//     return (
-//       <GiftedChat
-//         messages={this.props.conversation}
-//         onSend={(message) => this.onSend(message)}
-//         user={{
-//           _id: this.props.uid,
-//           name: this.props.name,
-//           avatar: this.props.avatar
-//         }}
-//       />
-//     );
-//   }
-// }
-
-// const mapStateToProps = (state, ownProps) => {
-//   const { groupID } = ownProps.navigation.getParam("group");
-//   return {
-//     uid: state.authReducer.user.uid,
-//     name: state.authReducer.user.displayName,
-//     avatar: state.authReducer.user.photoURL,
-//     conversation: state.messagesReducer[groupID],
-//   }
-// }
-
-// export default connect(mapStateToProps)(ChatScreen);
-
-
