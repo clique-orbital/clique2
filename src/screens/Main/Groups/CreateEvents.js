@@ -164,7 +164,7 @@ class CreateEvents extends Component {
         messageType: "event",
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         sender: this.props.uid,
-        event
+        event,
       }
       const msgID = firebase.database().ref('messages').child(`${groupID}`).push().key;
       firebase.database().ref('messages').child(`${groupID}`).child(`${msgID}`).set(message);
@@ -193,7 +193,7 @@ class CreateEvents extends Component {
                 style={{width: width, height: 40, justifyContent: "center", paddingBottom: 10}}
                 onPress={this.showFromDatePicker}
               >
-                <Text style={styles.date}>{this.convertDate(this.props.fromDate)}</Text>
+                <Text style={styles.date}>{'From: ' + this.convertDate(this.props.fromDate)}</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.textInputView}>
@@ -201,7 +201,7 @@ class CreateEvents extends Component {
                 style={{width: width, height: 40, justifyContent: "center", paddingBottom: 10}}
                 onPress={this.showToDatePicker}
               >
-                <Text style={styles.date}>{this.convertDate(this.props.toDate)}</Text>
+                <Text style={styles.date}>{'To: ' + this.convertDate(this.props.toDate)}</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.textInputView}>

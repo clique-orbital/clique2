@@ -186,6 +186,28 @@ class ChatScreen extends Component {
       }
   };
 
+  respondToInvitation = (eventID, response) => async () => {
+    const eventSnapshot = await firebase.database().ref(`events/${this.state.groupID}/${eventID}`).once('value');
+    const event = eventSnapshot.val();
+    const attendees = (event.attending || []).filter(uid => uid !== this.props.uid);
+    const nonAttendees = (event.notAttending || []).filter(uid => uid !== this.props.uid);
+    let updatedEvent;
+    if(response) {
+      updatedEvent = {
+        ...event,
+        attending: [...attendees, this.props.uid],
+        notAttending: nonAttendees
+      }
+    } else {
+      updatedEvent = {
+        ...event,
+        attending: attendees,
+        notAttending: [...nonAttendees, this.props.uid]
+      }
+    }
+    firebase.database().ref(`events/${this.state.groupID}/${eventID}`).set(updatedEvent); 
+  }
+
   renderRow = ({ item }) => {
     if(item.messageType === "text"){
       return(
@@ -225,12 +247,12 @@ class ChatScreen extends Component {
           </View>
           <View style={styles.eventBubbleButtons}>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={styles.acceptButton}>
+              <TouchableOpacity style={styles.acceptButton} onPress={this.respondToInvitation(item.event.eventID, true)}>
                 <Text style={styles.invitationButton}>Accept</Text>
               </TouchableOpacity>
             </View>
             <View style={{flex: 1}}>
-              <TouchableOpacity style={styles.rejectButton}>
+              <TouchableOpacity style={styles.rejectButton} onPress={this.respondToInvitation(item.event.eventID, false)}>
                 <Text style={styles.invitationButton}>Reject</Text>
               </TouchableOpacity>
             </View>
