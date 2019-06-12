@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  Image
 } from "react-native";
 import firebase from "react-native-firebase";
 import _ from "lodash";
@@ -37,17 +38,31 @@ class GroupScreen extends Component {
   async componentDidMount() {
     const userUID = firebase.auth().currentUser._user.uid;
     const ref = firebase.database().ref(`users/${userUID}/groups`);
-    const snapshot = await ref.once('value');
+    const snapshot = await ref.once("value");
     const groupIDs = _.keys(snapshot.val());
-    const groups = [];
+    const groups = {};
     groupIDs.map(groupID => {
       const groupRef = firebase.database().ref(`groups/${groupID}`);
-      groupRef.once('value').then(snapshot => {
-        groups.push(snapshot.val());
-        this.props.dispatch(fetchedGroups(groups));
-      }).catch(e => console.log(e))
+      groupRef
+        .once("value")
+        .then(snapshot => {
+          groups[groupID] = snapshot.val();
+          this.props.dispatch(fetchedGroups(groups));
+        })
+        .catch(e => console.log(e));
     });
   }
+
+  renderLastMessage = groupId => {
+    const username = this.props.groups[groupId].last_message.username;
+    const message = this.props.groups[groupId].last_message.message;
+
+    return (
+      <Text>
+        {username}: {message}
+      </Text>
+    );
+  };
 
   renderRow = ({ item }) => {
     return (
@@ -55,20 +70,26 @@ class GroupScreen extends Component {
         style={styles.chatList}
         onPress={() =>
           this.props.navigation.navigate("Chat", {
-            group: item,
+            group: item
           })
         }
       >
-        <Text style={{ fontSize: 16 }}>{item.groupName}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Image source={{ uri: item.photoURL }} style={styles.groupPicture} />
+          <Text style={{ fontSize: 16, left: 10, fontWeight: "500" }}>
+            {item.groupName}
+          </Text>
+          <View>{this.renderLastMessage(item.groupID)}</View>
+        </View>
       </TouchableOpacity>
     );
   };
 
   render() {
-    return(
+    return (
       <View>
         <FlatList
-          data={this.props.groups}
+          data={Object.values(this.props.groups)}
           renderItem={this.renderRow}
           keyExtractor={(item, index) => index.toString()}
         />
@@ -82,15 +103,19 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: "#CCC"
-  }
+  },
+  groupPicture: {
+    height: 44,
+    width: 44,
+    borderRadius: 22
+  },
+  lastMessage: {}
 });
 
 const mapStateToProps = state => {
-  return { 
-    groups: state.groupsReducer.groups 
-  }
-}
+  return {
+    groups: state.groupsReducer.groups
+  };
+};
 
-export default connect(
-  mapStateToProps
-)(GroupScreen);
+export default connect(mapStateToProps)(GroupScreen);
