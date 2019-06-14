@@ -46,13 +46,22 @@ class GroupScreen extends Component {
           db.ref(`groups/${groupId}/last_message`).on(
             "child_changed",
             snapshot => {
-              this.fetchGroups();
+              this.fetchGroup(groupId);
             }
           );
         });
       }
     });
   }
+
+  fetchGroup = groupId => {
+    firebase
+      .database()
+      .ref(`groups/${groupId}/last_message`)
+      .once("value", snapshot => {
+        this.props.fetchAGroup(groupId, snapshot.val());
+      });
+  };
 
   fetchGroups = async () => {
     const userUID = firebase.auth().currentUser._user.uid;
@@ -78,7 +87,7 @@ class GroupScreen extends Component {
     sortedArr.forEach(group => {
       sortedGroups[group.groupID] = group;
     });
-    return this.props.dispatch(fetchedGroups(sortedGroups));
+    return this.props.fetchedGroups(sortedGroups);
   };
 
   renderLastMessage = groupId => {
@@ -150,4 +159,7 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(GroupScreen);
+export default connect(
+  mapStateToProps,
+  { fetchAGroup, fetchedGroups }
+)(GroupScreen);

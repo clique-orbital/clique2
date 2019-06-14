@@ -1,6 +1,6 @@
 import firebase from "react-native-firebase";
 import uuidv4 from "uuid/v4";
-import { INITIALIZE_GROUPS, ADD_NEW_GROUP } from "../constants";
+import { INITIALIZE_GROUPS, ADD_NEW_GROUP, FETCH_GROUP } from "../constants";
 const db = firebase.database();
 
 // export const dispatchFetchedGroups = groups => dispatch => {
@@ -12,10 +12,17 @@ export const fetchedGroups = groups => {
   };
 };
 
-const addNewGroup = group => {
+export const fetchAGroup = (groupId, message) => {
+  return {
+    type: FETCH_GROUP,
+    payload: { groupId, message }
+  };
+};
+
+const addNewGroup = (groupId, group) => {
   return {
     type: ADD_NEW_GROUP,
-    payload: group
+    payload: { groupId, group }
   };
 };
 
@@ -103,7 +110,7 @@ export const createGroup = (
     .once("value")
     .then(snapshot => {
       const newGroup = snapshot.val();
-      dispatch(addNewGroup(newGroup));
+      dispatch(addNewGroup(groupID, newGroup));
     })
     .catch(e => console.log(e));
 };
