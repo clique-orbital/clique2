@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image
+  Image,
+  Dimensions
 } from "react-native";
 import firebase from "react-native-firebase";
 import _ from "lodash";
@@ -122,6 +123,16 @@ class GroupScreen extends Component {
     }
   };
 
+  renderTimestamp = groupId => {
+    const timestamp = this.props.groups[groupId].last_message.timestamp;
+    const time = new Date(timestamp);
+    let hours = time.getHours() + "";
+    let minutes = time.getMinutes() + "";
+    minutes = minutes.padStart(2, "0");
+    hours = hours.padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
   renderRow = ({ item }) => {
     return (
       <TouchableOpacity
@@ -135,9 +146,18 @@ class GroupScreen extends Component {
         <View style={{ flexDirection: "row" }}>
           <Image source={{ uri: item.photoURL }} style={styles.groupPicture} />
           <View style={{ flexDirection: "column", left: 15 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>
-              {item.groupName}
-            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: Dimensions.get("window").width * 0.75
+              }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                {item.groupName}
+              </Text>
+              <Text>{this.renderTimestamp(item.groupID)}</Text>
+            </View>
             {this.renderLastMessage(item.groupID)}
           </View>
         </View>
@@ -166,9 +186,9 @@ const styles = StyleSheet.create({
     borderColor: "#CCC"
   },
   groupPicture: {
-    height: 44,
-    width: 44,
-    borderRadius: 22
+    height: Dimensions.get("window").width * 0.14,
+    width: Dimensions.get("window").width * 0.14,
+    borderRadius: Dimensions.get("window").width * 0.07
   },
   lastMessage: {}
 });
