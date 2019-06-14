@@ -90,6 +90,11 @@ class CreateEvents extends Component {
         .ref("events")
         .child(`${groupID}`)
         .push().key;
+      const msgID = firebase
+        .database()
+        .ref("messages")
+        .child(`${groupID}`)
+        .push().key;
       let groupSnapShot = await firebase
         .database()
         .ref("groups")
@@ -99,12 +104,14 @@ class CreateEvents extends Component {
       const event = {
         title,
         eventID,
+        msgID,
         from: this.props.fromDate,
         to: this.props.toDate,
         location: this.props.location,
         notes: this.props.notes,
         attending: [],
-        notAttending: [...members]
+        notAttending: [],
+        noResponse: [...members],
       };
       firebase
         .database()
@@ -117,11 +124,7 @@ class CreateEvents extends Component {
         sender: this.props.uid,
         event
       };
-      const msgID = firebase
-        .database()
-        .ref("messages")
-        .child(`${groupID}`)
-        .push().key;
+
       firebase
         .database()
         .ref("messages")
