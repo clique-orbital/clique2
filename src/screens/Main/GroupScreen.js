@@ -12,7 +12,11 @@ import firebase from "react-native-firebase";
 import _ from "lodash";
 import HeaderTitle from "../../components/HeaderTitle";
 import MyIcon from "../../components/MyIcon";
-import { fetchedGroups, fetchAGroup } from "../../store/actions/groups";
+import {
+  fetchedGroups,
+  fetchAGroup,
+  sortGroups
+} from "../../store/actions/groups";
 import { connect } from "react-redux";
 
 const cliqueBlue = "#134782";
@@ -50,6 +54,7 @@ class GroupScreen extends Component {
             "child_changed",
             snapshot => {
               this.fetchGroup(groupId);
+              this.props.sortGroups();
             }
           );
         });
@@ -84,7 +89,7 @@ class GroupScreen extends Component {
       })
     );
     const sortedArr = Object.values(groups).sort(
-      (a, b) => b.last_message.timestamp - a.last_message.timestamp
+      (a, b) => a.last_message.timestamp - b.last_message.timestamp
     );
     const sortedGroups = {};
     sortedArr.forEach(group => {
@@ -201,5 +206,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { fetchAGroup, fetchedGroups }
+  { fetchAGroup, fetchedGroups, sortGroups }
 )(GroupScreen);
