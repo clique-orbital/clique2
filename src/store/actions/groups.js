@@ -5,19 +5,19 @@ const db = firebase.database();
 
 // export const dispatchFetchedGroups = groups => dispatch => {
 
-export const fetchedGroups = (groups) => {
+export const fetchedGroups = groups => {
   return {
     type: INITIALIZE_GROUPS,
     payload: groups
   };
-}
+};
 
-const addNewGroup = (group) => {
+const addNewGroup = group => {
   return {
     type: ADD_NEW_GROUP,
     payload: group
-  }
-}
+  };
+};
 
 export const addGroupToUser = (groupID, uid) => async () => {
   await db
@@ -38,11 +38,10 @@ export const newGroupCreator = (
     groupName,
     photoURL,
     last_message: {
-      data,
-      image: "",
+      message: data,
+      sender: "",
       timestamp: new Date().getTime(),
-      user_id: "",
-      video: ""
+      messageType: "text"
     },
     users,
     groupID
@@ -99,9 +98,12 @@ export const createGroup = (
 
   await dispatch(newGroupCreator(groupName, groupID, url, users_info, data));
 
-  db.ref("groups").child(`${groupID}`).once('value').then(snapshot => {
-    const newGroup = snapshot.val();
-    dispatch(addNewGroup(newGroup));
-  }).catch(e => console.log(e));
-
+  db.ref("groups")
+    .child(`${groupID}`)
+    .once("value")
+    .then(snapshot => {
+      const newGroup = snapshot.val();
+      dispatch(addNewGroup(newGroup));
+    })
+    .catch(e => console.log(e));
 };

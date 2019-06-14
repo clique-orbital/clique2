@@ -77,16 +77,18 @@ class GroupScreen extends Component {
     return this.props.dispatch(fetchedGroups(sortedGroups));
   };
 
-  //renderLastMessage = groupId => {
-  //const username = this.props.groups[groupId].last_message.username;
-  //const message = this.props.groups[groupId].last_message.message;
+  renderLastMessage = groupId => {
+    const username = this.props.groups[groupId].last_message.username;
+    const message = this.props.groups[groupId].last_message.message;
 
-  //return (
-  //<Text>
-  //{username}: {message}
-  //</Text>
-  //);
-  //};
+    return (
+      <Text style={{ top: 5 }}>
+        {username}
+        {username ? ": " : ""}
+        {message}
+      </Text>
+    );
+  };
 
   renderRow = ({ item }) => {
     return (
@@ -100,9 +102,12 @@ class GroupScreen extends Component {
       >
         <View style={{ flexDirection: "row" }}>
           <Image source={{ uri: item.photoURL }} style={styles.groupPicture} />
-          <Text style={{ fontSize: 16, left: 10, fontWeight: "500" }}>
-            {item.groupName}
-          </Text>
+          <View style={{ flexDirection: "column", left: 15 }}>
+            <Text style={{ fontSize: 16, fontWeight: "500" }}>
+              {item.groupName}
+            </Text>
+            {this.renderLastMessage(item.groupID)}
+          </View>
         </View>
       </TouchableOpacity>
     );
