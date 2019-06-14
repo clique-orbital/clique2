@@ -1,9 +1,28 @@
 import React, { Component } from "react";
-import { SafeAreaView, Text, View, TextInput, Dimensions, StyleSheet, KeyboardAvoidingView, Keyboard, Platform } from "react-native";
-import { TouchableOpacity, FlatList, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  TextInput,
+  Dimensions,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Keyboard,
+  Platform
+} from "react-native";
+import {
+  TouchableOpacity,
+  FlatList,
+  TouchableWithoutFeedback
+} from "react-native-gesture-handler";
+
+import {
+  toggleEventModal,
+  populateAttending,
+  populateNotAttending
+} from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
 import { fetchedConversation } from "../../../store/actions/messages"
-import { toggleEventModal, populateAttending, populateNotAttending } from "../../../store/actions/eventModal";
 import { convertDate } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
@@ -16,25 +35,29 @@ class ChatScreen extends Component {
     this.state = {
       uid: this.props.uid,
       groupID: this.props.navigation.getParam("group").groupID,
-      textMessage: '',
-      prevDay: (new Date()).getDay(),
-    }
+      textMessage: "",
+      prevDay: new Date().getDay()
+    };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
   }
 
-  messagesRef = firebase.database().ref('messages');
+  messagesRef = firebase.database().ref("messages");
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
       headerTitle: navigation.getParam("group").groupName,
       headerRight: (
-        <TouchableOpacity onPress={() => navigation.navigate("CreateEvents", {
-          groupID: navigation.getParam("group").groupID
-        })}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("CreateEvents", {
+              groupID: navigation.getParam("group").groupID
+            })
+          }
+        >
           <MyIcon
             name="ios-add"
             size={32}
@@ -43,22 +66,27 @@ class ChatScreen extends Component {
           />
         </TouchableOpacity>
       )
-    }
+    };
   };
 
   componentWillMount() {
     const groupID = this.state.groupID;
-    this.messagesRef.child(`${groupID}`).on('value', snapshot => {
-      this.props.dispatch(fetchedConversation(groupID, _.sortBy(_.values(snapshot.val()), 'timestamp')));
-    })
+    this.messagesRef.child(`${groupID}`).on("value", snapshot => {
+      this.props.dispatch(
+        fetchedConversation(
+          groupID,
+          _.sortBy(_.values(snapshot.val()), "timestamp")
+        )
+      );
+    });
     this.keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       this.scrollToBottom
-    )
+    );
     this.keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
+      "keyboardDidHide",
       this.scrollToBottom
-    )
+    );
   }
 
   componentWillUnmount() {
@@ -67,8 +95,8 @@ class ChatScreen extends Component {
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
-    this.refs.messageList.scrollToEnd({ animated: true })
-  }
+    this.refs.messageList.scrollToEnd({ animated: true });
+  };
 
   handleChange = key => val => {
     this.setState({
@@ -103,10 +131,19 @@ class ChatScreen extends Component {
         messageType: "text",
         message: this.state.textMessage,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
-        sender: this.state.uid
-      }
-      this.messagesRef.child(`${groupID}`).child(`${msgID}`).set(message);
-      this.setState({ textMessage: '' })
+        sender: this.state.uid,
+        username: this.props.username
+      };
+      this.messagesRef
+        .child(`${groupID}`)
+        .child(`${msgID}`)
+        .set(message);
+      firebase
+        .database()
+        .ref(`groups/${groupID}`)
+        .child("last_message")
+        .set(message);
+      this.setState({ textMessage: "" });
     }
   };
 
@@ -166,14 +203,27 @@ class ChatScreen extends Component {
   renderRow = ({ item }) => {
     if (item.messageType === "text") {
       return (
-        <View style={item.sender === this.props.uid ? styles.myMessageBubble : styles.yourMessageBubble}>
+        <View
+          style={
+            item.sender === this.props.uid
+              ? styles.myMessageBubble
+              : styles.yourMessageBubble
+          }
+        >
           <View style={{ flexWrap: "wrap" }}>
-            <Text style={{ color: '#fff', padding: 7, fontSize: 16 }}>
+            <Text style={{ color: "#fff", padding: 7, fontSize: 16 }}>
               {item.message}
             </Text>
           </View>
-          <View style={{ justifyContent: 'flex-end' }}>
-            <Text style={{ color: '#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10 }}>
+          <View style={{ justifyContent: "flex-end" }}>
+            <Text
+              style={{
+                color: "#eee",
+                paddingRight: 13,
+                paddingBottom: 7,
+                fontSize: 10
+              }}
+            >
               {this.convertTime(item.timestamp)}
             </Text>
           </View>
@@ -182,8 +232,15 @@ class ChatScreen extends Component {
     } else if (item.messageType === "event") {
       const eventID = item.event.eventID;
       return (
-        <View style={item.sender === this.props.uid ? styles.myEventBubble : styles.yourEventBubble}>
-          <TouchableOpacity style={styles.eventBubbleContent} onPress={this.showEventModal(eventID)}>
+        <View
+          style={item.sender === this.props.uid
+            ? styles.myEventBubble
+            : styles.yourEventBubble}
+        >
+          <TouchableOpacity
+            style={styles.eventBubbleContent}
+            onPress={this.showEventModal(eventID)}
+          >
             <View>
               <Text style={{ ...styles.eventDetails, fontWeight: "bold" }}>
                 {item.event.title}
@@ -191,12 +248,24 @@ class ChatScreen extends Component {
               <Text style={styles.eventDetails}>
                 {convertDate(item.event.from) + " to\n" + convertDate(item.event.to)}
               </Text>
-              <Text style={{ ...styles.eventDetails, display: item.event.location ? 'flex' : 'none' }}>
+              <Text
+                style={{
+                  ...styles.eventDetails,
+                  display: item.event.location ? "flex" : "none"
+                }}
+              >
                 {item.event.location}
               </Text>
             </View>
-            <View style={{ justifyContent: 'flex-end' }}>
-              <Text style={{ color: '#eee', paddingRight: 13, paddingBottom: 7, fontSize: 10 }}>
+            <View style={{ justifyContent: "flex-end" }}>
+              <Text
+                style={{
+                  color: "#eee",
+                  paddingRight: 13,
+                  paddingBottom: 7,
+                  fontSize: 10
+                }}
+              >
                 {this.convertTime(item.timestamp)}
               </Text>
             </View>
@@ -214,15 +283,18 @@ class ChatScreen extends Component {
             </View>
           </View>
         </View>
-      )
+      );
     }
-  }
-
+  };
 
   render() {
-    let { height } = Dimensions.get('window');
+    let { height } = Dimensions.get("window");
     return (
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 85 : 0} style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : 0}
+        style={{ flex: 1 }}
+      >
         <SafeAreaView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.inner}>
@@ -258,59 +330,61 @@ class ChatScreen extends Component {
 const mapStateToProps = (state, ownProps) => {
   const { groupID } = ownProps.navigation.getParam("group");
   const stateOfGroup = state.messagesReducer[groupID] || {};
+  const username = state.authReducer.user.displayName;
   return {
     uid: state.authReducer.user.uid,
     conversation: stateOfGroup.messages || [],
-  }
-}
+    username
+  };
+};
 
 export default connect(mapStateToProps)(ChatScreen);
 
 const styles = StyleSheet.create({
   inner: {
-    justifyContent: "flex-end",
+    justifyContent: "flex-end"
   },
   chatBox: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "center"
   },
   chatInput: {
     borderWidth: 1,
     borderRadius: 7,
-    width: '80%',
+    width: "80%",
     padding: 10,
     margin: 8,
-    color: 'black',
-    borderColor: 'black'
+    color: "black",
+    borderColor: "black"
   },
   sendBtn: {
-    color: '#1d73d6',
-    fontSize: 20,
+    color: "#1d73d6",
+    fontSize: 20
   },
   yourMessageBubble: {
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     width: "auto",
-    alignSelf: 'flex-start',
-    backgroundColor: '#134782',
+    alignSelf: "flex-start",
+    backgroundColor: "#134782",
     borderRadius: 20,
     marginBottom: 8,
     paddingLeft: 5,
-    marginRight: 40,
+    marginRight: 40
   },
   myMessageBubble: {
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     width: "auto",
-    alignSelf: 'flex-end',
-    backgroundColor: '#3a8cbc',
+    alignSelf: "flex-end",
+    backgroundColor: "#3a8cbc",
     borderRadius: 20,
     marginBottom: 8,
     paddingLeft: 5,
-    marginLeft: 40,
+    marginLeft: 40
   },
   yourEventBubble: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     borderRadius: 20,
     marginBottom: 8,
     backgroundColor: "#134782",
@@ -318,7 +392,7 @@ const styles = StyleSheet.create({
     marginRight: 40
   },
   myEventBubble: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     borderRadius: 20,
     marginBottom: 8,
     backgroundColor: "#3a8cbc",
@@ -332,17 +406,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   eventDetails: {
-    color: '#fff',
+    color: "#fff",
     padding: 7,
     fontSize: 16,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
     flex: 1
   },
   eventBubbleContent: {
-    flexWrap: 'nowrap',
+    flexWrap: "nowrap",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 5,
+    paddingLeft: 5
   },
   eventBubbleButtons: {
     height: 40,
@@ -361,5 +435,5 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     borderBottomRightRadius: 20
-  },
-})
+  }
+});

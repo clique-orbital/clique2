@@ -1,21 +1,28 @@
 import firebase from "react-native-firebase";
 import uuidv4 from "uuid/v4";
-import { INITIALIZE_GROUPS, ADD_NEW_GROUP } from "../constants";
+import { INITIALIZE_GROUPS, ADD_NEW_GROUP, FETCH_GROUP } from "../constants";
 const db = firebase.database();
 
-export const fetchedGroups = (groups) => {
+export const fetchedGroups = groups => {
   return {
     type: INITIALIZE_GROUPS,
     payload: groups
   };
-}
+};
 
-const addNewGroup = (group) => {
+export const fetchAGroup = (groupId, message) => {
+  return {
+    type: FETCH_GROUP,
+    payload: { groupId, message }
+  };
+};
+
+const addNewGroup = (groupId, group) => {
   return {
     type: ADD_NEW_GROUP,
-    payload: group
-  }
-}
+    payload: { groupId, group }
+  };
+};
 
 export const addGroupToUser = (groupID, uid) => async () => {
   await db
@@ -36,11 +43,10 @@ export const newGroupCreator = (
     groupName,
     photoURL,
     last_message: {
-      data,
-      image: "",
+      message: data,
+      sender: "",
       timestamp: new Date().getTime(),
-      user_id: "",
-      video: ""
+      messageType: "text"
     },
     users,
     groupID
@@ -97,9 +103,12 @@ export const createGroup = (
 
   await dispatch(newGroupCreator(groupName, groupID, url, users_info, data));
 
-  db.ref("groups").child(`${groupID}`).once('value').then(snapshot => {
-    const newGroup = snapshot.val();
-    dispatch(addNewGroup(newGroup));
-  }).catch(e => console.log(e));
-
+  db.ref("groups")
+    .child(`${groupID}`)
+    .once("value")
+    .then(snapshot => {
+      const newGroup = snapshot.val();
+      dispatch(addNewGroup(groupID, newGroup));
+    })
+    .catch(e => console.log(e));
 };
