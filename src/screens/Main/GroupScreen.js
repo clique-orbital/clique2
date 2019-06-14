@@ -11,7 +11,7 @@ import firebase from "react-native-firebase";
 import _ from "lodash";
 import HeaderTitle from "../../components/HeaderTitle";
 import MyIcon from "../../components/MyIcon";
-import { fetchedGroups } from "../../store/actions/groups";
+import { fetchedGroups, fetchAGroup } from "../../store/actions/groups";
 import { connect } from "react-redux";
 
 class GroupScreen extends Component {
@@ -35,17 +35,21 @@ class GroupScreen extends Component {
     };
   };
 
-  async componentDidMount() {
-    await this.fetchGroups();
-  }
-
   componentWillMount() {
     const uid = firebase.auth().currentUser._user.uid;
     const db = firebase.database();
-    db.ref(`groups`).on("child_added", snapshot => {
+    db.ref(`groups`).on("child_added", async snapshot => {
       console.log(snapshot.val());
       if (snapshot.val().users[uid]) {
-        this.fetchGroups();
+        await this.fetchGroups();
+        Object.keys(this.props.groups).forEach(groupId => {
+          db.ref(`groups/${groupId}/last_message`).on(
+            "child_changed",
+            snapshot => {
+              this.fetchGroups();
+            }
+          );
+        });
       }
     });
   }
