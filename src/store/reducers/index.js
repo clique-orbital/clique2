@@ -4,11 +4,13 @@ import { authReducer } from "./authReducer";
 import { groupsReducer } from "./groupsReducer";
 import { messagesReducer } from "./messagesReducer";
 import { createEventsReducer } from "./createEventsReducer";
+import { eventModalReducer } from "./eventModalReducer";
 
 export default combineReducers({ 
     authReducer, 
     groupsReducer,
     messagesReducer,
     createEventsReducer,
+    eventModalReducer,
     form: formReducer 
 });

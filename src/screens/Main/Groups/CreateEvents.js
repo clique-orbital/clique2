@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { changeText, toggleFromDatePicker, toggleToDatePicker, pickFromDate, pickToDate, setGroupID, resetEventState } from "../../../store/actions/createEvents";
 import firebase from "react-native-firebase";
 import _ from "lodash";
+import { convertDate } from "../../../assets/constants";
 
 class CreateEvents extends Component {
   constructor(props) {
@@ -15,7 +16,6 @@ class CreateEvents extends Component {
     this.hideFromDatePicker = this.hideFromDatePicker.bind(this);
     this.showToDatePicker = this.showToDatePicker.bind(this);
     this.hideToDatePicker = this.hideToDatePicker.bind(this);
-    this.convertDate = this.convertDate.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.publishEvent = this.publishEvent.bind(this);
     this.props.dispatch(setGroupID(this.props.navigation.getParam("groupID")));
@@ -64,94 +64,16 @@ class CreateEvents extends Component {
     this.hideToDatePicker();
   }
 
-  convertDate = dateObj => {
-    const date = dateObj.getDate();
-    let month = dateObj.getMonth();
-    let hour = dateObj.getHours();
-    hour = hour < 10 ? '0' + hour : hour;
-    let minute = dateObj.getMinutes();
-    minute = minute < 10 ? '0' + minute : minute;
-    let day = dateObj.getDay();
-    switch(day) {
-      case 0:
-        day = "Sunday"
-        break;
-      case 1:
-        day = "Monday"
-        break;
-      case 2:
-        day = "Tuesday"
-        break;
-      case 3:
-        day = "Wednesday"
-        break;
-      case 4:
-        day = "Thursday"
-        break;
-      case 5:
-        day = "Friday"
-        break;
-      case 6:
-        day = "Saturday"
-        break;
-      default:
-        day = "No day defined";
-        break;
-    }
-    switch(month) {
-      case 0:
-        month = "Jan";
-        break;
-      case 1:
-        month = "Feb";
-        break;
-      case 2:
-        month = "Mar";
-        break;
-      case 3:
-        month = "Apr";
-        break;
-      case 4:
-        month = "May";
-        break;
-      case 5:
-        month = "Jun";
-        break;
-      case 6:
-        month = "Jul";
-        break;
-      case 7:
-        month = "Aug";
-        break;
-      case 8:
-        month = "Sep";
-        break;
-      case 9:
-        month = "Oct";
-        break;
-      case 10:
-        month = "Nov";
-        break;
-      case 11:
-        month = "Dec";
-        break;
-      default:
-        month = "No Month Defined";
-        break;
-    }
-    return `${day}, ${date} ${month}, ${hour}:${minute}`;
-  }
-
   async publishEvent() {
     const title = this.props.title;
-    if(title !== ""){
+    if (title !== "") {
       const groupID = this.props.navigation.getParam("groupID");
       let eventID = firebase.database().ref('events').child(`${groupID}`).push().key;
       let groupSnapShot = await firebase.database().ref('groups').child(`${groupID}`).once('value')
       const members = _.keys(groupSnapShot.val().users)
       const event = {
         title,
-        eventID,        
+        eventID,
         from: this.props.fromDate,
         to: this.props.toDate,
         location: this.props.location,
@@ -173,41 +95,41 @@ class CreateEvents extends Component {
     }
   }
 
-  render(){
+  render() {
     const { height, width } = Dimensions.get('window');
 
-    return(
+    return (
       <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
-          <View style={{flex: 1, justifyContent: "flex-end"}}>
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
             <View style={styles.textInputView}>
               <TextInput
                 placeholder="Title"
-                style={{...(styles.textInput), width: width}}
+                style={{ ...(styles.textInput), width: width }}
                 value={this.props.title}
                 onChangeText={this.handleTextChange("title")}
               />
             </View>
             <View style={styles.textInputView}>
-              <TouchableOpacity 
-                style={{width: width, height: 40, justifyContent: "center", paddingBottom: 10}}
+              <TouchableOpacity
+                style={{ width: width, height: 40, justifyContent: "center", paddingBottom: 10 }}
                 onPress={this.showFromDatePicker}
               >
-                <Text style={styles.date}>{'From: ' + this.convertDate(this.props.fromDate)}</Text>
+                <Text style={styles.date}>{'From: ' + convertDate(this.props.fromDate)}</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.textInputView}>
-              <TouchableOpacity 
-                style={{width: width, height: 40, justifyContent: "center", paddingBottom: 10}}
+              <TouchableOpacity
+                style={{ width: width, height: 40, justifyContent: "center", paddingBottom: 10 }}
                 onPress={this.showToDatePicker}
               >
-                <Text style={styles.date}>{'To: ' + this.convertDate(this.props.toDate)}</Text>
+                <Text style={styles.date}>{'To: ' + convertDate(this.props.toDate)}</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.textInputView}>
               <TextInput
                 placeholder="Location"
-                style={{...(styles.textInput), width: width}}
+                style={{ ...(styles.textInput), width: width }}
                 value={this.props.location}
                 onChangeText={this.handleTextChange("location")}
               />
@@ -215,7 +137,7 @@ class CreateEvents extends Component {
             <View style={styles.textInputView}>
               <TextInput
                 placeholder="Notes"
-                style={{...(styles.textInput), width: width}}
+                style={{ ...(styles.textInput), width: width }}
                 value={this.props.notes}
                 onChangeText={this.handleTextChange("notes")}
               />
