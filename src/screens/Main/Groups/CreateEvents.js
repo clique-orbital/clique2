@@ -122,7 +122,8 @@ class CreateEvents extends Component {
         messageType: "event",
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         sender: this.props.uid,
-        event
+        event,
+        username: this.props.username
       };
 
       firebase
@@ -243,7 +244,8 @@ const mapStateToProps = state => {
     toDate: createEventsReducerState.toDate || new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
-    uid: state.authReducer.user.uid
+    uid: state.authReducer.user.uid,
+    username: state.authReducer.user.displayName
   };
 };
 

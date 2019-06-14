@@ -1,4 +1,9 @@
-import { INITIALIZE_GROUPS, ADD_NEW_GROUP, FETCH_GROUP } from "../constants";
+import {
+  INITIALIZE_GROUPS,
+  ADD_NEW_GROUP,
+  FETCH_GROUP,
+  SORT_GROUPS
+} from "../constants";
 
 const initialState = {
   groups: {}
@@ -30,6 +35,15 @@ export const groupsReducer = (state = initialState, action) => {
           }
         }
       };
+    case SORT_GROUPS:
+      const sortedArr = Object.values(state.groups).sort(
+        (a, b) => b.last_message.timestamp - a.last_message.timestamp
+      );
+      const sortedGroups = {};
+      sortedArr.forEach(group => {
+        sortedGroups[group.groupID] = group;
+      });
+      return { ...state, groups: sortedGroups };
     default:
       return state;
   }
