@@ -17,10 +17,7 @@ import {
 } from "react-native-gesture-handler";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
-import {
-  fetchedConversation,
-  updateLastMessage
-} from "../../../store/actions/messages";
+import { fetchedConversation } from "../../../store/actions/messages";
 import MyIcon from "../../../components/MyIcon";
 import _ from "lodash";
 
@@ -213,7 +210,11 @@ class ChatScreen extends Component {
         .child(`${groupID}`)
         .child(`${msgID}`)
         .set(message);
-      updateLastMessage(groupID, message);
+      firebase
+        .database()
+        .ref(`groups/${groupID}`)
+        .child("last_message")
+        .set(message);
       this.setState({ textMessage: "" });
     }
   };

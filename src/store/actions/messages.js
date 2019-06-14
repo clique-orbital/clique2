@@ -22,15 +22,6 @@ export const changePrevDate = (groupID, prevDate) => {
   };
 };
 
-export const updateLastMessage = (groupId, message) => async dispatch => {
-  await firebase
-    .database()
-    .ref(`groups/${groupId}/last_message`)
-    .set(message)
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
-};
-
 // export const fetchNewMessage = (groupID, message) => {
 //     return {
 //         type: FETCH_NEW_MESSAGE,
