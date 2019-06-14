@@ -5,14 +5,21 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image
+  Image,
+  Dimensions
 } from "react-native";
 import firebase from "react-native-firebase";
 import _ from "lodash";
 import HeaderTitle from "../../components/HeaderTitle";
 import MyIcon from "../../components/MyIcon";
-import { fetchedGroups, fetchAGroup } from "../../store/actions/groups";
+import {
+  fetchedGroups,
+  fetchAGroup,
+  sortGroups
+} from "../../store/actions/groups";
 import { connect } from "react-redux";
+
+const cliqueBlue = "#134782";
 
 class GroupScreen extends Component {
   constructor(props) {
@@ -47,6 +54,7 @@ class GroupScreen extends Component {
             "child_changed",
             snapshot => {
               this.fetchGroup(groupId);
+              this.props.sortGroups();
             }
           );
         });
@@ -81,7 +89,7 @@ class GroupScreen extends Component {
       })
     );
     const sortedArr = Object.values(groups).sort(
-      (a, b) => b.last_message.timestamp - a.last_message.timestamp
+      (a, b) => a.last_message.timestamp - b.last_message.timestamp
     );
     const sortedGroups = {};
     sortedArr.forEach(group => {
@@ -91,16 +99,43 @@ class GroupScreen extends Component {
   };
 
   renderLastMessage = groupId => {
-    const username = this.props.groups[groupId].last_message.username;
-    const message = this.props.groups[groupId].last_message.message;
+    const groups = this.props.groups;
 
-    return (
-      <Text style={{ top: 5 }}>
-        {username}
-        {username ? ": " : ""}
-        {message}
-      </Text>
-    );
+    const isText = groups[groupId].last_message.messageType === "text";
+    const username = groups[groupId].last_message.username;
+
+    if (isText) {
+      const message = groups[groupId].last_message.message;
+      return (
+        <Text style={{ top: 5 }}>
+          <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
+            {username}
+          </Text>
+          {username ? ": " : ""}
+          {message}
+        </Text>
+      );
+    } else {
+      const eventTitle = groups[groupId].last_message.event.title;
+      return (
+        <Text style={{ top: 5 }}>
+          <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
+            {username + " "}
+          </Text>
+          created a new event: {eventTitle}
+        </Text>
+      );
+    }
+  };
+
+  renderTimestamp = groupId => {
+    const timestamp = this.props.groups[groupId].last_message.timestamp;
+    const time = new Date(timestamp);
+    let hours = time.getHours() + "";
+    let minutes = time.getMinutes() + "";
+    minutes = minutes.padStart(2, "0");
+    hours = hours.padStart(2, "0");
+    return `${hours}:${minutes}`;
   };
 
   renderRow = ({ item }) => {
@@ -116,9 +151,18 @@ class GroupScreen extends Component {
         <View style={{ flexDirection: "row" }}>
           <Image source={{ uri: item.photoURL }} style={styles.groupPicture} />
           <View style={{ flexDirection: "column", left: 15 }}>
-            <Text style={{ fontSize: 16, fontWeight: "500" }}>
-              {item.groupName}
-            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: Dimensions.get("window").width * 0.75
+              }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                {item.groupName}
+              </Text>
+              <Text>{this.renderTimestamp(item.groupID)}</Text>
+            </View>
             {this.renderLastMessage(item.groupID)}
           </View>
         </View>
@@ -147,9 +191,9 @@ const styles = StyleSheet.create({
     borderColor: "#CCC"
   },
   groupPicture: {
-    height: 44,
-    width: 44,
-    borderRadius: 22
+    height: Dimensions.get("window").width * 0.14,
+    width: Dimensions.get("window").width * 0.14,
+    borderRadius: Dimensions.get("window").width * 0.07
   },
   lastMessage: {}
 });
@@ -162,5 +206,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { fetchAGroup, fetchedGroups }
+  { fetchAGroup, fetchedGroups, sortGroups }
 )(GroupScreen);
