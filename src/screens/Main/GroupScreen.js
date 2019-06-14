@@ -14,6 +14,8 @@ import MyIcon from "../../components/MyIcon";
 import { fetchedGroups, fetchAGroup } from "../../store/actions/groups";
 import { connect } from "react-redux";
 
+const cliqueBlue = "#134782";
+
 class GroupScreen extends Component {
   constructor(props) {
     super(props);
@@ -91,16 +93,33 @@ class GroupScreen extends Component {
   };
 
   renderLastMessage = groupId => {
-    const username = this.props.groups[groupId].last_message.username;
-    const message = this.props.groups[groupId].last_message.message;
+    const groups = this.props.groups;
 
-    return (
-      <Text style={{ top: 5 }}>
-        {username}
-        {username ? ": " : ""}
-        {message}
-      </Text>
-    );
+    const isText = groups[groupId].last_message.messageType === "text";
+    const username = groups[groupId].last_message.username;
+
+    if (isText) {
+      const message = groups[groupId].last_message.message;
+      return (
+        <Text style={{ top: 5 }}>
+          <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
+            {username}
+          </Text>
+          {username ? ": " : ""}
+          {message}
+        </Text>
+      );
+    } else {
+      const eventTitle = groups[groupId].last_message.event.title;
+      return (
+        <Text style={{ top: 5 }}>
+          <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
+            {username + " "}
+          </Text>
+          created a new event: {eventTitle}
+        </Text>
+      );
+    }
   };
 
   renderRow = ({ item }) => {
