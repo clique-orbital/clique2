@@ -3,8 +3,6 @@ import uuidv4 from "uuid/v4";
 import { INITIALIZE_GROUPS, ADD_NEW_GROUP } from "../constants";
 const db = firebase.database();
 
-// export const dispatchFetchedGroups = groups => dispatch => {
-
 export const fetchedGroups = (groups) => {
   return {
     type: INITIALIZE_GROUPS,
