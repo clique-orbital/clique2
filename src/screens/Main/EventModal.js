@@ -2,14 +2,16 @@ import React, { Component } from "react";
 import Modal from "react-native-modal";
 import { View, Text, FlatList, Image, StyleSheet, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
-import { toggleEventModal } from "../../store/actions/eventModal";
+import { toggleEventModal, populateAttending, populateNotAttending } from "../../store/actions/eventModal";
 import { cliqueBlue, getDate, getDay, getTime } from "../../assets/constants";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import firebase from "react-native-firebase";
 
 class EventModal extends Component {
   constructor(props) {
     super(props);
     this.hideModal = this.hideModal.bind(this);
+    this.respondToInvitation = this.respondToInvitation.bind(this);
   }
 
   hideModal() {
@@ -22,6 +24,46 @@ class EventModal extends Component {
         <Text style={{ textAlign: "center", fontSize: 18, color: cliqueBlue }}>{item}</Text>
       </View>
     )
+  }
+
+  respondToInvitation = (eventID, response) => async () => {
+    const eventSnapshot = await firebase.database().ref(`events/${this.props.groupID}/${eventID}`).once('value');
+    const event = eventSnapshot.val();
+    const attending = (event.attending || []).filter(uid => uid !== this.props.uid);
+    const notAttending = (event.notAttending || []).filter(uid => uid !== this.props.uid);
+    const noResponse = (event.noResponse || []).filter(uid => uid !== this.props.uid);
+
+    let attendingNames = (this.props.attending || []).filter(name => name !== this.props.displayName);
+    let notAttendingNames = (this.props.notAttending || []).filter(name => name !== this.props.displayName);
+    
+    let updatedEvent;
+    if (response) {
+      updatedEvent = {
+        ...event,
+        attending: [...attending, this.props.uid],
+        notAttending,
+        noResponse
+      }
+      attendingNames = [...attendingNames, this.props.displayName]
+    } else {
+      updatedEvent = {
+        ...event,
+        attending,
+        noResponse,
+        notAttending: [...notAttending, this.props.uid]
+      }
+      notAttendingNames = [...notAttendingNames, this.props.displayName]
+    }
+    firebase.database().ref(`events/${this.props.groupID}/${eventID}`).set(updatedEvent);
+
+    // Updates event in message the event is attached to
+    const msgID = updatedEvent.msgID;
+    firebase.database().ref(`messages/${this.props.groupID}/${msgID}/event`).set(updatedEvent);
+
+    // Updates Event Modal
+    this.props.dispatch(toggleEventModal(true, updatedEvent));
+    this.props.dispatch(populateAttending(attendingNames));
+    this.props.dispatch(populateNotAttending(notAttendingNames));
   }
 
 
@@ -45,7 +87,7 @@ class EventModal extends Component {
                 />
               </TouchableOpacity>
             </View>
-            <View style={{ flex: 1, justifyContent: "space-between" }}>
+            <View style={{ height: 400, justifyContent: "space-between" }}>
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginBottom: 20 }}>
                 <Text style={{ textAlign: "center", fontWeight: "bold", color: cliqueBlue, fontSize: 35 }}>{this.props.event.title}</Text>
               </View>
@@ -73,7 +115,7 @@ class EventModal extends Component {
                 <Text style={styles.eventDetailsBody}>{this.props.event.notes || '-'}</Text>
               </View>
             </View>
-            <View style={{ flex: 1, flexDirection: "row", marginTop: 30 }}>
+            <View style={{ flexDirection: "row", marginTop: 30 }}>
               <View style={{ flex: 1, borderRightWidth: 1, height: 200, borderColor: "#D8D8D8" }}>
                 <Text style={[styles.attendanceHeader, { color: "#2AC58B" }]}>Attending</Text>
                 <FlatList
@@ -91,6 +133,30 @@ class EventModal extends Component {
                 />
               </View>
             </View>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <TouchableOpacity 
+                  style={[styles.respondInvitationButton, { backgroundColor: "#2AC58B" }]}
+                  onPress={this.respondToInvitation(this.props.event.eventID, true)}
+                  disabled={(this.props.attending || []).includes(this.props.uid)}
+                >
+                  <Text style={{color: "#fff"}}>
+                    {(this.props.event.attending || []).includes(this.props.uid) ? "Accepted!" : "Accept"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <TouchableOpacity 
+                  style={[styles.respondInvitationButton, { backgroundColor: "#E83838" }]}
+                  onPress={this.respondToInvitation(this.props.event.eventID, false)}
+                  disabled={(this.props.notAttending || []).includes(this.props.uid)}
+                >
+                  <Text style={{color: "#fff"}}>
+                    {(this.props.event.notAttending || []).includes(this.props.uid) ? "Rejected!" : "Reject"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </Modal>
       </SafeAreaView >
@@ -104,6 +170,8 @@ const mapStateToProps = state => {
     event: state.eventModalReducer.event || {},
     attending: state.eventModalReducer.attending || [],
     notAttending: state.eventModalReducer.notAttending || [],
+    uid: state.authReducer.user.uid,
+    displayName: state.authReducer.user.displayName,
   }
 }
 
@@ -137,5 +205,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
+  },
+  respondInvitationButton: {
+    height: 40, 
+    width: 120, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    borderRadius: 10
   }
 })

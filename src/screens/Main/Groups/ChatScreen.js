@@ -179,13 +179,12 @@ class ChatScreen extends Component {
   /*
   Fetches Event data and display names of all uid, and stored in state for event modal to use
   */
-  showEventModal = eventID => async () => {
-    const eventSnapshot = await firebase.database().ref(`events/${this.state.groupID}/${eventID}`).once('value');
-    const event = eventSnapshot.val();
+  showEventModal = event => async () => {
+    // const eventSnapshot = await firebase.database().ref(`events/${this.state.groupID}/${eventID}`).once('value');
+    // const event = eventSnapshot.val();
     let attending = event.attending || [];
     let notAttending = event.notAttending || [];
     attending = await attending.map(async (uid) => {
-      console.log(uid);
       const nameSnapshot = await firebase.database().ref(`users/${uid}/displayName`).once('value');
       return nameSnapshot.val();
     })
@@ -195,7 +194,6 @@ class ChatScreen extends Component {
     })
 
     notAttending = await notAttending.map(async (uid) => {
-      console.log(uid);
       const nameSnapshot = await firebase.database().ref(`users/${uid}/displayName`).once('value');
       return nameSnapshot.val();
     })
@@ -238,7 +236,6 @@ class ChatScreen extends Component {
       )
     } else if (item.messageType === "event") {
       const eventID = item.event.eventID;
-      console.log(item.event);
       return (
         <View
           style={item.sender === this.props.uid
@@ -247,7 +244,7 @@ class ChatScreen extends Component {
         >
           <TouchableOpacity
             style={styles.eventBubbleContent}
-            onPress={this.showEventModal(eventID)}
+            onPress={this.showEventModal(item.event)}
           >
             <View>
               <Text style={{ ...styles.eventDetails, fontWeight: "bold" }}>
@@ -337,7 +334,7 @@ class ChatScreen extends Component {
             </View>
           </TouchableWithoutFeedback>
         </SafeAreaView>
-        <EventModal />
+        <EventModal groupID={this.state.groupID}/>
       </KeyboardAvoidingView>
     );
   }
