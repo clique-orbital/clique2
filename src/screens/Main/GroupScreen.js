@@ -36,33 +36,57 @@ class GroupScreen extends Component {
   };
 
   async componentDidMount() {
-    const userUID = firebase.auth().currentUser._user.uid;
-    const ref = firebase.database().ref(`users/${userUID}/groups`);
-    const snapshot = await ref.once("value");
-    const groupIDs = _.keys(snapshot.val());
-    const groups = {};
-    groupIDs.map(groupID => {
-      const groupRef = firebase.database().ref(`groups/${groupID}`);
-      groupRef
-        .once("value")
-        .then(snapshot => {
-          groups[groupID] = snapshot.val();
-          this.props.dispatch(fetchedGroups(groups));
-        })
-        .catch(e => console.log(e));
+    await this.fetchGroups();
+  }
+
+  componentWillMount() {
+    const uid = firebase.auth().currentUser._user.uid;
+    const db = firebase.database();
+    db.ref(`groups`).on("child_added", snapshot => {
+      console.log(snapshot.val());
+      if (snapshot.val().users[uid]) {
+        this.fetchGroups();
+      }
     });
   }
 
-  renderLastMessage = groupId => {
-    const username = this.props.groups[groupId].last_message.username;
-    const message = this.props.groups[groupId].last_message.message;
-
-    return (
-      <Text>
-        {username}: {message}
-      </Text>
+  fetchGroups = async () => {
+    const userUID = firebase.auth().currentUser._user.uid;
+    const snapshot = await firebase
+      .database()
+      .ref(`users/${userUID}/groups`)
+      .once("value");
+    const groupIDs = _.keys(snapshot.val());
+    const groups = {};
+    await Promise.all(
+      groupIDs.map(async groupID => {
+        const data = await firebase
+          .database()
+          .ref(`groups/${groupID}`)
+          .once("value");
+        groups[groupID] = data.val();
+      })
     );
+    const sortedArr = Object.values(groups).sort(
+      (a, b) => b.last_message.timestamp - a.last_message.timestamp
+    );
+    const sortedGroups = {};
+    sortedArr.forEach(group => {
+      sortedGroups[group.groupID] = group;
+    });
+    return this.props.dispatch(fetchedGroups(sortedGroups));
   };
+
+  //renderLastMessage = groupId => {
+  //const username = this.props.groups[groupId].last_message.username;
+  //const message = this.props.groups[groupId].last_message.message;
+
+  //return (
+  //<Text>
+  //{username}: {message}
+  //</Text>
+  //);
+  //};
 
   renderRow = ({ item }) => {
     return (
@@ -79,7 +103,6 @@ class GroupScreen extends Component {
           <Text style={{ fontSize: 16, left: 10, fontWeight: "500" }}>
             {item.groupName}
           </Text>
-          <View>{this.renderLastMessage(item.groupID)}</View>
         </View>
       </TouchableOpacity>
     );

@@ -1,10 +1,27 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TextInput, Dimensions, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
+} from "react-native";
 import { cliqueBlue } from "../../../assets/constants";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { connect } from "react-redux";
-import { changeText, toggleFromDatePicker, toggleToDatePicker, pickFromDate, pickToDate, setGroupID, resetEventState } from "../../../store/actions/createEvents";
+import {
+  changeText,
+  toggleFromDatePicker,
+  toggleToDatePicker,
+  pickFromDate,
+  pickToDate,
+  setGroupID,
+  resetEventState
+} from "../../../store/actions/createEvents";
 import firebase from "react-native-firebase";
 import _ from "lodash";
 
@@ -26,23 +43,23 @@ class CreateEvents extends Component {
   static navigationOptions = () => {
     return {
       title: "Create Event",
-      headerTintColor: "#fff",
-    }
+      headerTintColor: "#fff"
+    };
   };
 
-  handleTextChange = (key) => {
+  handleTextChange = key => {
     return text => {
       return this.props.dispatch(changeText(key, text));
-    }
-  }
+    };
+  };
 
   showFromDatePicker() {
-    console.log("Inside showFromDatePicker")
+    console.log("Inside showFromDatePicker");
     this.props.dispatch(toggleFromDatePicker(true));
   }
 
   showToDatePicker() {
-    console.log("Inside showFromDatePicker")
+    console.log("Inside showFromDatePicker");
     this.props.dispatch(toggleToDatePicker(true));
   }
 
@@ -57,48 +74,48 @@ class CreateEvents extends Component {
   handleFromDatePicked = date => {
     this.props.dispatch(pickFromDate(date));
     this.hideFromDatePicker();
-  }
+  };
 
   handleToDatePicked = date => {
     this.props.dispatch(pickToDate(date));
     this.hideToDatePicker();
-  }
+  };
 
   convertDate = dateObj => {
     const date = dateObj.getDate();
     let month = dateObj.getMonth();
     let hour = dateObj.getHours();
-    hour = hour < 10 ? '0' + hour : hour;
+    hour = hour < 10 ? "0" + hour : hour;
     let minute = dateObj.getMinutes();
-    minute = minute < 10 ? '0' + minute : minute;
+    minute = minute < 10 ? "0" + minute : minute;
     let day = dateObj.getDay();
-    switch(day) {
+    switch (day) {
       case 0:
-        day = "Sunday"
+        day = "Sunday";
         break;
       case 1:
-        day = "Monday"
+        day = "Monday";
         break;
       case 2:
-        day = "Tuesday"
+        day = "Tuesday";
         break;
       case 3:
-        day = "Wednesday"
+        day = "Wednesday";
         break;
       case 4:
-        day = "Thursday"
+        day = "Thursday";
         break;
       case 5:
-        day = "Friday"
+        day = "Friday";
         break;
       case 6:
-        day = "Saturday"
+        day = "Saturday";
         break;
       default:
         day = "No day defined";
         break;
     }
-    switch(month) {
+    switch (month) {
       case 0:
         month = "Jan";
         break;
@@ -140,74 +157,118 @@ class CreateEvents extends Component {
         break;
     }
     return `${day}, ${date} ${month}, ${hour}:${minute}`;
-  }
+  };
 
   async publishEvent() {
     const title = this.props.title;
-    if(title !== ""){
+    if (title !== "") {
       const groupID = this.props.navigation.getParam("groupID");
-      let eventID = firebase.database().ref('events').child(`${groupID}`).push().key;
-      let groupSnapShot = await firebase.database().ref('groups').child(`${groupID}`).once('value')
-      const members = _.keys(groupSnapShot.val().users)
+      let eventID = firebase
+        .database()
+        .ref("events")
+        .child(`${groupID}`)
+        .push().key;
+      let groupSnapShot = await firebase
+        .database()
+        .ref("groups")
+        .child(`${groupID}`)
+        .once("value");
+      const members = _.keys(groupSnapShot.val().users);
       const event = {
         title,
-        eventID,        
+        eventID,
         from: this.props.fromDate,
         to: this.props.toDate,
         location: this.props.location,
         notes: this.props.notes,
         attending: [],
         notAttending: [...members]
-      }
-      firebase.database().ref('events').child(`${groupID}/${eventID}`).set(event);
+      };
+      firebase
+        .database()
+        .ref("events")
+        .child(`${groupID}/${eventID}`)
+        .set(event);
       const message = {
         messageType: "event",
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         sender: this.props.uid,
         event
-      }
-      const msgID = firebase.database().ref('messages').child(`${groupID}`).push().key;
-      firebase.database().ref('messages').child(`${groupID}`).child(`${msgID}`).set(message);
+      };
+      const msgID = firebase
+        .database()
+        .ref("messages")
+        .child(`${groupID}`)
+        .push().key;
+      firebase
+        .database()
+        .ref("messages")
+        .child(`${groupID}`)
+        .child(`${msgID}`)
+        .set(message);
+      firebase
+        .database()
+        .ref(`groups/${groupID}`)
+        .child("last_message")
+        .set(message);
       this.props.dispatch(resetEventState());
       this.props.navigation.goBack();
     }
   }
 
-  render(){
-    const { height, width } = Dimensions.get('window');
+  render() {
+    const { height, width } = Dimensions.get("window");
 
-    return(
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} style={{ flex: 1 }}>
+    return (
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        style={{ flex: 1 }}
+      >
         <ScrollView style={styles.container}>
-          <View style={{flex: 1, justifyContent: "flex-end"}}>
+          <View style={{ flex: 1, justifyContent: "flex-end" }}>
             <View style={styles.textInputView}>
               <TextInput
                 placeholder="Title"
-                style={{...(styles.textInput), width: width}}
+                style={{ ...styles.textInput, width: width }}
                 value={this.props.title}
                 onChangeText={this.handleTextChange("title")}
               />
             </View>
             <View style={styles.textInputView}>
-              <TouchableOpacity 
-                style={{width: width, height: 40, justifyContent: "center", paddingBottom: 10}}
+              <TouchableOpacity
+                style={{
+                  width: width,
+                  height: 40,
+                  justifyContent: "center",
+                  paddingBottom: 10
+                }}
                 onPress={this.showFromDatePicker}
               >
-                <Text style={styles.date}>{this.convertDate(this.props.fromDate)}</Text>
+                <Text style={styles.date}>
+                  {this.convertDate(this.props.fromDate)}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.textInputView}>
-              <TouchableOpacity 
-                style={{width: width, height: 40, justifyContent: "center", paddingBottom: 10}}
+              <TouchableOpacity
+                style={{
+                  width: width,
+                  height: 40,
+                  justifyContent: "center",
+                  paddingBottom: 10
+                }}
                 onPress={this.showToDatePicker}
               >
-                <Text style={styles.date}>{this.convertDate(this.props.toDate)}</Text>
+                <Text style={styles.date}>
+                  {this.convertDate(this.props.toDate)}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={styles.textInputView}>
               <TextInput
                 placeholder="Location"
-                style={{...(styles.textInput), width: width}}
+                style={{ ...styles.textInput, width: width }}
                 value={this.props.location}
                 onChangeText={this.handleTextChange("location")}
               />
@@ -215,7 +276,7 @@ class CreateEvents extends Component {
             <View style={styles.textInputView}>
               <TextInput
                 placeholder="Notes"
-                style={{...(styles.textInput), width: width}}
+                style={{ ...styles.textInput, width: width }}
                 value={this.props.notes}
                 onChangeText={this.handleTextChange("notes")}
               />
@@ -236,7 +297,10 @@ class CreateEvents extends Component {
           mode="datetime"
           date={this.props.toDate}
         />
-        <TouchableOpacity style={styles.publishButton} onPress={() => this.publishEvent()}>
+        <TouchableOpacity
+          style={styles.publishButton}
+          onPress={() => this.publishEvent()}
+        >
           <Text style={styles.publishText}>Publish</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -250,31 +314,29 @@ const mapStateToProps = state => {
     title: createEventsReducerState.title,
     fromDateVisibility: createEventsReducerState.fromDateVisibility,
     toDateVisibility: createEventsReducerState.toDateVisibility,
-    fromDate: createEventsReducerState.fromDate || (new Date()),
-    toDate: createEventsReducerState.toDate || (new Date()),
+    fromDate: createEventsReducerState.fromDate || new Date(),
+    toDate: createEventsReducerState.toDate || new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid
-  }
-}
+  };
+};
 
-export default connect(
-  mapStateToProps
-)(CreateEvents);
+export default connect(mapStateToProps)(CreateEvents);
 
 const styles = StyleSheet.create({
   date: {
     fontSize: 20,
-    color: "grey",
+    color: "grey"
   },
   container: {
-    flex: 1,
+    flex: 1
   },
   textInput: {
     flex: 1,
     fontSize: 20,
     color: cliqueBlue,
-    height: 40,
+    height: 40
   },
   textInputView: {
     height: 35,
@@ -297,4 +359,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15
   }
-})
+});
