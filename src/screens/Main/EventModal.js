@@ -45,8 +45,8 @@ class EventModal extends Component {
                 />
               </TouchableOpacity>
             </View>
-            <View style={{ height: 450, justifyContent: "space-between" }}>
-              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={{ flex: 1, justifyContent: "space-between" }}>
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginBottom: 20 }}>
                 <Text style={{ textAlign: "center", fontWeight: "bold", color: cliqueBlue, fontSize: 35 }}>{this.props.event.title}</Text>
               </View>
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "row", marginHorizontal: 20 }}>
@@ -73,7 +73,7 @@ class EventModal extends Component {
                 <Text style={styles.eventDetailsBody}>{this.props.event.notes || '-'}</Text>
               </View>
             </View>
-            <View style={{ flexDirection: "row", marginTop: 30 }}>
+            <View style={{ flex: 1, flexDirection: "row", marginTop: 30 }}>
               <View style={{ flex: 1, borderRightWidth: 1, height: 200, borderColor: "#D8D8D8" }}>
                 <Text style={[styles.attendanceHeader, { color: "#2AC58B" }]}>Attending</Text>
                 <FlatList

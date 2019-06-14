@@ -152,21 +152,28 @@ class ChatScreen extends Component {
     const event = eventSnapshot.val();
     const attending = (event.attending || []).filter(uid => uid !== this.props.uid);
     const notAttending = (event.notAttending || []).filter(uid => uid !== this.props.uid);
+    const noResponse = (event.noResponse || []).filter(uid => uid !== this.props.uid);
     let updatedEvent;
     if (response) {
       updatedEvent = {
         ...event,
         attending: [...attending, this.props.uid],
-        notAttending: notAttending
+        notAttending,
+        noResponse
       }
     } else {
       updatedEvent = {
         ...event,
-        attending: attending,
+        attending,
+        noResponse,
         notAttending: [...notAttending, this.props.uid]
       }
     }
     firebase.database().ref(`events/${this.state.groupID}/${eventID}`).set(updatedEvent);
+
+    // Updates event in message the event is attached to
+    const msgID = updatedEvent.msgID;
+    firebase.database().ref(`messages/${this.state.groupID}/${msgID}/event`).set(updatedEvent);
   }
 
   /*
@@ -231,6 +238,7 @@ class ChatScreen extends Component {
       )
     } else if (item.messageType === "event") {
       const eventID = item.event.eventID;
+      console.log(item.event);
       return (
         <View
           style={item.sender === this.props.uid
@@ -272,13 +280,21 @@ class ChatScreen extends Component {
           </TouchableOpacity>
           <View style={styles.eventBubbleButtons}>
             <View style={{ flex: 1 }}>
-              <TouchableOpacity style={styles.acceptButton} onPress={this.respondToInvitation(eventID, true)}>
-                <Text style={styles.invitationButton}>Accept</Text>
+              <TouchableOpacity
+                style={styles.acceptButton}
+                onPress={this.respondToInvitation(eventID, true)}
+                disabled={(item.event.attending || []).includes(this.props.uid)}
+              >
+                <Text style={styles.invitationButton}>{(item.event.attending || []).includes(this.props.uid) ? "Accepted!" : "Accept"}</Text>
               </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
-              <TouchableOpacity style={styles.rejectButton} onPress={this.respondToInvitation(eventID, false)}>
-                <Text style={styles.invitationButton}>Reject</Text>
+              <TouchableOpacity
+                style={styles.rejectButton}
+                onPress={this.respondToInvitation(eventID, false)}
+                disabled={(item.event.notAttending || []).includes(this.props.uid)}
+              >
+                <Text style={styles.invitationButton}>{(item.event.notAttending || []).includes(this.props.uid) ? "Rejected!" : "Reject"}</Text>
               </TouchableOpacity>
             </View>
           </View>
