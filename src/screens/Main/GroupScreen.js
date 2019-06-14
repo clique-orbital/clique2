@@ -46,7 +46,6 @@ class GroupScreen extends Component {
     const uid = firebase.auth().currentUser._user.uid;
     const db = firebase.database();
     db.ref(`groups`).on("child_added", async snapshot => {
-      console.log(snapshot.val());
       if (snapshot.val().users[uid]) {
         await this.fetchGroups();
         Object.keys(this.props.groups).forEach(groupId => {

@@ -1,13 +1,11 @@
 import { TOGGLE_EVENT_MODAL, POPULATE_ATTENDING,  POPULATE_NOTATTENDING} from "../constants";
 
-export const toggleEventModal = (mode, event, attending, notAttending) => {
+export const toggleEventModal = (mode, event) => {
     return {
         type: TOGGLE_EVENT_MODAL,
         payload: {
             mode,
             event,
-            attending,
-            notAttending
         }
     }
 }
