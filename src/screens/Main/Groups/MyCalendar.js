@@ -4,6 +4,7 @@ import { Calendar, Agenda } from "react-native-calendars";
 import ContinueButton from "../.././../components/ContinueButton";
 import { connect } from "react-redux";
 import { fetchEvents } from "../../../store/actions/calendar";
+import firebase from "react-native-firebase";
 
 const date = new Date();
 const day = date.getDate();
@@ -26,7 +27,14 @@ class MyCalendar extends React.Component {
   };
 
   async componentDidMount() {
-    await this.props.fetchEvents(this.props.navigation.getParam("groupID"));
+    const groupID = this.props.navigation.getParam("groupID");
+    await this.props.fetchEvents(groupID);
+    firebase
+      .database()
+      .ref(`events/${groupID}`)
+      .on("child_added", () => {
+        this.props.fetchEvents(groupID);
+      });
   }
 
   renderButton = () => {
@@ -71,7 +79,9 @@ class MyCalendar extends React.Component {
     const toTime = new Date(item.event.to).toTimeString().slice(0, 5);
     return (
       <View style={[styles.item, { height: item.height }]}>
-        <Text style={{ fontWeight: "500" }}>{item.event.title}</Text>
+        <Text style={{ fontWeight: "500", fontSize: 16, marginBottom: 10 }}>
+          {item.event.title}
+        </Text>
         <Text>
           {fromTime} - {toTime}
         </Text>
