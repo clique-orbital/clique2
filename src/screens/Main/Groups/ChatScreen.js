@@ -305,7 +305,7 @@ class ChatScreen extends Component {
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -200}
         style={{ flex: 1 }}
       >
         <SafeAreaView>
@@ -334,7 +334,7 @@ class ChatScreen extends Component {
             </View>
           </TouchableWithoutFeedback>
         </SafeAreaView>
-        <EventModal groupID={this.state.groupID}/>
+        <EventModal groupID={this.state.groupID} />
       </KeyboardAvoidingView>
     );
   }

@@ -4,13 +4,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  PermissionsAndroid
 } from "react-native";
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
 import { connect } from "react-redux";
 import { Field, reduxForm, formValueSelector } from "redux-form";
-
 import ContinueButton from "../../../components/ContinueButton";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
@@ -43,6 +43,28 @@ class GroupMembersSelect extends React.Component {
     };
   };
 
+  requestContactsPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+        {
+          title: 'Clique Contacts Permission',
+          message:
+            'Clique needs access to your camera.',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Android Contacts permission allowed');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
   checkAndGetPermissionForContacts() {
     Contacts.checkPermission((err, permission) => {
       if (err) throw err;
@@ -50,19 +72,26 @@ class GroupMembersSelect extends React.Component {
       // Contacts.PERMISSION_AUTHORIZED || Contacts.PERMISSION_UNDEFINED || Contacts.PERMISSION_DENIED
       if (permission === "undefined") {
         console.log("requesting");
-        Contacts.requestPermission((err, permission) => {
-          if (err) console.log(err);
-          if (permission === "authorized") {
-            console.log("requesting permission successful");
-          } else if (permission === "denied") {
-            console.log("requesting permission denied");
-          }
-        });
+        if (Platform.os === "ios") {
+          Contacts.requestPermission((err, permission) => {
+            if (err) console.log(err);
+            if (permission === "authorized") {
+              console.log("requesting permission successful");
+            } else if (permission === "denied") {
+              console.log("requesting permission denied");
+            }
+          });
+        } else {
+          this.requestContactsPermission();
+        }
       }
       if (permission === "authorized") {
         console.log("Permission already authorized");
       }
       if (permission === "denied") {
+        if (Platform.os === "android") {
+          this.requestContactsPermission();
+        }
         console.log("Permission already denied");
       }
     });

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "654951934306-goef9k8aqnrm9jh23ge8oce930h9h53f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invertase.rnfirebasestarter",
+            "certificate_hash": "38ceb0e2342da4d79a3f700645bca621bfe5133e"
+          }
+        },
+        {
           "client_id": "654951934306-2qn8f00mc09eohh32dh9inp0in9el1ba.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
