@@ -53,14 +53,14 @@ class GroupDetails extends React.Component {
 
   renderInput = ({ input, label, meta }) => {
     return (
-      <TextInput {...input} style={styles.textInput} placeholder={label} />
+      <TextInput {...input} style={[styles.textInput, { marginTop: 5 }]} placeholder={label} />
     );
   };
 
   renderGroupPicture = () => {
     return (
       <View style={styles.container}>
-        <View style={{ marginTop: "20%" }}>
+        <View style={{ marginTop: "15%" }}>
           <Text style={styles.text}>
             Enter your group name and group picture!
           </Text>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     top: "20%",
-    height: 30,
+    height: 50,
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth
   }

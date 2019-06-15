@@ -227,5 +227,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply plugin: 'com.google.gms.google-services'
 GoogleServicesPlugin.config.disableVersionCheck = true
+apply plugin: 'com.google.gms.google-services'

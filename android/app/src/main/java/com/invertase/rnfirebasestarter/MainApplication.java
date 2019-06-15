@@ -59,7 +59,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new SplashScreenReactPackage(),
             new RNGestureHandlerPackage(),
             new RNFirebasePackage(),
-        new RNFirebasePackage(),
         // add/remove these packages as appropriate
         new RNFirebaseAdMobPackage(),
         new RNFirebaseAnalyticsPackage(),
