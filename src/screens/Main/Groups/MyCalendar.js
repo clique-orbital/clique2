@@ -27,13 +27,6 @@ class MyCalendar extends React.Component {
 
   async componentDidMount() {
     await this.props.fetchEvents(this.props.navigation.getParam("groupID"));
-    const arrEvents = Object.values(this.props.events);
-    const events = {};
-    arrEvents.forEach(event => {
-      const date = event.from.split("T")[0];
-      events[date] = [...(events[date] = []), { text: event.title }];
-    });
-    this.setState({ events });
   }
 
   renderButton = () => {
@@ -57,10 +50,31 @@ class MyCalendar extends React.Component {
     this.setState({ selectedDate: day });
   };
 
+  loadItems = () => {
+    const arrEvents = Object.values(this.props.events).sort((a, b) => {
+      return new Date(a.from).getTime() - new Date(b.from).getTime();
+    });
+    const events = {};
+    arrEvents.forEach(event => {
+      const date = event.from.split("T");
+      const day = date[0];
+      if (!events[day]) {
+        events[day] = [];
+      }
+      events[day] = [...events[day], { event }];
+    });
+    this.setState({ events });
+  };
+
   renderItem(item) {
+    const fromTime = new Date(item.event.from).toTimeString().slice(0, 5);
+    const toTime = new Date(item.event.to).toTimeString().slice(0, 5);
     return (
       <View style={[styles.item, { height: item.height }]}>
-        <Text>{item.text}</Text>
+        <Text style={{ fontWeight: "500" }}>{item.event.title}</Text>
+        <Text>
+          {fromTime} - {toTime}
+        </Text>
       </View>
     );
   }
@@ -91,19 +105,7 @@ class MyCalendar extends React.Component {
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
           onDayPress={day => this.dayPress(day)}
-          // markingType={'period'}
-          // markedDates={{
-          //    '2017-05-08': {textColor: '#666'},
-          //    '2017-05-09': {textColor: '#666'},
-          //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-          //    '2017-05-21': {startingDay: true, color: 'blue'},
-          //    '2017-05-22': {endingDay: true, color: 'gray'},
-          //    '2017-05-24': {startingDay: true, color: 'gray'},
-          //    '2017-05-25': {color: 'gray'},
-          //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-          // monthFormat={'yyyy'}
-          // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-          //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+          loadItemsForMonth={this.loadItems.bind(this)}
         />
         {this.renderButton()}
       </View>
