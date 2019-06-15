@@ -22,7 +22,7 @@ import {
   populateNotAttending
 } from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
-import { fetchedConversation } from "../../../store/actions/messages"
+import { fetchedConversation } from "../../../store/actions/messages";
 import { convertDate } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
@@ -53,13 +53,13 @@ class ChatScreen extends Component {
       headerRight: (
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate("CreateEvents", {
+            navigation.navigate("Calendar", {
               groupID: navigation.getParam("group").groupID
             })
           }
         >
           <MyIcon
-            name="ios-add"
+            name="md-calendar"
             size={32}
             color="white"
             style={{ marginRight: 20 }}
@@ -107,10 +107,10 @@ class ChatScreen extends Component {
   convertTime = time => {
     let d = new Date(time);
     let c = new Date();
-    let result = (d.getHours() < 10 ? 0 : '') + d.getHours() + ":";
-    result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+    let result = (d.getHours() < 10 ? 0 : "") + d.getHours() + ":";
+    result += (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
     return result;
-  }
+  };
 
   // sameDay = (dateOfMessage, message) => {
   //   console.log("props date = " + this.props.prevDate);
@@ -148,11 +148,20 @@ class ChatScreen extends Component {
   };
 
   respondToInvitation = (eventID, response) => async () => {
-    const eventSnapshot = await firebase.database().ref(`events/${this.state.groupID}/${eventID}`).once('value');
+    const eventSnapshot = await firebase
+      .database()
+      .ref(`events/${this.state.groupID}/${eventID}`)
+      .once("value");
     const event = eventSnapshot.val();
-    const attending = (event.attending || []).filter(uid => uid !== this.props.uid);
-    const notAttending = (event.notAttending || []).filter(uid => uid !== this.props.uid);
-    const noResponse = (event.noResponse || []).filter(uid => uid !== this.props.uid);
+    const attending = (event.attending || []).filter(
+      uid => uid !== this.props.uid
+    );
+    const notAttending = (event.notAttending || []).filter(
+      uid => uid !== this.props.uid
+    );
+    const noResponse = (event.noResponse || []).filter(
+      uid => uid !== this.props.uid
+    );
     let updatedEvent;
     if (response) {
       updatedEvent = {
@@ -160,21 +169,27 @@ class ChatScreen extends Component {
         attending: [...attending, this.props.uid],
         notAttending,
         noResponse
-      }
+      };
     } else {
       updatedEvent = {
         ...event,
         attending,
         noResponse,
         notAttending: [...notAttending, this.props.uid]
-      }
+      };
     }
-    firebase.database().ref(`events/${this.state.groupID}/${eventID}`).set(updatedEvent);
+    firebase
+      .database()
+      .ref(`events/${this.state.groupID}/${eventID}`)
+      .set(updatedEvent);
 
     // Updates event in message the event is attached to
     const msgID = updatedEvent.msgID;
-    firebase.database().ref(`messages/${this.state.groupID}/${msgID}/event`).set(updatedEvent);
-  }
+    firebase
+      .database()
+      .ref(`messages/${this.state.groupID}/${msgID}/event`)
+      .set(updatedEvent);
+  };
 
   /*
   Fetches Event data and display names of all uid, and stored in state for event modal to use
@@ -184,26 +199,32 @@ class ChatScreen extends Component {
     // const event = eventSnapshot.val();
     let attending = event.attending || [];
     let notAttending = event.notAttending || [];
-    attending = await attending.map(async (uid) => {
-      const nameSnapshot = await firebase.database().ref(`users/${uid}/displayName`).once('value');
+    attending = await attending.map(async uid => {
+      const nameSnapshot = await firebase
+        .database()
+        .ref(`users/${uid}/displayName`)
+        .once("value");
       return nameSnapshot.val();
-    })
+    });
 
-    Promise.all(attending).then((members) => {
+    Promise.all(attending).then(members => {
       this.props.dispatch(populateAttending(members));
-    })
+    });
 
-    notAttending = await notAttending.map(async (uid) => {
-      const nameSnapshot = await firebase.database().ref(`users/${uid}/displayName`).once('value');
+    notAttending = await notAttending.map(async uid => {
+      const nameSnapshot = await firebase
+        .database()
+        .ref(`users/${uid}/displayName`)
+        .once("value");
       return nameSnapshot.val();
-    })
+    });
 
-    Promise.all(notAttending).then((members) => {
+    Promise.all(notAttending).then(members => {
       this.props.dispatch(populateNotAttending(members));
-    })
+    });
 
     this.props.dispatch(toggleEventModal(true, event));
-  }
+  };
 
   renderRow = ({ item }) => {
     if (item.messageType === "text") {
@@ -233,14 +254,16 @@ class ChatScreen extends Component {
             </Text>
           </View>
         </View>
-      )
+      );
     } else if (item.messageType === "event") {
       const eventID = item.event.eventID;
       return (
         <View
-          style={item.sender === this.props.uid
-            ? styles.myEventBubble
-            : styles.yourEventBubble}
+          style={
+            item.sender === this.props.uid
+              ? styles.myEventBubble
+              : styles.yourEventBubble
+          }
         >
           <TouchableOpacity
             style={styles.eventBubbleContent}
@@ -251,7 +274,9 @@ class ChatScreen extends Component {
                 {item.event.title}
               </Text>
               <Text style={styles.eventDetails}>
-                {convertDate(item.event.from) + " to\n" + convertDate(item.event.to)}
+                {convertDate(item.event.from) +
+                  " to\n" +
+                  convertDate(item.event.to)}
               </Text>
               <Text
                 style={{
@@ -282,16 +307,26 @@ class ChatScreen extends Component {
                 onPress={this.respondToInvitation(eventID, true)}
                 disabled={(item.event.attending || []).includes(this.props.uid)}
               >
-                <Text style={styles.invitationButton}>{(item.event.attending || []).includes(this.props.uid) ? "Accepted!" : "Accept"}</Text>
+                <Text style={styles.invitationButton}>
+                  {(item.event.attending || []).includes(this.props.uid)
+                    ? "Accepted!"
+                    : "Accept"}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
               <TouchableOpacity
                 style={styles.rejectButton}
                 onPress={this.respondToInvitation(eventID, false)}
-                disabled={(item.event.notAttending || []).includes(this.props.uid)}
+                disabled={(item.event.notAttending || []).includes(
+                  this.props.uid
+                )}
               >
-                <Text style={styles.invitationButton}>{(item.event.notAttending || []).includes(this.props.uid) ? "Rejected!" : "Reject"}</Text>
+                <Text style={styles.invitationButton}>
+                  {(item.event.notAttending || []).includes(this.props.uid)
+                    ? "Rejected!"
+                    : "Reject"}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -334,7 +369,7 @@ class ChatScreen extends Component {
             </View>
           </TouchableWithoutFeedback>
         </SafeAreaView>
-        <EventModal groupID={this.state.groupID}/>
+        <EventModal groupID={this.state.groupID} />
       </KeyboardAvoidingView>
     );
   }

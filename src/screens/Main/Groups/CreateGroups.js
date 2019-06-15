@@ -140,7 +140,7 @@ class GroupMembersSelect extends React.Component {
         onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
         style={{ position: "absolute", top: "90%", left: "80%" }}
       >
-        <ContinueButton />
+        <ContinueButton name="arrow-forward" />
       </TouchableOpacity>
     );
   };

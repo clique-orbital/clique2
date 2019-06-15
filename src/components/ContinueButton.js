@@ -15,7 +15,7 @@ const ContinueButton = props => {
         alignItems: "center"
       }}
     >
-      <MyIcon name="arrow-forward" size={30} color="white" type="material" />
+      <MyIcon name={props.name} size={30} color="white" type="material" />
     </View>
   );
 };
