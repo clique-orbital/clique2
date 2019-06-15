@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Calendar, Agenda } from "react-native-calendars";
 import ContinueButton from "../.././../components/ContinueButton";
 import { connect } from "react-redux";
+import { fetchEvents } from "../../../store/actions/calendar";
 
 const date = new Date();
 const day = date.getDate();
@@ -23,6 +24,17 @@ class MyCalendar extends React.Component {
     },
     events: {}
   };
+
+  async componentDidMount() {
+    await this.props.fetchEvents(this.props.navigation.getParam("groupID"));
+    const arrEvents = Object.values(this.props.events);
+    const events = {};
+    arrEvents.forEach(event => {
+      const date = event.from.split("T")[0];
+      events[date] = [...(events[date] = []), { text: event.title }];
+    });
+    this.setState({ events });
+  }
 
   renderButton = () => {
     return (
@@ -45,38 +57,10 @@ class MyCalendar extends React.Component {
     this.setState({ selectedDate: day });
   };
 
-  loadItems(day) {
-    // setTimeout(() => {
-    //   for (let i = -15; i < 85; i++) {
-    //     const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-    //     const strTime = this.timeToString(time);
-    //     if (!this.state.events[strTime]) {
-    //       this.state.events[strTime] = [];
-    //       const numItems = Math.floor(Math.random() * 5);
-    //       for (let j = 0; j < numItems; j++) {
-    //         this.state.events[strTime].push({
-    //           name: "Item for " + strTime,
-    //           height: Math.max(50, Math.floor(Math.random() * 150))
-    //         });
-    //       }
-    //     }
-    //   }
-    //   //console.log(this.state.events);
-    //   const newItems = {};
-    //   Object.keys(this.state.events).forEach(key => {
-    //     newItems[key] = this.state.events[key];
-    //   });
-    //   this.setState({
-    //     items: newItems
-    //   });
-    // }, 1000);
-    // console.log(`Load Items for ${day.year}-${day.month}`);
-  }
-
   renderItem(item) {
     return (
       <View style={[styles.item, { height: item.height }]}>
-        <Text>{item.name}</Text>
+        <Text>{item.text}</Text>
       </View>
     );
   }
@@ -103,7 +87,6 @@ class MyCalendar extends React.Component {
       <View style={{ display: "flex", height: "100%" }}>
         <Agenda
           items={this.state.events}
-          loadItemsForMonth={this.loadItems.bind(this)}
           renderItem={this.renderItem.bind(this)}
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
@@ -145,10 +128,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  return;
+  return { events: state.calendar.events };
 };
 
 export default connect(
-  null,
-  {}
+  mapStateToProps,
+  { fetchEvents }
 )(MyCalendar);
