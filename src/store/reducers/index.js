@@ -5,12 +5,14 @@ import { groupsReducer } from "./groupsReducer";
 import { messagesReducer } from "./messagesReducer";
 import { createEventsReducer } from "./createEventsReducer";
 import { eventModalReducer } from "./eventModalReducer";
+import { calendarReducer } from "./calendarReducer";
 
-export default combineReducers({ 
-    authReducer, 
-    groupsReducer,
-    messagesReducer,
-    createEventsReducer,
-    eventModalReducer,
-    form: formReducer 
+export default combineReducers({
+  authReducer,
+  groupsReducer,
+  messagesReducer,
+  createEventsReducer,
+  eventModalReducer,
+  form: formReducer,
+  calendar: calendarReducer
 });
