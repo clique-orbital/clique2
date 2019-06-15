@@ -37,7 +37,7 @@ export const groupsReducer = (state = initialState, action) => {
       };
     case SORT_GROUPS:
       const sortedArr = Object.values(state.groups).sort(
-        (a, b) => b.last_message.timestamp - a.last_message.timestamp
+        (a, b) => a.last_message.timestamp - b.last_message.timestamp
       );
       const sortedGroups = {};
       sortedArr.forEach(group => {
