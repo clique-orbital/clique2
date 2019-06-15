@@ -36,8 +36,8 @@ class CreateEvents extends Component {
     this.handleTextChange = this.handleTextChange.bind(this);
     this.publishEvent = this.publishEvent.bind(this);
     this.props.dispatch(setGroupID(this.props.navigation.getParam("groupID")));
-    this.props.dispatch(pickFromDate(new Date()));
-    this.props.dispatch(pickToDate(new Date()));
+    this.props.dispatch(pickFromDate(this.props.navigation.getParam("date")));
+    this.props.dispatch(pickToDate(this.props.navigation.getParam("date")));
   }
 
   static navigationOptions = () => {
@@ -111,7 +111,7 @@ class CreateEvents extends Component {
         notes: this.props.notes,
         attending: [],
         notAttending: [],
-        noResponse: [...members],
+        noResponse: [...members]
       };
       firebase
         .database()

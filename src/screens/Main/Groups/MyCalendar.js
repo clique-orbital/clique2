@@ -1,10 +1,28 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Agenda } from "react-native-calendars";
+import { Calendar, Agenda } from "react-native-calendars";
 import ContinueButton from "../.././../components/ContinueButton";
+import { connect } from "react-redux";
+
+const date = new Date();
+const day = date.getDate();
+const month = date.getMonth() + 1;
+const year = date.getFullYear();
+const timestamp = date.getTime();
 
 class MyCalendar extends React.Component {
-  state = { events: {} };
+  state = {
+    selectedDate: {
+      day,
+      month,
+      year,
+      timestamp,
+      dateString: `${year}-${(month + "").padStart(2, "0")}-${(
+        day + ""
+      ).padStart(2, "0")}`
+    },
+    events: {}
+  };
 
   renderButton = () => {
     return (
@@ -12,7 +30,8 @@ class MyCalendar extends React.Component {
         title="Create"
         onPress={() =>
           this.props.navigation.navigate("CreateEvents", {
-            groupID: this.props.navigation.getParam("groupID")
+            groupID: this.props.navigation.getParam("groupID"),
+            date: new Date(this.state.selectedDate.dateString)
           })
         }
         style={{ position: "absolute", top: "90%", left: "80%" }}
@@ -22,33 +41,9 @@ class MyCalendar extends React.Component {
     );
   };
 
-  render() {
-    return (
-      <View style={{ display: "flex", height: "100%" }}>
-        <Agenda
-          items={this.state.events}
-          loadItemsForMonth={this.loadItems.bind(this)}
-          renderItem={this.renderItem.bind(this)}
-          renderEmptyDate={this.renderEmptyDate.bind(this)}
-          rowHasChanged={this.rowHasChanged.bind(this)}
-          // markingType={'period'}
-          // markedDates={{
-          //    '2017-05-08': {textColor: '#666'},
-          //    '2017-05-09': {textColor: '#666'},
-          //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-          //    '2017-05-21': {startingDay: true, color: 'blue'},
-          //    '2017-05-22': {endingDay: true, color: 'gray'},
-          //    '2017-05-24': {startingDay: true, color: 'gray'},
-          //    '2017-05-25': {color: 'gray'},
-          //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-          // monthFormat={'yyyy'}
-          // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-          //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-        />
-        {this.renderButton()}
-      </View>
-    );
-  }
+  dayPress = day => {
+    this.setState({ selectedDate: day });
+  };
 
   loadItems(day) {
     // setTimeout(() => {
@@ -102,6 +97,35 @@ class MyCalendar extends React.Component {
     const date = new Date(time);
     return date.toISOString().split("T")[0];
   }
+
+  render() {
+    return (
+      <View style={{ display: "flex", height: "100%" }}>
+        <Agenda
+          items={this.state.events}
+          loadItemsForMonth={this.loadItems.bind(this)}
+          renderItem={this.renderItem.bind(this)}
+          renderEmptyDate={this.renderEmptyDate.bind(this)}
+          rowHasChanged={this.rowHasChanged.bind(this)}
+          onDayPress={day => this.dayPress(day)}
+          // markingType={'period'}
+          // markedDates={{
+          //    '2017-05-08': {textColor: '#666'},
+          //    '2017-05-09': {textColor: '#666'},
+          //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
+          //    '2017-05-21': {startingDay: true, color: 'blue'},
+          //    '2017-05-22': {endingDay: true, color: 'gray'},
+          //    '2017-05-24': {startingDay: true, color: 'gray'},
+          //    '2017-05-25': {color: 'gray'},
+          //    '2017-05-26': {endingDay: true, color: 'gray'}}}
+          // monthFormat={'yyyy'}
+          // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
+          //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+        />
+        {this.renderButton()}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -120,4 +144,11 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MyCalendar;
+const mapStateToProps = state => {
+  return;
+};
+
+export default connect(
+  null,
+  {}
+)(MyCalendar);
