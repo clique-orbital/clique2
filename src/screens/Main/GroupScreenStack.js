@@ -4,8 +4,8 @@ import CreateGroups from "./Groups/CreateGroups";
 import ChatScreen from "./Groups/ChatScreen";
 import GroupDetails from "./Groups/GroupDetails";
 import GroupScreen from "./GroupScreen";
-import CreateEvents from "./Groups/CreateEvents"
-
+import CreateEvents from "./Groups/CreateEvents";
+import MyCalendar from "./Groups/MyCalendar";
 
 const GroupScreenStack = createStackNavigator(
   {
@@ -14,14 +14,14 @@ const GroupScreenStack = createStackNavigator(
     Chat: ChatScreen,
     GroupDetails: GroupDetails,
     CreateEvents: CreateEvents,
-
+    Calendar: MyCalendar
   },
   {
     initialRouteName: "Main",
     defaultNavigationOptions: {
       headerStyle: {
-        backgroundColor: cliqueBlue,
-      },
+        backgroundColor: cliqueBlue
+      }
     }
   }
 );
@@ -35,7 +35,6 @@ GroupScreenStack.navigationOptions = ({ navigation }) => {
   return {
     tabBarVisible
   };
-
 };
 
 export default GroupScreenStack;
