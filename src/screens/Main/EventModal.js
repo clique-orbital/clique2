@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import Modal from "react-native-modal";
-import { View, Text, FlatList, Image, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, FlatList, Image, StyleSheet, SafeAreaView, TouchableOpacity, Platform } from "react-native";
 import { connect } from "react-redux";
 import { toggleEventModal, populateAttending, populateNotAttending } from "../../store/actions/eventModal";
 import { cliqueBlue, getDate, getDay, getTime } from "../../assets/constants";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import firebase from "react-native-firebase";
 
 class EventModal extends Component {
@@ -35,7 +34,7 @@ class EventModal extends Component {
 
     let attendingNames = (this.props.attending || []).filter(name => name !== this.props.displayName);
     let notAttendingNames = (this.props.notAttending || []).filter(name => name !== this.props.displayName);
-    
+
     let updatedEvent;
     if (response) {
       updatedEvent = {
@@ -69,25 +68,25 @@ class EventModal extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <Modal isVisible={this.props.modalVisibility}
           swipeDirection='down'
           swipeThreshold={200}
           onSwipeComplete={this.hideModal}
           style={{ margin: 0 }}
         >
-          <View style={{ flex: 1, backgroundColor: "#fff" }}>
-            <View style={{ paddingTop: 30, marginLeft: 8, justifyContent: "flex-end" }}>
-              <TouchableOpacity style={{ height: 50, width: 50 }} onPress={this.hideModal}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+            <View style={{ height: "5%", justifyContent: "flex-end", flexDirection: "row" }}>
+              <TouchableOpacity style={{ height: 50, width: 50, marginLeft: 8, flex: 1 }} onPress={this.hideModal}>
                 <Image
                   source={require("../../assets/x.png")}
                   style={{
-                    resizeMode: "center",
+                    marginLeft: 13, marginTop: 10, height: 20, width: 20
                   }}
                 />
               </TouchableOpacity>
             </View>
-            <View style={{ height: 400, justifyContent: "space-between" }}>
+            <View style={{ height: "50%", justifyContent: "space-between" }}>
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginBottom: 20 }}>
                 <Text style={{ textAlign: "center", fontWeight: "bold", color: cliqueBlue, fontSize: 35 }}>{this.props.event.title}</Text>
               </View>
@@ -97,8 +96,8 @@ class EventModal extends Component {
                   <Text style={styles.dateFormat}>{getDate(this.props.event.from)}</Text>
                   <Text style={styles.dateFormat}>{getTime(this.props.event.from)}</Text>
                 </View>
-                <View style={{ flex: 0.5, justifyContent: "center", alignItems: "center", width: 50 }}>
-                  <Image source={require("../../assets/arrow.png")} style={{ resizeMode: "center", }} />
+                <View style={{ flex: 0.5, justifyContent: "center", alignItems: "center" }}>
+                  <Image source={require("../../assets/arrow.png")} style={{ height: 28, width: 40 }} />
                 </View>
                 <View style={{ flex: 1, justifyContent: "center" }}>
                   <Text style={styles.dateFormat}>{getDay(this.props.event.to)}</Text>
@@ -115,7 +114,7 @@ class EventModal extends Component {
                 <Text style={styles.eventDetailsBody}>{this.props.event.notes || '-'}</Text>
               </View>
             </View>
-            <View style={{ flexDirection: "row", marginTop: 30 }}>
+            <View style={{ flexDirection: "row", marginTop: 30, height: "30%" }}>
               <View style={{ flex: 1, borderRightWidth: 1, height: 200, borderColor: "#D8D8D8" }}>
                 <Text style={[styles.attendanceHeader, { color: "#2AC58B" }]}>Attending</Text>
                 <FlatList
@@ -124,7 +123,7 @@ class EventModal extends Component {
                   keyExtractor={(item, index) => index.toString()}
                 />
               </View>
-              <View style={{ flex: 1, height: 200 }}>
+              <View style={{ flex: 1, height: "auto" }}>
                 <Text style={[styles.attendanceHeader, { color: "#E83838" }]}>Not Attending</Text>
                 <FlatList
                   data={this.props.notAttending}
@@ -133,33 +132,33 @@ class EventModal extends Component {
                 />
               </View>
             </View>
-            <View style={{ flex: 1, flexDirection: "row" }}>
+            <View style={{ flex: 1, flexDirection: "row", height: "10%" }}>
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.respondInvitationButton, { backgroundColor: "#2AC58B" }]}
                   onPress={this.respondToInvitation(this.props.event.eventID, true)}
                   disabled={(this.props.attending || []).includes(this.props.uid)}
                 >
-                  <Text style={{color: "#fff"}}>
+                  <Text style={{ color: "#fff" }}>
                     {(this.props.event.attending || []).includes(this.props.uid) ? "Accepted!" : "Accept"}
                   </Text>
                 </TouchableOpacity>
               </View>
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.respondInvitationButton, { backgroundColor: "#E83838" }]}
                   onPress={this.respondToInvitation(this.props.event.eventID, false)}
                   disabled={(this.props.notAttending || []).includes(this.props.uid)}
                 >
-                  <Text style={{color: "#fff"}}>
+                  <Text style={{ color: "#fff" }}>
                     {(this.props.event.notAttending || []).includes(this.props.uid) ? "Rejected!" : "Reject"}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </SafeAreaView>
         </Modal>
-      </SafeAreaView >
+      </View >
     )
   }
 }
@@ -207,10 +206,10 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   respondInvitationButton: {
-    height: 40, 
-    width: 120, 
-    justifyContent: "center", 
-    alignItems: "center", 
+    height: 40,
+    width: 120,
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10
   }
 })

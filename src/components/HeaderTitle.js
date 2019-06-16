@@ -8,7 +8,8 @@ const HeaderTitle = props => {
         fontWeight: "400",
         color: "white",
         fontSize: 20,
-        textAlign: "left"
+        textAlign: "left",
+        marginLeft: 10
       }}
     >
       {props.title}

@@ -7,10 +7,10 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
 import { cliqueBlue } from "../../../assets/constants";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { connect } from "react-redux";
 import {
@@ -148,7 +148,7 @@ class CreateEvents extends Component {
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : -200}
         style={{ flex: 1 }}
       >
         <ScrollView style={styles.container}>
@@ -266,10 +266,10 @@ const styles = StyleSheet.create({
     height: 40
   },
   textInputView: {
-    height: 35,
+    height: 45,
     margin: 20,
     borderBottomWidth: 2,
-    borderColor: cliqueBlue
+    borderColor: cliqueBlue,
   },
   publishButton: {
     backgroundColor: cliqueBlue,

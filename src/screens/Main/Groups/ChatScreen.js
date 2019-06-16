@@ -8,14 +8,13 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
-  Platform
+  Platform,
+  TouchableOpacity,
 } from "react-native";
 import {
-  TouchableOpacity,
   FlatList,
   TouchableWithoutFeedback
 } from "react-native-gesture-handler";
-
 import {
   toggleEventModal,
   populateAttending,
@@ -36,12 +35,14 @@ class ChatScreen extends Component {
       uid: this.props.uid,
       groupID: this.props.navigation.getParam("group").groupID,
       textMessage: "",
-      prevDay: new Date().getDay()
+      dayOfLastMsg: new Date().getDay(),
+      dateOfLastMsg: new Date().getDate(),
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
+    this.sameDay = this.sameDay.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -112,18 +113,8 @@ class ChatScreen extends Component {
     return result;
   }
 
-  // sameDay = (dateOfMessage, message) => {
-  //   console.log("props date = " + this.props.prevDate);
-  //   if(dateOfMessage === this.props.prevDate){
-  //     console.log("in true. day = " + dateOfMessage + ' ' + message)
-  //     return true;
-  //   }
-  //   console.log('in false. day = ' + dateOfMessage + ' ' + message);
-  //   this.props.dispatch(changePrevDate(this.state.groupID, dateOfMessage));
-  //   return false;
-  // }
-
   sendMessage = () => {
+    console.log("Sending Message");
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
       const msgID = this.messagesRef.child(`${groupID}`).push().key;
@@ -180,8 +171,6 @@ class ChatScreen extends Component {
   Fetches Event data and display names of all uid, and stored in state for event modal to use
   */
   showEventModal = event => async () => {
-    // const eventSnapshot = await firebase.database().ref(`events/${this.state.groupID}/${eventID}`).once('value');
-    // const event = eventSnapshot.val();
     let attending = event.attending || [];
     let notAttending = event.notAttending || [];
     attending = await attending.map(async (uid) => {
@@ -203,6 +192,20 @@ class ChatScreen extends Component {
     })
 
     this.props.dispatch(toggleEventModal(true, event));
+  }
+
+  sameDay = (dateOfLastMsg, dayOfLastMsg) => {
+    console.log("props date = " + this.props.prevDate);
+    if (dateOfLastMsg === this.state.dateOfLastMsg && dayOfLastMsg === this.state.dayOfLastMsg) {
+      console.log("in true. " + `${dateOfLastMsg}/${dayOfLastMsg}`)
+      return true;
+    }
+    console.log("in false. " + `${dateOfLastMsg}/${dayOfLastMsg}`)
+    this.setState({
+      dateOfLastMsg,
+      dayOfLastMsg
+    })
+    return false;
   }
 
   renderRow = ({ item }) => {
@@ -319,14 +322,14 @@ class ChatScreen extends Component {
                 renderItem={this.renderRow}
                 keyExtractor={(item, index) => index.toString()}
               />
-              <View style={styles.chatBox}>
+              <View style={[styles.chatBox, { zIndex: 1 }]}>
                 <TextInput
                   style={styles.chatInput}
                   value={this.state.textMessage}
                   onChangeText={this.handleChange("textMessage")}
                   placeholder="Write a message"
                 />
-                <TouchableOpacity onPress={this.sendMessage}>
+                <TouchableOpacity onPress={this.sendMessage} style={{ zIndex: 1 }}>
                   <Text style={styles.sendBtn}>Send</Text>
                 </TouchableOpacity>
               </View>

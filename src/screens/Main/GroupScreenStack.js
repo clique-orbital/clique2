@@ -8,34 +8,34 @@ import CreateEvents from "./Groups/CreateEvents"
 
 
 const GroupScreenStack = createStackNavigator(
-    {
-      Main: GroupScreen,
-      CreateGroups: CreateGroups,
-      Chat: ChatScreen,
-      GroupDetails: GroupDetails,
-      CreateEvents: CreateEvents,
+  {
+    Main: GroupScreen,
+    CreateGroups: CreateGroups,
+    Chat: ChatScreen,
+    GroupDetails: GroupDetails,
+    CreateEvents: CreateEvents,
 
-    },
-    {
-      initialRouteName: "Main",
-      defaultNavigationOptions: {
-        headerStyle: {
-          backgroundColor: cliqueBlue
-        }
-      }
+  },
+  {
+    initialRouteName: "Main",
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: cliqueBlue,
+      },
     }
-  );
-  
-  GroupScreenStack.navigationOptions = ({ navigation }) => {
-    let tabBarVisible = true;
-    if (navigation.state.index > 0) {
-      tabBarVisible = false;
-    }
-  
-    return {
-      tabBarVisible
-    };
-  
+  }
+);
+
+GroupScreenStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  if (navigation.state.index > 0) {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible
   };
 
-  export default GroupScreenStack;
+};
+
+export default GroupScreenStack;
