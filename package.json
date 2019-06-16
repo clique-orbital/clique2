@@ -16,6 +16,7 @@
     "lodash": "^4.17.11",
     "react": "16.8.3",
     "react-native": "0.59.3",
+    "react-native-calendars": "^1.187.0",
     "react-native-contacts": "^4.0.2",
     "react-native-elements": "^1.1.0",
     "react-native-firebase": "^5.4.0",

@@ -42,22 +42,20 @@ class GroupScreen extends Component {
     };
   };
 
-  componentWillMount() {
+  async componentDidMount() {
     const uid = firebase.auth().currentUser._user.uid;
     const db = firebase.database();
-    db.ref(`groups`).on("child_added", async snapshot => {
-      if (snapshot.val().users[uid]) {
-        await this.fetchGroups();
-        Object.keys(this.props.groups).forEach(groupId => {
-          db.ref(`groups/${groupId}/last_message`).on(
-            "child_changed",
-            snapshot => {
-              this.fetchGroup(groupId);
-              this.props.sortGroups();
-            }
-          );
-        });
-      }
+    await this.fetchGroups();
+
+    for (let groupId of Object.keys(this.props.groups)) {
+      db.ref(`groups/${groupId}/last_message`).on("child_changed", snapshot => {
+        this.fetchGroup(groupId);
+        this.props.sortGroups();
+      });
+    }
+
+    db.ref(`users/${uid}/groups`).on("child_added", () => {
+      this.fetchGroups();
     });
   }
 
