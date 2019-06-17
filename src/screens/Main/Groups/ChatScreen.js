@@ -9,11 +9,12 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Platform,
-  TouchableOpacity,
 } from "react-native";
 import {
   FlatList,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+
 } from "react-native-gesture-handler";
 import {
   toggleEventModal,
@@ -21,7 +22,7 @@ import {
   populateNotAttending
 } from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
-import { fetchedConversation } from "../../../store/actions/messages";
+import { fetchConversation } from "../../../store/actions/messages";
 import { convertDate } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
@@ -54,8 +55,9 @@ class ChatScreen extends Component {
       headerRight: (
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate("Calendar", {
-              groupID: navigation.getParam("group").groupID
+            navigation.navigate("GroupCalendar", {
+              groupID: navigation.getParam("group").groupID,
+              title: "Group Calendar"
             })
           }
         >
@@ -74,7 +76,7 @@ class ChatScreen extends Component {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
       this.props.dispatch(
-        fetchedConversation(
+        fetchConversation(
           groupID,
           _.sortBy(_.values(snapshot.val()), "timestamp")
         )
@@ -364,7 +366,7 @@ class ChatScreen extends Component {
                   onChangeText={this.handleChange("textMessage")}
                   placeholder="Write a message"
                 />
-                <TouchableOpacity onPress={this.sendMessage} style={{ zIndex: 1 }}>
+                <TouchableOpacity onPress={this.sendMessage} style={{}}>
                   <Text style={styles.sendBtn}>Send</Text>
                 </TouchableOpacity>
               </View>

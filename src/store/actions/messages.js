@@ -1,8 +1,6 @@
-import firebase from "react-native-firebase";
-
 import { FETCH_CONVERSATION, CHANGE_PREV_DATE } from "../constants";
 
-export const fetchedConversation = (groupID, messages) => {
+export const fetchConversation = (groupID, messages) => {
   return {
     type: FETCH_CONVERSATION,
     payload: {
@@ -21,13 +19,3 @@ export const changePrevDate = (groupID, prevDate) => {
     }
   };
 };
-
-// export const fetchNewMessage = (groupID, message) => {
-//     return {
-//         type: FETCH_NEW_MESSAGE,
-//         payload: {
-//             groupID,
-//             message,
-//         }
-//     }
-// }

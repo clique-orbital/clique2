@@ -5,6 +5,14 @@ import {
   createAppContainer,
   createSwitchNavigator
 } from "react-navigation";
+import firebase from "react-native-firebase";
+import {
+  fetchedGroups,
+  fetchAGroup,
+  sortGroups
+} from "./src/store/actions/groups";
+import { connect } from "react-redux";
+import _ from "lodash";
 
 import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
 import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
@@ -15,7 +23,6 @@ import Auth from "./src/screens/Auth/Auth";
 import UserDetails from "./src/screens/Auth/UserDetails";
 
 import MyIcon from "./src/components/MyIcon";
-import IconWithBadge from "./src/components/IconWithBadge";
 import { cliqueBlue } from "./src/assets/constants";
 
 const AppNavigator = createBottomTabNavigator(
@@ -80,9 +87,71 @@ const InitialNavigator = createSwitchNavigator(
 const AppContainer = createAppContainer(InitialNavigator);
 
 class App extends React.Component {
+  async componentDidMount() {
+    const uid = firebase.auth().currentUser._user.uid;
+    const db = firebase.database();
+    await this.fetchGroups();
+
+    for (let groupId of Object.keys(this.props.groups)) {
+      db.ref(`groups/${groupId}/last_message`).on("child_changed", snapshot => {
+        this.fetchGroup(groupId);
+        this.props.sortGroups();
+      });
+    }
+
+    db.ref(`users/${uid}/groups`).on("child_added", () => {
+      this.fetchGroups();
+    });
+  }
+
+  fetchGroup = groupId => {
+    firebase
+      .database()
+      .ref(`groups/${groupId}/last_message`)
+      .once("value", snapshot => {
+        this.props.fetchAGroup(groupId, snapshot.val());
+      });
+  };
+
+  fetchGroups = async () => {
+    const userUID = firebase.auth().currentUser._user.uid;
+    const snapshot = await firebase
+      .database()
+      .ref(`users/${userUID}/groups`)
+      .once("value");
+    const groupIDs = _.keys(snapshot.val());
+    const groups = {};
+    await Promise.all(
+      groupIDs.map(async groupID => {
+        const data = await firebase
+          .database()
+          .ref(`groups/${groupID}`)
+          .once("value");
+        groups[groupID] = data.val();
+      })
+    );
+    const sortedArr = Object.values(groups).sort(
+      (a, b) => a.last_message.timestamp - b.last_message.timestamp
+    );
+    const sortedGroups = {};
+    sortedArr.forEach(group => {
+      sortedGroups[group.groupID] = group;
+    });
+    return this.props.fetchedGroups(sortedGroups);
+  };
+
   render() {
     return <AppContainer />;
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    groups: state.groupsReducer.groups
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { fetchAGroup, fetchedGroups, sortGroups }
+)(App);

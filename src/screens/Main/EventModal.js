@@ -26,7 +26,8 @@ class EventModal extends Component {
   }
 
   respondToInvitation = (eventID, response) => async () => {
-    const eventSnapshot = await firebase.database().ref(`events/${this.props.groupID}/${eventID}`).once('value');
+    const groupID = this.props.event.groupID;
+    const eventSnapshot = await firebase.database().ref(`events/${groupID}/${eventID}`).once('value');
     const event = eventSnapshot.val();
     const attending = (event.attending || []).filter(uid => uid !== this.props.uid);
     const notAttending = (event.notAttending || []).filter(uid => uid !== this.props.uid);
@@ -53,11 +54,11 @@ class EventModal extends Component {
       }
       notAttendingNames = [...notAttendingNames, this.props.displayName]
     }
-    firebase.database().ref(`events/${this.props.groupID}/${eventID}`).set(updatedEvent);
+    firebase.database().ref(`events/${groupID}/${eventID}`).set(updatedEvent);
 
     // Updates event in message the event is attached to
     const msgID = updatedEvent.msgID;
-    firebase.database().ref(`messages/${this.props.groupID}/${msgID}/event`).set(updatedEvent);
+    firebase.database().ref(`messages/${groupID}/${msgID}/event`).set(updatedEvent);
 
     // Updates Event Modal
     this.props.dispatch(toggleEventModal(true, updatedEvent));
