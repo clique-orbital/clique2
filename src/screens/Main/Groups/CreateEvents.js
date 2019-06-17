@@ -111,7 +111,8 @@ class CreateEvents extends Component {
         notes: this.props.notes,
         attending: [],
         notAttending: [],
-        noResponse: [...members]
+        noResponse: [...members],
+        groupID
       };
       firebase
         .database()

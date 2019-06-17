@@ -5,7 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Platform
 } from "react-native";
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
@@ -33,10 +34,10 @@ class GroupMembersSelect extends React.Component {
   static navigationOptions = () => {
     return {
       headerTitle: (
-        <View style={{ bottom: 5 }}>
-          <HeaderTitle title="New Group" />
-          <Text style={{ color: "white", fontSize: 12 }}>
-            Pick your clique members:
+        <View style={{ bottom: 5, justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ fontSize: 20, color: "white", textAlign: "center" }}>New Group</Text>
+          <Text style={{ color: "white", fontSize: 12, textAlign: "center" }}>
+            Pick your clique members
           </Text>
         </View>
       )
@@ -72,7 +73,7 @@ class GroupMembersSelect extends React.Component {
       // Contacts.PERMISSION_AUTHORIZED || Contacts.PERMISSION_UNDEFINED || Contacts.PERMISSION_DENIED
       if (permission === "undefined") {
         console.log("requesting");
-        if (Platform.os === "ios") {
+        if (Platform.OS === "ios") {
           Contacts.requestPermission((err, permission) => {
             if (err) console.log(err);
             if (permission === "authorized") {

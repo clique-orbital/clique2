@@ -98,11 +98,11 @@ class GroupScreen extends Component {
   renderLastMessage = groupId => {
     const groups = this.props.groups;
 
-    const isText = groups[groupId].last_message.messageType === "text";
-    const username = groups[groupId].last_message.username;
+    const isText = (groups[groupId].last_message || {}).messageType === "text";
+    const username = (groups[groupId].last_message || {}).username;
 
     if (isText) {
-      const message = groups[groupId].last_message.message;
+      const message = (groups[groupId].last_message || {}).message;
       return (
         <Text style={{ top: 5 }}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
@@ -113,7 +113,7 @@ class GroupScreen extends Component {
         </Text>
       );
     } else {
-      const eventTitle = groups[groupId].last_message.event.title;
+      const eventTitle = (groups[groupId].last_message || {}).event.title;
       return (
         <Text style={{ top: 5 }}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
@@ -126,7 +126,7 @@ class GroupScreen extends Component {
   };
 
   renderTimestamp = groupId => {
-    const timestamp = this.props.groups[groupId].last_message.timestamp;
+    const timestamp = (this.props.groups[groupId].last_message || {}).timestamp;
     const time = new Date(timestamp);
     let hours = time.getHours() + "";
     let minutes = time.getMinutes() + "";

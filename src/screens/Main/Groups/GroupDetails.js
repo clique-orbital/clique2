@@ -81,7 +81,7 @@ class GroupDetails extends React.Component {
           onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
           style={{ position: "absolute", top: "90%", left: "80%" }}
         >
-          <ContinueButton />
+          <ContinueButton name="arrow-forward" />
         </TouchableOpacity>
       </View>
     );
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     top: "20%",
-    height: 50,
+    height: 40,
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth
   }

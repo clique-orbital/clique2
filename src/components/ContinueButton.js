@@ -12,7 +12,10 @@ const ContinueButton = props => {
         borderRadius: 23,
         flex: 1,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
       }}
     >
       <MyIcon name={props.name} size={30} color="white" type="material" />
