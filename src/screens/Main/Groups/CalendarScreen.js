@@ -11,7 +11,16 @@ class CalendarScreen extends React.Component {
 
   render() {
     return (
-      <CalendarComponent groupID={this.props.navigation.getParam("groupID")} />
+      <CalendarComponent
+        groupID={this.props.navigation.getParam("groupID")}
+        hasButton={true}
+        nav={dateString =>
+          this.props.navigation.navigate("CreateEvents", {
+            groupID: this.props.navigation.getParam("groupID"),
+            date: dateString
+          })
+        }
+      />
     );
   }
 }
