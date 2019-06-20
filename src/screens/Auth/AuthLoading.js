@@ -38,8 +38,8 @@ class AuthLoading extends React.Component {
           // AsyncStorage.setItem("profilePicture", JSON.stringify(user.photoURL));
           // update user auth details in redux store
           this.props.setUserDetails(user.toJSON());
+          await this.props.fetchAllEvents(user.uid);
           await this.props.fetchGroups();
-          this.props.fetchAllEvents(user.uid);
           this.props.navigation.navigate("App");
         } else {
           // get user to set username and profile picture
