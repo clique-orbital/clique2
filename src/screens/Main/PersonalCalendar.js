@@ -14,7 +14,7 @@ class PersonalCalendar extends React.Component {
   };
 
   render() {
-    return <CalendarComponent />;
+    return <CalendarComponent hasButton={false} />;
   }
 }
 

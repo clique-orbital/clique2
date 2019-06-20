@@ -100,6 +100,7 @@ class CreateEvents extends Component {
         .ref("groups")
         .child(`${groupID}`)
         .once("value");
+      console.log(groupSnapShot.val());
       const members = _.keys(groupSnapShot.val().users);
       const event = {
         title,
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     height: 45,
     margin: 20,
     borderBottomWidth: 2,
-    borderColor: cliqueBlue,
+    borderColor: cliqueBlue
   },
   publishButton: {
     backgroundColor: cliqueBlue,
