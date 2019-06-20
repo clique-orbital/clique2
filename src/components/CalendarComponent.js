@@ -43,10 +43,6 @@ class CalendarComponent extends React.Component {
       <TouchableOpacity
         title="Create"
         onPress={() =>
-          // this.props.navigation.navigate("CreateEvents", {
-          // groupID: this.props.groupID,
-          // date: new Date(this.state.selectedDate.dateString)
-          // })
           this.props.nav(new Date(this.state.selectedDate.dateString))
         }
         style={{ position: "absolute", top: "90%", left: "80%" }}

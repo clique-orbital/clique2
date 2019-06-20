@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { createSwitchNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
 import CalendarComponent from "../../components/CalendarComponent";
@@ -18,6 +18,6 @@ class PersonalCalendar extends React.Component {
   }
 }
 
-const calendarStack = createSwitchNavigator({ Main: PersonalCalendar });
+const calendarStack = createStackNavigator({ Main: PersonalCalendar });
 
 export default calendarStack;
