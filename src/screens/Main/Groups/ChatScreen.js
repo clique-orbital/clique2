@@ -8,13 +8,12 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
-  Platform,
+  Platform
 } from "react-native";
 import {
   FlatList,
   TouchableWithoutFeedback,
-  TouchableOpacity,
-
+  TouchableOpacity
 } from "react-native-gesture-handler";
 import {
   toggleEventModal,
@@ -37,7 +36,7 @@ class ChatScreen extends Component {
       groupID: this.props.navigation.getParam("group").groupID,
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
-      dateOfLastMsg: new Date().getDate(),
+      dateOfLastMsg: new Date().getDate()
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -219,17 +218,20 @@ class ChatScreen extends Component {
 
   sameDay = (dateOfLastMsg, dayOfLastMsg) => {
     console.log("props date = " + this.props.prevDate);
-    if (dateOfLastMsg === this.state.dateOfLastMsg && dayOfLastMsg === this.state.dayOfLastMsg) {
-      console.log("in true. " + `${dateOfLastMsg}/${dayOfLastMsg}`)
+    if (
+      dateOfLastMsg === this.state.dateOfLastMsg &&
+      dayOfLastMsg === this.state.dayOfLastMsg
+    ) {
+      console.log("in true. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
       return true;
     }
-    console.log("in false. " + `${dateOfLastMsg}/${dayOfLastMsg}`)
+    console.log("in false. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
     this.setState({
       dateOfLastMsg,
       dayOfLastMsg
-    })
+    });
     return false;
-  }
+  };
 
   renderRow = ({ item }) => {
     if (item.messageType === "text") {

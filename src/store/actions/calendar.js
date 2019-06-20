@@ -1,7 +1,11 @@
 import firebase from "react-native-firebase";
-import { FETCH_EVENTS } from "../constants";
+import { FETCH_EVENTS, CLEAR_EVENTS } from "../constants";
 
 const db = firebase.database();
+
+export const clearEvents = () => {
+  return { type: CLEAR_EVENTS };
+};
 
 // get events from database
 export const fetchEvents = groupId => async dispatch => {
