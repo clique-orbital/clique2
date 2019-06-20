@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
 import ContinueButton from "../../../components/ContinueButton";
 import { connect } from "react-redux";
-import { fetchEvents, clearEvents } from "../../../store/actions/calendar";
+import { fetchEvents } from "../../../store/actions/calendar";
 import firebase from "react-native-firebase";
 import {
   toggleEventModal,
@@ -36,27 +36,16 @@ class CalendarScreen extends React.Component {
     this.showEventModal = this.showEventModal.bind(this);
   }
 
+  state = {
+    events: this.props.events[this.props.navigation.getParam("groupID")]
+  };
+
   static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
       headerTitle: navigation.getParam("title") || (this.props || {}).title
     };
   };
-
-  async componentDidMount() {
-    const groupID = this.props.navigation.getParam("groupID");
-    await this.props.fetchEvents(groupID);
-    firebase
-      .database()
-      .ref(`events/${groupID}`)
-      .on("child_added", () => {
-        this.props.fetchEvents(groupID);
-      });
-  }
-
-  componentWillMount() {
-    this.props.clearEvents();
-  }
 
   renderButton = () => {
     return (
@@ -212,11 +201,16 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
-  return { events: state.calendar.events };
+const mapStateToProps = (state, ownProps) => {
+  const groupId = ownProps.navigation.getParam("groupID");
+  const events = state.calendar.events[groupId];
+  if (!events) {
+    return { events: {} };
+  }
+  return { events };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchEvents, clearEvents }
+  { fetchEvents }
 )(CalendarScreen);

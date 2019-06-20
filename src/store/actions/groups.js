@@ -6,6 +6,8 @@ import {
   FETCH_GROUP,
   SORT_GROUPS
 } from "../constants";
+import _ from "lodash";
+
 const db = firebase.database();
 
 export const sortGroups = () => {
@@ -31,6 +33,33 @@ const addNewGroup = (groupId, group) => {
     type: ADD_NEW_GROUP,
     payload: { groupId, group }
   };
+};
+
+export const fetchGroups = () => async dispatch => {
+  const userUID = firebase.auth().currentUser._user.uid;
+  const snapshot = await firebase
+    .database()
+    .ref(`users/${userUID}/groups`)
+    .once("value");
+  const groupIDs = _.keys(snapshot.val());
+  const groups = {};
+  await Promise.all(
+    groupIDs.map(async groupID => {
+      const data = await firebase
+        .database()
+        .ref(`groups/${groupID}`)
+        .once("value");
+      groups[groupID] = data.val();
+    })
+  );
+  const sortedArr = Object.values(groups).sort(
+    (a, b) => a.last_message.timestamp - b.last_message.timestamp
+  );
+  const sortedGroups = {};
+  sortedArr.forEach(group => {
+    sortedGroups[group.groupID] = group;
+  });
+  dispatch(fetchedGroups(sortedGroups));
 };
 
 export const addGroupToUser = (groupID, uid) => async () => {
