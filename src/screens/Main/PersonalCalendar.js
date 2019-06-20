@@ -18,4 +18,6 @@ class PersonalCalendar extends React.Component {
   }
 }
 
-export default PersonalCalendar;
+const calendarStack = createStackNavigator({ Main: PersonalCalendar });
+
+export default calendarStack;
