@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import { createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
-import { connect } from "react-redux";
+import CalendarComponent from "../../components/CalendarComponent";
 
 class PersonalCalendar extends React.Component {
   static navigationOptions = {
@@ -13,16 +13,9 @@ class PersonalCalendar extends React.Component {
     }
   };
 
-  render() {}
+  render() {
+    return <CalendarComponent />;
+  }
 }
 
-const CalendarStack = createStackNavigator({
-  Main: PersonalCalendar
-});
-
-const mapStateToProps = state => {};
-
-export default connect(
-  mapStateToProps,
-  {}
-)(CalendarStack);
+export default PersonalCalendar;
