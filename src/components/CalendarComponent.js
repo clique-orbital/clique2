@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
 import ContinueButton from "./ContinueButton";
 import { connect } from "react-redux";
-import { fetchEvents } from "../store/actions/calendar";
 import firebase from "react-native-firebase";
 import {
   toggleEventModal,
@@ -213,7 +212,4 @@ const mapStateToProps = (state, ownProps) => {
   return { events };
 };
 
-export default connect(
-  mapStateToProps,
-  { fetchEvents }
-)(CalendarComponent);
+export default connect(mapStateToProps)(CalendarComponent);
