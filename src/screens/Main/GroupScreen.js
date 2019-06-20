@@ -15,7 +15,8 @@ import MyIcon from "../../components/MyIcon";
 import {
   fetchedGroups,
   fetchAGroup,
-  sortGroups
+  sortGroups,
+  fetchGroups
 } from "../../store/actions/groups";
 import { connect } from "react-redux";
 
@@ -45,7 +46,6 @@ class GroupScreen extends Component {
   async componentDidMount() {
     const uid = firebase.auth().currentUser._user.uid;
     const db = firebase.database();
-    await this.fetchGroups();
 
     for (let groupId of Object.keys(this.props.groups)) {
       db.ref(`groups/${groupId}/last_message`).on("child_changed", snapshot => {
@@ -55,7 +55,7 @@ class GroupScreen extends Component {
     }
 
     db.ref(`users/${uid}/groups`).on("child_added", () => {
-      this.fetchGroups();
+      this.props.fetchGroups();
     });
   }
 
@@ -66,33 +66,6 @@ class GroupScreen extends Component {
       .once("value", snapshot => {
         this.props.fetchAGroup(groupId, snapshot.val());
       });
-  };
-
-  fetchGroups = async () => {
-    const userUID = firebase.auth().currentUser._user.uid;
-    const snapshot = await firebase
-      .database()
-      .ref(`users/${userUID}/groups`)
-      .once("value");
-    const groupIDs = _.keys(snapshot.val());
-    const groups = {};
-    await Promise.all(
-      groupIDs.map(async groupID => {
-        const data = await firebase
-          .database()
-          .ref(`groups/${groupID}`)
-          .once("value");
-        groups[groupID] = data.val();
-      })
-    );
-    const sortedArr = Object.values(groups).sort(
-      (a, b) => a.last_message.timestamp - b.last_message.timestamp
-    );
-    const sortedGroups = {};
-    sortedArr.forEach(group => {
-      sortedGroups[group.groupID] = group;
-    });
-    return this.props.fetchedGroups(sortedGroups);
   };
 
   renderLastMessage = groupId => {
@@ -203,5 +176,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { fetchAGroup, fetchedGroups, sortGroups }
+  { fetchAGroup, fetchedGroups, sortGroups, fetchGroups }
 )(GroupScreen);
