@@ -25,6 +25,7 @@ import {
 import firebase from "react-native-firebase";
 import _ from "lodash";
 import { convertDate } from "../../../assets/constants";
+import { fetchAllEvents } from "../../../store/actions/calendar";
 
 class CreateEvents extends Component {
   constructor(props) {
@@ -140,6 +141,7 @@ class CreateEvents extends Component {
         .child("last_message")
         .set(message);
       this.props.dispatch(resetEventState());
+      await this.props.dispatch(fetchAllEvents(this.props.uid));
       this.props.navigation.goBack();
     }
   }

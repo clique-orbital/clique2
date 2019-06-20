@@ -77,7 +77,7 @@ class GroupScreen extends Component {
     if (isText) {
       const message = (groups[groupId].last_message || {}).message;
       return (
-        <Text style={{ top: 5 }}>
+        <Text style={{ top: 5 }} numberOfLines={1}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username}
           </Text>
@@ -88,7 +88,7 @@ class GroupScreen extends Component {
     } else {
       const eventTitle = (groups[groupId].last_message || {}).event.title;
       return (
-        <Text style={{ top: 5 }}>
+        <Text style={{ top: 5 }} numberOfLines={1}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username + " "}
           </Text>
@@ -133,7 +133,9 @@ class GroupScreen extends Component {
               </Text>
               <Text>{this.renderTimestamp(item.groupID)}</Text>
             </View>
-            {this.renderLastMessage(item.groupID)}
+            <View style={{ padding: 2, width: "90%" }}>
+              {this.renderLastMessage(item.groupID)}
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -164,8 +166,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").width * 0.14,
     width: Dimensions.get("window").width * 0.14,
     borderRadius: Dimensions.get("window").width * 0.07
-  },
-  lastMessage: {}
+  }
 });
 
 const mapStateToProps = state => {
