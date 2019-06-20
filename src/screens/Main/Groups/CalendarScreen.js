@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
 import ContinueButton from "../../../components/ContinueButton";
 import { connect } from "react-redux";
-import { fetchEvents } from "../../../store/actions/calendar";
+import { fetchEvents, clearEvents } from "../../../store/actions/calendar";
 import firebase from "react-native-firebase";
 import {
   toggleEventModal,
@@ -36,13 +36,12 @@ class CalendarScreen extends React.Component {
     this.showEventModal = this.showEventModal.bind(this);
   }
 
-
   static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
       headerTitle: navigation.getParam("title") || (this.props || {}).title
-    }
-  }
+    };
+  };
 
   async componentDidMount() {
     const groupID = this.props.navigation.getParam("groupID");
@@ -53,6 +52,10 @@ class CalendarScreen extends React.Component {
       .on("child_added", () => {
         this.props.fetchEvents(groupID);
       });
+  }
+
+  componentWillMount() {
+    this.props.clearEvents();
   }
 
   renderButton = () => {
@@ -149,10 +152,17 @@ class CalendarScreen extends React.Component {
 
   renderEmptyData() {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingBottom: 40 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingBottom: 40
+        }}
+      >
         <Text style={{ fontSize: 20 }}>No events on this day!</Text>
       </View>
-    )
+    );
   }
 
   rowHasChanged(r1, r2) {
@@ -181,7 +191,6 @@ class CalendarScreen extends React.Component {
         </View>
         <EventModal />
       </View>
-
     );
   }
 }
@@ -209,5 +218,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { fetchEvents }
+  { fetchEvents, clearEvents }
 )(CalendarScreen);
