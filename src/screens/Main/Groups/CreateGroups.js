@@ -11,31 +11,21 @@ import {
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
 import { connect } from "react-redux";
-import { Field, reduxForm, formValueSelector } from "redux-form";
+import { Field, reduxForm } from "redux-form";
 import ContinueButton from "../../../components/ContinueButton";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
-import HeaderTitle from "../../../components/HeaderTitle";
 
 class GroupMembersSelect extends React.Component {
-  state = { users: [], count: 0 };
-
-  componentWillMount() {
-    this.checkAndGetPermissionForContacts();
-    this.getContacts();
-  }
-
-  handleSubmit = formValues => {
-    this.props.navigation.navigate("GroupDetails", {
-      users: formValues
-    });
-  };
-
   static navigationOptions = () => {
     return {
       headerTitle: (
-        <View style={{ bottom: 5, justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ fontSize: 20, color: "white", textAlign: "center" }}>New Group</Text>
+        <View
+          style={{ bottom: 5, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ fontSize: 20, color: "white", textAlign: "center" }}>
+            New Group
+          </Text>
           <Text style={{ color: "white", fontSize: 12, textAlign: "center" }}>
             Pick your clique members
           </Text>
@@ -44,58 +34,37 @@ class GroupMembersSelect extends React.Component {
     };
   };
 
-  requestContactsPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-        {
-          title: 'Clique Contacts Permission',
-          message:
-            'Clique needs access to your camera.',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Android Contacts permission allowed');
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
+  state = { users: [], count: 0 };
+
+  async componentWillMount() {
+    if (Platform.OS === "android") {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+        title: "Clique Contacts Permission",
+        message: "Clique would like to access your contacts.",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK"
+      })
+        .then(granted => {
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            this.getContacts();
+          } else {
+            this.props.navigation.goBack();
+          }
+        })
+        .catch(err => {
+          console.log("PermissionsAndroid", err);
+        });
+    } else if (Platform.OS === "ios") {
+      Contacts.requestPermission((err, permission) => {
+        if (err) console.log(err);
+        if (permission === "authorized") {
+          this.getContacts();
+        } else if (permission === "denied") {
+          console.log("requesting permission denied");
+          this.props.navigation.goBack();
+        }
+      });
     }
-  }
-
-  checkAndGetPermissionForContacts() {
-    Contacts.checkPermission((err, permission) => {
-      if (err) throw err;
-
-      // Contacts.PERMISSION_AUTHORIZED || Contacts.PERMISSION_UNDEFINED || Contacts.PERMISSION_DENIED
-      if (permission === "undefined") {
-        console.log("requesting");
-        if (Platform.OS === "ios") {
-          Contacts.requestPermission((err, permission) => {
-            if (err) console.log(err);
-            if (permission === "authorized") {
-              console.log("requesting permission successful");
-            } else if (permission === "denied") {
-              console.log("requesting permission denied");
-            }
-          });
-        } else {
-          this.requestContactsPermission();
-        }
-      }
-      if (permission === "authorized") {
-        console.log("Permission already authorized");
-      }
-      if (permission === "denied") {
-        if (Platform.os === "android") {
-          this.requestContactsPermission();
-        }
-        console.log("Permission already denied");
-      }
-    });
   }
 
   getContacts() {
@@ -128,6 +97,12 @@ class GroupMembersSelect extends React.Component {
       });
     });
   }
+
+  handleSubmit = formValues => {
+    this.props.navigation.navigate("GroupDetails", {
+      users: formValues
+    });
+  };
 
   count = increase => {
     if (increase) {

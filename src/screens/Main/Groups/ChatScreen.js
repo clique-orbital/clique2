@@ -8,13 +8,11 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
-  Platform
+  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback
 } from "react-native";
-import {
-  FlatList,
-  TouchableWithoutFeedback,
-  TouchableOpacity
-} from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import {
   toggleEventModal,
   populateAttending,
