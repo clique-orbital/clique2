@@ -53,7 +53,11 @@ class GroupDetails extends React.Component {
 
   renderInput = ({ input, label, meta }) => {
     return (
-      <TextInput {...input} style={[styles.textInput, { marginTop: 5 }]} placeholder={label} />
+      <TextInput
+        {...input}
+        style={[styles.textInput, { marginTop: 5 }]}
+        placeholder={label}
+      />
     );
   };
 
@@ -71,7 +75,7 @@ class GroupDetails extends React.Component {
           />
           <Field
             name="groupname"
-            component={props => this.renderInput(props)}
+            component={this.renderInput}
             label="Enter group name"
             validate={required}
           />

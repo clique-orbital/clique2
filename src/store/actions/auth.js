@@ -42,10 +42,10 @@ const userDetailsToDatabase = user => async dispatch => {
   await firebase
     .database()
     .ref(`users/${uid}`)
-    .set(user2);
+    .set(user);
   await firebase
     .database()
     .ref(`phoneNumbers/${user._user.phoneNumber}`)
-    .set(user2);
+    .set(user);
   createGroup("Saved Messages", uid, "This is your saved messages!");
 };

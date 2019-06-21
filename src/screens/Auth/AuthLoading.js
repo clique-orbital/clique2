@@ -35,10 +35,11 @@ class AuthLoading extends React.Component {
       if (user) {
         if (user.displayName && user.photoURL) {
           this.storeData("profilePicture", user.photoURL);
-          // AsyncStorage.setItem("profilePicture", JSON.stringify(user.photoURL));
           // update user auth details in redux store
           this.props.setUserDetails(user.toJSON());
+          // fetch events now
           await this.props.fetchAllEvents(user.uid);
+          // fetch groups now
           await this.props.fetchGroups();
           this.props.navigation.navigate("App");
         } else {
