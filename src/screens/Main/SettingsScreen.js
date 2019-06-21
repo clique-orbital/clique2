@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
+import { Button } from "react-native-elements";
 import { createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
@@ -70,7 +71,12 @@ class SettingsScreen extends React.Component {
         {this.renderProfilePic()}
         <Text>Your name: {this.props.username}</Text>
         <Text>Your phone number: {this.props.phoneNumber}</Text>
-        <Button title="Sign Out" onPress={this.signOut} />
+        <Button
+          title="Sign Out"
+          type="clear"
+          onPress={this.signOut}
+          buttonStyle={{ top: 10 }}
+        />
       </View>
     );
   }
