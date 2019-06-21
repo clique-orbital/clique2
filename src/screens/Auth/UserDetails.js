@@ -63,7 +63,7 @@ class UserDetails extends React.Component {
         <Field name="profilepicture" component={this.renderImagePicker} />
         <Field
           name="username"
-          component={props => this.renderInput(props)}
+          component={this.renderInput}
           label="Enter username"
         />
         <TouchableHighlight

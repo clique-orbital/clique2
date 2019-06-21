@@ -52,14 +52,8 @@ export const fetchGroups = () => async dispatch => {
       groups[groupID] = data.val();
     })
   );
-  const sortedArr = Object.values(groups).sort(
-    (a, b) => a.last_message.timestamp - b.last_message.timestamp
-  );
-  const sortedGroups = {};
-  sortedArr.forEach(group => {
-    sortedGroups[group.groupID] = group;
-  });
-  dispatch(fetchedGroups(sortedGroups));
+  dispatch(fetchedGroups(groups));
+  dispatch(sortGroups());
 };
 
 export const addGroupToUser = (groupID, uid) => async () => {
@@ -100,6 +94,7 @@ export const newGroupCreator = (
 
 const addGroupPicture = pictureUri => async () => {
   //upload picture to firebase storage
+  console.log("picture is uploading");
   let url;
   await firebase
     .storage()
@@ -108,10 +103,11 @@ const addGroupPicture = pictureUri => async () => {
     .then(snapshot => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
         url = snapshot.downloadURL;
+        console.log("picture uploaded");
       }
     })
     .catch(err => {
-      console.log(err.message);
+      console.log("error message", err.message);
     });
   return url;
 };
