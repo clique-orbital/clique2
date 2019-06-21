@@ -20,7 +20,6 @@ export const fetchedGroups = groups => {
     payload: groups
   };
 };
-
 export const fetchAGroup = (groupId, message) => {
   return {
     type: FETCH_GROUP,
@@ -37,10 +36,7 @@ const addNewGroup = (groupId, group) => {
 
 export const fetchGroups = () => async dispatch => {
   const userUID = firebase.auth().currentUser._user.uid;
-  const snapshot = await firebase
-    .database()
-    .ref(`users/${userUID}/groups`)
-    .once("value");
+  const snapshot = await db.ref(`users/${userUID}/groups`).once("value");
   const groupIDs = _.keys(snapshot.val());
   const groups = {};
   await Promise.all(
@@ -54,23 +50,18 @@ export const fetchGroups = () => async dispatch => {
   );
   dispatch(fetchedGroups(groups));
   dispatch(sortGroups());
+  return Promise.resolve();
 };
 
-export const addGroupToUser = (groupID, uid) => async () => {
-  await db
+export const addGroupToUser = async (groupID, uid) => {
+  return db
     .ref(`users/${uid}/groups`)
     .child(groupID)
     .set(true)
     .catch(err => console.log(err));
 };
 
-export const newGroupCreator = (
-  groupName,
-  groupID,
-  photoURL,
-  users,
-  data
-) => async () => {
+const newGroupCreator = async (groupName, groupID, photoURL, users, data) => {
   const newGroup = {
     groupName,
     photoURL,
@@ -84,32 +75,27 @@ export const newGroupCreator = (
     groupID
   };
 
-  await firebase
-    .database()
+  return db
     .ref(`groups`)
     .child(groupID)
     .set(newGroup)
     .catch(err => console.log(err));
 };
 
-const addGroupPicture = pictureUri => async () => {
-  //upload picture to firebase storage
-  console.log("picture is uploading");
-  let url;
-  await firebase
+const addGroupPicture = async pictureUri => {
+  return firebase
     .storage()
     .ref(`images/group_pictures/${new Date().getTime()}`)
     .put(pictureUri)
     .then(snapshot => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-        url = snapshot.downloadURL;
         console.log("picture uploaded");
+        return snapshot.downloadURL;
       }
     })
     .catch(err => {
-      console.log("error message", err.message);
+      console.log("Add group picture error:", err.message);
     });
-  return url;
 };
 
 export const createGroup = (
@@ -121,28 +107,28 @@ export const createGroup = (
 ) => async dispatch => {
   let users_info = { [myuser]: true };
   const groupID = uuidv4();
-  await dispatch(addGroupToUser(groupID, myuser));
+  addGroupToUser(groupID, myuser);
   for (let user of users) {
-    await db
-      .ref("phoneNumbers")
+    db.ref("phoneNumbers")
       .child(`${user.phoneNumbers[0].number.replace(/\s/g, "")}`)
-      .once("value", async data => {
+      .once("value", data => {
         uid = data.child("uid").val();
         users_info = { ...users_info, [uid]: true };
-        await dispatch(addGroupToUser(groupID, uid));
+        addGroupToUser(groupID, uid);
       });
   }
 
-  const url = await dispatch(addGroupPicture(groupPicture));
-
-  await dispatch(newGroupCreator(groupName, groupID, url, users_info, data));
-
-  db.ref("groups")
-    .child(`${groupID}`)
-    .once("value")
-    .then(snapshot => {
-      const newGroup = snapshot.val();
-      dispatch(addNewGroup(groupID, newGroup));
-    })
-    .catch(e => console.log(e));
+  const url = await addGroupPicture(groupPicture);
+  newGroupCreator(groupName, groupID, url, users_info, data).then(() => {
+    return db
+      .ref("groups")
+      .child(`${groupID}`)
+      .once("value")
+      .then(snapshot => {
+        const newGroup = snapshot.val();
+        dispatch(addNewGroup(groupID, newGroup));
+        return true;
+      })
+      .catch(e => console.log(e));
+  });
 };

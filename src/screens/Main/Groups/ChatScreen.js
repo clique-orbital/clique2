@@ -95,7 +95,7 @@ class ChatScreen extends Component {
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
-    this.refs.messageList.scrollToEnd({ animated: true });
+    this.refs.messageList.scrollToEnd({ animated: false });
   };
 
   handleChange = key => val => {

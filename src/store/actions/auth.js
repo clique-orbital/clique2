@@ -11,10 +11,10 @@ export const setUserDetails = userDetails => {
   };
 };
 
-export const createAccount = (username, pictureUri) => async dispatch => {
+export const createAccount = (username, pictureUri) => dispatch => {
   //upload picture to firebase storage
   let user = firebase.auth().currentUser;
-  await firebase
+  firebase
     .storage()
     .ref(`images/profile_pictures/${new Date().getTime()}`)
     .put(pictureUri)
@@ -37,15 +37,14 @@ export const createAccount = (username, pictureUri) => async dispatch => {
     });
 };
 
-const userDetailsToDatabase = user => async dispatch => {
+const userDetailsToDatabase = user => {
   const uid = user._user.uid;
-  await firebase
+  firebase
     .database()
     .ref(`users/${uid}`)
     .set(user);
-  await firebase
+  firebase
     .database()
     .ref(`phoneNumbers/${user._user.phoneNumber}`)
     .set(user);
-  createGroup("Saved Messages", uid, "This is your saved messages!");
 };
