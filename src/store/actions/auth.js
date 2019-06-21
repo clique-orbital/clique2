@@ -37,7 +37,6 @@ export const createAccount = (username, pictureUri) => async dispatch => {
     });
 };
 
-
 const userDetailsToDatabase = user => async dispatch => {
   const uid = user._user.uid;
   await firebase

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   View,
-  Button,
   Text,
   TextInput,
   StyleSheet,
@@ -9,6 +8,7 @@ import {
   Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { Button } from "react-native-elements";
 
 import { connect } from "react-redux";
 import { setUserDetails } from "../../store/actions/auth";
@@ -51,7 +51,10 @@ class Auth extends Component {
     firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber)
-      .then(confirmResult => this.setState({ confirmResult, message: "" }))
+      .then(confirmResult => {
+        this.props.setUserDetails(firebase.auth().currentUser);
+        this.setState({ confirmResult, message: "" });
+      })
       .catch(error =>
         this.setState({
           message: `${error.message}`
@@ -111,7 +114,7 @@ class Auth extends Component {
         </Text>
         <TextInput
           autoFocus
-          keyboardType='phone-pad'
+          keyboardType="phone-pad"
           style={{
             width: "70%",
             height: 40,
@@ -124,7 +127,7 @@ class Auth extends Component {
           placeholder={"Phone number"}
           value={phoneNumber}
         />
-        <Button title="Continue" color="blue" onPress={this.signIn} />
+        <Button title="Continue" type="clear" onPress={this.signIn} />
         <Text style={styles.fineprint}>
           Press continue to verify your account through a SMS code sent to your
           phone number. Message and data rates may apply.
@@ -163,7 +166,7 @@ class Auth extends Component {
         <Text> Please enter it below:</Text>
         <TextInput
           autoFocus
-          keyboardType='phone-pad'
+          keyboardType="phone-pad"
           style={{
             height: 40,
             marginTop: "10%",
