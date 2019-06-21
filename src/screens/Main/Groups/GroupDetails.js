@@ -30,15 +30,20 @@ class GroupDetails extends React.Component {
     };
   };
 
-  handleSubmit = async values => {
-    await this.props.createGroup(
-      values.groupname,
-      values.grouppicture.uri,
-      this.props.user.uid,
-      "This is a new clique!",
-      Object.values(this.props.navigation.getParam("users"))
-    );
-    this.props.navigation.navigate("Main");
+  handleSubmit = values => {
+    this.props
+      .dispatch(
+        createGroup(
+          values.groupname,
+          values.grouppicture.uri,
+          this.props.user.uid,
+          "This is a new clique!",
+          Object.values(this.props.navigation.getParam("users"))
+        )
+      )
+      .then(() => {
+        this.props.navigation.navigate("Main");
+      });
   };
 
   renderImagePicker = props => {
@@ -120,7 +125,4 @@ const mapStateToProps = state => {
 };
 
 let form = reduxForm({ form: "groupDetails" })(GroupDetails);
-export default connect(
-  mapStateToProps,
-  { createGroup }
-)(form);
+export default connect(mapStateToProps)(form);

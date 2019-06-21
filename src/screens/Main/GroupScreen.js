@@ -44,23 +44,18 @@ class GroupScreen extends Component {
   };
 
   async componentDidMount() {
-    const uid = firebase.auth().currentUser._user.uid;
+    this.scrollToTop();
     const db = firebase.database();
 
     for (let groupId of Object.keys(this.props.groups)) {
       db.ref(`groups/${groupId}/last_message`).on("child_changed", snapshot => {
-        this.fetchGroup(groupId);
-        this.props.sortGroups();
+        this.fetchGroup(groupId).then(() => this.props.sortGroups());
       });
     }
-
-    db.ref(`users/${uid}/groups`).on("child_added", () => {
-      this.props.fetchGroups();
-    });
   }
 
   fetchGroup = groupId => {
-    firebase
+    return firebase
       .database()
       .ref(`groups/${groupId}/last_message`)
       .once("value", snapshot => {
@@ -142,11 +137,16 @@ class GroupScreen extends Component {
     );
   };
 
+  scrollToTop = () => {
+    this.refs.groupList.scrollToOffset({ animated: false, offset: 0 });
+  };
+
   render() {
     return (
       <View>
         <FlatList
-          inverted
+          ref="groupList"
+          onContentSizeChange={this.scrollToTop}
           data={Object.values(this.props.groups)}
           renderItem={this.renderRow}
           keyExtractor={(item, index) => index.toString()}
