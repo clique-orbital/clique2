@@ -16,8 +16,10 @@ import MyIcon from "../../components/MyIcon";
 import { createAccount } from "../../store/actions/auth";
 import defaultPicture from "../../assets/default_profile.png";
 import AsyncStorage from "@react-native-community/async-storage";
+import Spinner from "../../components/Spinner";
 
 class UserDetails extends React.Component {
+  state = { loading: false };
   storeData = async (key, val) => {
     try {
       val = JSON.stringify(val);
@@ -33,6 +35,7 @@ class UserDetails extends React.Component {
   };
 
   handleSubmit = async values => {
+    this.setState({ loading: true });
     this.storeData("profilePicture", values.profilepicture.uri);
     await this.props.createAccount(values.username, values.profilepicture.uri);
     this.props.navigation.navigate("App");
@@ -79,6 +82,7 @@ class UserDetails extends React.Component {
             </View>
           </View>
         </TouchableHighlight>
+        {this.state.loading && <Spinner />}
       </SafeAreaView>
     );
   }

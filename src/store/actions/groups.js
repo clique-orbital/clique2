@@ -129,6 +129,7 @@ export const createGroup = (
       .then(snapshot => {
         const newGroup = snapshot.val();
         dispatch(addNewGroup(groupID, newGroup));
+        dispatch(sortGroups());
         return true;
       })
       .catch(e => console.log(e));

@@ -15,6 +15,7 @@ import { Field, reduxForm } from "redux-form";
 import ContinueButton from "../../../components/ContinueButton";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
+import Spinner from "../../../components/Spinner";
 
 class GroupMembersSelect extends React.Component {
   static navigationOptions = () => {
@@ -34,7 +35,7 @@ class GroupMembersSelect extends React.Component {
     };
   };
 
-  state = { users: [], count: 0 };
+  state = { users: [], count: 0, loading: true };
 
   async componentWillMount() {
     if (Platform.OS === "android") {
@@ -96,6 +97,7 @@ class GroupMembersSelect extends React.Component {
         });
       });
     });
+    this.setState({ loading: false });
   }
 
   handleSubmit = formValues => {
@@ -167,6 +169,7 @@ class GroupMembersSelect extends React.Component {
     return (
       <View style={{ display: "flex", height: "100%" }}>
         {this.renderFlatList()}
+        {this.state.loading && <Spinner />}
       </View>
     );
   }

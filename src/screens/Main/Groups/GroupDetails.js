@@ -16,11 +16,12 @@ import { createGroup } from "../../../store/actions/groups";
 import defaultPicture from "../../../assets/default_profile.png";
 import ImagePicker from "../../../components/ImagePickerComponent";
 import HeaderTitle from "../../../components/HeaderTitle";
+import Spinner from "../../../components/Spinner";
 
 const required = value => (value ? undefined : "Required");
 
 class GroupDetails extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
       headerTitle: (
         <View style={{ bottom: 5 }}>
@@ -30,7 +31,10 @@ class GroupDetails extends React.Component {
     };
   };
 
+  state = { loading: false };
+
   handleSubmit = values => {
+    this.setState({ loading: true });
     this.props
       .dispatch(
         createGroup(
@@ -92,6 +96,7 @@ class GroupDetails extends React.Component {
         >
           <ContinueButton name="arrow-forward" />
         </TouchableOpacity>
+        {this.state.loading && <Spinner />}
       </View>
     );
   };
