@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { setUserDetails } from "../../store/actions/auth";
 import { fetchGroups } from "../../store/actions/groups";
 import { fetchAllEvents } from "../../store/actions/calendar";
+import { populateGroups } from "../../store/actions/messageCounter";
+
 import AsyncStorage from "@react-native-community/async-storage";
 import LoadingView from "../../components/LoadingView";
 
@@ -29,7 +31,6 @@ class AuthLoading extends React.Component {
       if (user) {
         if (user.displayName && user.photoURL) {
           this.storeData("profilePicture", user.photoURL)
-            .then(() => this.props.setUserDetails(user))
             .then(() => this.props.fetchGroups())
             .then(() => this.props.fetchAllEvents(user.uid))
             .then(() => this.props.navigation.navigate("App"));
@@ -54,6 +55,7 @@ export default connect(
   {
     setUserDetails,
     fetchGroups,
-    fetchAllEvents
+    fetchAllEvents,
+    populateGroups
   }
 )(AuthLoading);
