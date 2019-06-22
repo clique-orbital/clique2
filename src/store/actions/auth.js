@@ -27,8 +27,10 @@ export const createAccount = (username, pictureUri) => dispatch => {
           })
           .then(() => {
             user = firebase.auth().currentUser;
-            dispatch(setUserDetails(user));
-            dispatch(userDetailsToDatabase(user));
+            user["_user"]["groups"] = "";
+            userDetailsToDatabase(user).then(() =>
+              dispatch(setUserDetails(user))
+            );
           });
       }
     })
@@ -37,13 +39,13 @@ export const createAccount = (username, pictureUri) => dispatch => {
     });
 };
 
-const userDetailsToDatabase = user => {
+const userDetailsToDatabase = async user => {
   const uid = user._user.uid;
   firebase
     .database()
     .ref(`users/${uid}`)
     .set(user);
-  firebase
+  return firebase
     .database()
     .ref(`phoneNumbers/${user._user.phoneNumber}`)
     .set(user);

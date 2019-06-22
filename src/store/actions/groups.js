@@ -36,10 +36,13 @@ const addNewGroup = (groupId, group) => {
 
 export const fetchGroups = () => async dispatch => {
   const userUID = firebase.auth().currentUser._user.uid;
-  const snapshot = await db.ref(`users/${userUID}/groups`).once("value");
+  const snapshot = await db
+    .ref(`users/${userUID}/groups`)
+    .once("value")
+    .catch(err => console.log(err));
   const groupIDs = _.keys(snapshot.val());
   const groups = {};
-  await Promise.all(
+  Promise.all(
     groupIDs.map(async groupID => {
       const data = await firebase
         .database()
@@ -47,9 +50,9 @@ export const fetchGroups = () => async dispatch => {
         .once("value");
       groups[groupID] = data.val();
     })
-  );
-  dispatch(fetchedGroups(groups));
-  dispatch(sortGroups());
+  )
+    .then(() => dispatch(fetchedGroups(groups)))
+    .then(() => dispatch(sortGroups()));
   return Promise.resolve();
 };
 
@@ -89,7 +92,6 @@ const addGroupPicture = async pictureUri => {
     .put(pictureUri)
     .then(snapshot => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-        console.log("picture uploaded");
         return snapshot.downloadURL;
       }
     })

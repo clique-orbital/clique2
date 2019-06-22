@@ -9,9 +9,9 @@ export const clearEvents = () => {
 
 // get events from database
 export const fetchEvents = groupId => async dispatch => {
-  const snapshot = await db.ref(`events/${groupId}`).once("value");
-  const events = snapshot.val();
-  dispatch(storeEvents(groupId, events));
+  return db.ref(`events/${groupId}`).once("value", snapshot => {
+    dispatch(storeEvents(groupId, snapshot.val()));
+  });
 };
 
 // send the events from database to redux store
@@ -23,8 +23,8 @@ const storeEvents = (groupid, events) => {
   };
 };
 
-export const fetchAllEvents = uid => async dispatch => {
-  await db.ref(`users/${uid}/groups`).once("value", snapshot => {
+export const fetchAllEvents = uid => dispatch => {
+  return db.ref(`users/${uid}/groups`).once("value", snapshot => {
     Object.keys(snapshot.val()).forEach(groupId => {
       dispatch(fetchEvents(groupId));
     });
