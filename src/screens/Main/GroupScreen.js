@@ -47,10 +47,15 @@ class GroupScreen extends Component {
     this.scrollToTop();
     const db = firebase.database();
 
-    for (let groupId of Object.keys(this.props.groups)) {
-      db.ref(`groups/${groupId}/last_message`).on("child_changed", snapshot => {
-        this.fetchGroup(groupId).then(() => this.props.sortGroups());
-      });
+    if (this.props.groups) {
+      for (let groupId of Object.keys(this.props.groups)) {
+        db.ref(`groups/${groupId}/last_message`).on(
+          "child_changed",
+          snapshot => {
+            this.fetchGroup(groupId).then(() => this.props.sortGroups());
+          }
+        );
+      }
     }
   }
 
