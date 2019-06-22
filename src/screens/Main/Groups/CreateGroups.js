@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   FlatList,
   PermissionsAndroid,
-  Platform
+  Platform,
+  StyleSheet
 } from "react-native";
 import firebase from "react-native-firebase";
 import Contacts from "react-native-contacts";
@@ -20,14 +21,11 @@ import Spinner from "../../../components/Spinner";
 class GroupMembersSelect extends React.Component {
   static navigationOptions = () => {
     return {
+      headerTintColor: "#fff",
       headerTitle: (
-        <View
-          style={{ bottom: 5, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text style={{ fontSize: 20, color: "white", textAlign: "center" }}>
-            New Group
-          </Text>
-          <Text style={{ color: "white", fontSize: 12, textAlign: "center" }}>
+        <View style={{ bottom: 5, justifyContent: "center" }}>
+          <Text style={{ fontSize: 20, color: "white" }}>New Group</Text>
+          <Text style={{ color: "white", fontSize: 12 }}>
             Pick your clique members
           </Text>
         </View>
@@ -136,6 +134,9 @@ class GroupMembersSelect extends React.Component {
         component={this.renderCheckBox}
         user={item}
         label={item.givenName + " " + item.familyName}
+        style={{
+          paddingBottom: 5
+        }}
       />
     );
   };

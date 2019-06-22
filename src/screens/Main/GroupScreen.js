@@ -19,6 +19,7 @@ import {
   fetchGroups
 } from "../../store/actions/groups";
 import { connect } from "react-redux";
+import GroupPicture from "../../components/GroupPicture";
 
 const cliqueBlue = "#134782";
 
@@ -114,12 +115,13 @@ class GroupScreen extends Component {
         style={styles.chatList}
         onPress={() =>
           this.props.navigation.navigate("Chat", {
-            group: item
+            group: item,
+            image: { uri: item.photoURL }
           })
         }
       >
         <View style={{ flexDirection: "row" }}>
-          <Image source={{ uri: item.photoURL }} style={styles.groupPicture} />
+          <GroupPicture source={{ uri: item.photoURL }} value={0.14} />
           <View style={{ flexDirection: "column", left: 15 }}>
             <View
               style={{
@@ -166,11 +168,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: "#CCC"
-  },
-  groupPicture: {
-    height: Dimensions.get("window").width * 0.14,
-    width: Dimensions.get("window").width * 0.14,
-    borderRadius: Dimensions.get("window").width * 0.07
   }
 });
 
