@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image,
   Dimensions
 } from "react-native";
 import firebase from "react-native-firebase";
@@ -20,6 +19,7 @@ import {
 } from "../../store/actions/groups";
 import { connect } from "react-redux";
 import GroupPicture from "../../components/GroupPicture";
+import { incrementCount, setToZero } from "../../store/actions/messageCounter";
 
 const cliqueBlue = "#134782";
 
@@ -53,6 +53,13 @@ class GroupScreen extends Component {
         db.ref(`groups/${groupId}/last_message`).on(
           "child_changed",
           snapshot => {
+            db.ref(`groups/${groupId}/last_message/username`)
+              .once("value")
+              .then(res => {
+                if (res.val() !== firebase.auth().currentUser.displayName) {
+                  this.props.incrementCount(groupId);
+                }
+              });
             this.fetchGroup(groupId).then(() => this.props.sortGroups());
           }
         );
@@ -113,12 +120,13 @@ class GroupScreen extends Component {
     return (
       <TouchableOpacity
         style={styles.chatList}
-        onPress={() =>
+        onPress={() => {
+          this.props.setToZero(item.groupID);
           this.props.navigation.navigate("Chat", {
             group: item,
             image: { uri: item.photoURL }
-          })
-        }
+          });
+        }}
       >
         <View style={{ flexDirection: "row" }}>
           <GroupPicture source={{ uri: item.photoURL }} value={0.14} />
@@ -137,6 +145,23 @@ class GroupScreen extends Component {
             </View>
             <View style={{ padding: 2, width: "90%" }}>
               {this.renderLastMessage(item.groupID)}
+            </View>
+            <View>
+              {this.props.groupsMessageCounter[item.groupID] > 0 ? (
+                <View
+                  style={{
+                    backgroundColor: "#3a8cbc",
+                    height: 20,
+                    width: 20,
+                    borderRadius: 10,
+                    position: "absolute",
+                    right: 10,
+                    bottom: 1
+                  }}
+                />
+              ) : (
+                undefined
+              )}
             </View>
           </View>
         </View>
@@ -173,11 +198,19 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    groups: state.groupsReducer.groups
+    groups: state.groupsReducer.groups,
+    groupsMessageCounter: state.messageCounterReducer.groups
   };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchAGroup, fetchedGroups, sortGroups, fetchGroups }
+  {
+    fetchAGroup,
+    fetchedGroups,
+    sortGroups,
+    fetchGroups,
+    incrementCount,
+    setToZero
+  }
 )(GroupScreen);

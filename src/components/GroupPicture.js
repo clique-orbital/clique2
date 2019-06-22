@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, Dimensions, StyleSheet } from "react-native";
+import { Image, Dimensions } from "react-native";
 
 class GroupPicture extends React.Component {
   render() {

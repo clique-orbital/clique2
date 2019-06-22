@@ -42,7 +42,7 @@ export const fetchGroups = () => async dispatch => {
     .catch(err => console.log(err));
   const groupIDs = _.keys(snapshot.val());
   const groups = {};
-  Promise.all(
+  return Promise.all(
     groupIDs.map(async groupID => {
       const data = await firebase
         .database()
@@ -52,8 +52,8 @@ export const fetchGroups = () => async dispatch => {
     })
   )
     .then(() => dispatch(fetchedGroups(groups)))
-    .then(() => dispatch(sortGroups()));
-  return Promise.resolve();
+    .then(() => dispatch(sortGroups()))
+    .then(() => groups);
 };
 
 export const addGroupToUser = async (groupID, uid) => {

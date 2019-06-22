@@ -16,7 +16,7 @@ const persistConfig = {
   key: "root",
   storage,
   stateReconciler: autoMergeLevel2,
-  blacklist: ["createEventsReducer", "form", "eventModalReducer"]
+  blacklist: ["eventModalReducer", "createEventsReducer", "form"]
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
