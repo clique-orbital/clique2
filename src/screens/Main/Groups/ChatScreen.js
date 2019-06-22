@@ -25,6 +25,7 @@ import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
 import _ from "lodash";
+import GroupPicture from "../../../components/GroupPicture";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -48,7 +49,22 @@ class ChatScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
-      headerTitle: navigation.getParam("group").groupName,
+      headerTitle: (
+        <View style={{ flexDirection: "row" }}>
+          <GroupPicture source={navigation.getParam("image")} value={0.1} />
+          <Text
+            style={{
+              color: "#fff",
+              paddingLeft: 15,
+              fontSize: 18,
+              fontWeight: "500",
+              textAlignVertical: "center"
+            }}
+          >
+            {navigation.getParam("group").groupName}
+          </Text>
+        </View>
+      ),
       headerRight: (
         <TouchableOpacity
           onPress={() =>
@@ -345,7 +361,7 @@ class ChatScreen extends Component {
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -200}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -300}
         style={{ flex: 1 }}
       >
         <SafeAreaView>
@@ -408,7 +424,8 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 8,
     color: "black",
-    borderColor: "black"
+    borderColor: "black",
+    bottom: 0
   },
   sendBtn: {
     color: "#1d73d6",

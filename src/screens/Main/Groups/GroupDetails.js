@@ -60,7 +60,7 @@ class GroupDetails extends React.Component {
     );
   };
 
-  renderInput = ({ input, label, meta }) => {
+  renderInput = ({ input, label }) => {
     return (
       <TextInput
         {...input}
