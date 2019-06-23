@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   SafeAreaView,
-  Text,
   View,
   TextInput,
   Dimensions,
@@ -26,6 +25,7 @@ import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
 import _ from "lodash";
 import GroupPicture from "../../../components/GroupPicture";
+import Text from "../../../components/Text";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -251,28 +251,38 @@ class ChatScreen extends Component {
     if (item.messageType === "text") {
       return (
         <View
-          style={
+          style={[
+            { flexDirection: "column" },
             item.sender === this.props.uid
               ? styles.myMessageBubble
               : styles.yourMessageBubble
-          }
+          ]}
         >
-          <View style={{ flexWrap: "wrap" }}>
-            <Text style={{ color: "#fff", padding: 7, fontSize: 16 }}>
-              {item.message}
-            </Text>
-          </View>
-          <View style={{ justifyContent: "flex-end" }}>
-            <Text
-              style={{
-                color: "#eee",
-                paddingRight: 13,
-                paddingBottom: 7,
-                fontSize: 10
-              }}
-            >
-              {this.convertTime(item.timestamp)}
-            </Text>
+          {item.sender !== this.props.uid && (
+            <View style={{ padding: 2 }}>
+              <Text white semibold>
+                {item.username}
+              </Text>
+            </View>
+          )}
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flexWrap: "wrap" }}>
+              <Text body white style={{ padding: 7 }}>
+                {item.message}
+              </Text>
+            </View>
+            <View style={{ justifyContent: "flex-end" }}>
+              <Text
+                style={{
+                  color: "#eee",
+                  paddingRight: 13,
+                  paddingBottom: 7,
+                  fontSize: 10
+                }}
+              >
+                {this.convertTime(item.timestamp)}
+              </Text>
+            </View>
           </View>
         </View>
       );
@@ -432,26 +442,25 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   yourMessageBubble: {
-    flexDirection: "row",
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-start",
     backgroundColor: "#134782",
-    borderRadius: 20,
+    borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    marginRight: 40
+    maxWidth: "80%"
   },
   myMessageBubble: {
-    flexDirection: "row",
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-end",
     backgroundColor: "#3a8cbc",
-    borderRadius: 20,
+    borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    marginLeft: 40
+    marginLeft: 40,
+    maxWidth: "80%"
   },
   yourEventBubble: {
     alignSelf: "flex-start",
