@@ -31,6 +31,7 @@ class AuthLoading extends React.Component {
       if (user) {
         if (user.displayName && user.photoURL) {
           this.storeData("profilePicture", user.photoURL)
+            .then(() => this.props.setUserDetails(user))
             .then(() => this.props.fetchGroups())
             .then(() => this.props.fetchAllEvents(user.uid))
             .then(() => this.props.navigation.navigate("App"));

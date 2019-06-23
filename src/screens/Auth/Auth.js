@@ -1,19 +1,16 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Image,
-  Dimensions
-} from "react-native";
+import { View, StyleSheet, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { Button } from "react-native-elements";
+import Button from "../../components/Button";
+import Text from "../../components/Text";
+import Input from "../../components/Input";
 
 import { connect } from "react-redux";
 import { setUserDetails } from "../../store/actions/auth";
 import firebase from "react-native-firebase";
 import cliqueBlue from "../../assets/constants";
+import theme from "../../assets/theme";
+import Spinner from "../../components/Spinner";
 
 import icon from "../../assets/icon.png";
 
@@ -25,7 +22,8 @@ class Auth extends Component {
       message: "",
       codeInput: "",
       phoneNumber: "+65", // need to change
-      confirmResult: null
+      confirmResult: null,
+      loading: false
     };
   }
 
@@ -47,11 +45,13 @@ class Auth extends Component {
   }
 
   signIn = () => {
+    this.setState({ loading: true });
     const { phoneNumber } = this.state;
     firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber)
       .then(confirmResult => {
+        this.setState({ loading: false });
         this.props.setUserDetails(firebase.auth().currentUser);
         this.setState({ confirmResult, message: "" });
       })
@@ -63,6 +63,8 @@ class Auth extends Component {
   };
 
   confirmCode = () => {
+    this.setState({ loading: true });
+
     const { codeInput, confirmResult } = this.state;
 
     if (confirmResult && codeInput.length) {
@@ -73,6 +75,7 @@ class Auth extends Component {
           ref.on(
             "value",
             snapshot => {
+              this.setState({ loading: false });
               this.props.navigation.navigate(
                 snapshot.val()[user._user.uid] ? "App" : "UserDetails"
               );
@@ -92,7 +95,7 @@ class Auth extends Component {
     const { phoneNumber } = this.state;
 
     return (
-      <SafeAreaView
+      <View
         style={{
           padding: 25,
           display: "flex",
@@ -108,82 +111,81 @@ class Auth extends Component {
             borderRadius: Dimensions.get("window").width / 4
           }}
         />
-        <Text style={styles.welcome}>Welcome to Clique</Text>
-        <Text style={styles.text}>
+        <Text h1 black center style={styles.welcome}>
+          Welcome to Clique
+        </Text>
+        <Text body gray center>
           What number can people use to reach you?
         </Text>
-        <TextInput
-          autoFocus
-          keyboardType="phone-pad"
-          style={{
-            width: "70%",
-            height: 40,
-            marginTop: 15,
-            marginBottom: 15,
-            borderBottomColor: "grey",
-            borderBottomWidth: StyleSheet.hairlineWidth
-          }}
+        <Input
+          phone
+          style={[styles.input, styles.border]}
           onChangeText={value => this.setState({ phoneNumber: value })}
-          placeholder={"Phone number"}
           value={phoneNumber}
+          w={Dimensions.get("window").width * 0.5}
         />
-        <Button title="Continue" type="clear" onPress={this.signIn} />
-        <Text style={styles.fineprint}>
+        <Button shadow onPress={this.signIn} style={{ width: "70%" }}>
+          <Text center semibold>
+            Continue
+          </Text>
+        </Button>
+        <Text center gray caption style={styles.fineprint}>
           Press continue to verify your account through a SMS code sent to your
           phone number. Message and data rates may apply.
         </Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   renderMessage() {
     const { message } = this.state;
-
     if (!message.length) return null;
-
-    return <Text style={styles.message}>{message}</Text>;
+    return (
+      <Text medium style={styles.message}>
+        {message}
+      </Text>
+    );
   }
 
   renderVerificationCodeInput() {
     const { codeInput } = this.state;
 
     return (
-      <SafeAreaView
+      <View
         style={{
-          marginTop: 25,
+          top: "30%",
           padding: 25,
           display: "flex",
           justifyContent: "center",
           alignItems: "center"
         }}
       >
-        <Text style={{ textAlign: "center" }}>
-          A six digit verification code has been sent to
-        </Text>
-        <Text style={{ fontSize: 20, fontWeight: "400", marginBottom: "10%" }}>
+        <Text center>A six digit verification code has been sent to</Text>
+        <Text medium h2 style={{ marginBottom: 20 }}>
           {this.state.phoneNumber}
         </Text>
         <Text> Please enter it below:</Text>
-        <TextInput
-          autoFocus
-          keyboardType="phone-pad"
-          style={{
-            height: 40,
-            marginTop: "10%",
-            marginBottom: "15%",
-            fontSize: 40
-          }}
+        <Input
+          phone
+          h={100}
+          style={[
+            styles.input,
+            {
+              fontSize: 40
+            }
+          ]}
           color={cliqueBlue}
           onChangeText={value => this.setState({ codeInput: value })}
-          placeholder={"_ _ _ _ _ _"}
           value={codeInput}
+          placeholder={"_ _ _ _ _ _"}
         />
-        <Button
-          title="Confirm Code"
-          color="#841584"
-          onPress={this.confirmCode}
-        />
-      </SafeAreaView>
+        <Button shadow onPress={this.confirmCode} style={{ width: "70%" }}>
+          <Text center semibold>
+            Confirm Code
+          </Text>
+        </Button>
+        {this.renderMessage()}
+      </View>
     );
   }
 
@@ -197,20 +199,29 @@ class Auth extends Component {
         <View>
           {this.renderPhoneNumberInput()}
           {this.renderMessage()}
+          {this.state.loading && !this.state.message && <Spinner />}
         </View>
       );
     } else if (!user && confirmResult) {
       currentRender = (
         <View>
           {this.renderVerificationCodeInput()}
-          {this.renderMessage()}
+          {this.state.loading && !this.state.message && <Spinner />}
         </View>
       );
     } else {
       this.props.navigation.navigate("UserDetails");
     }
 
-    return <SafeAreaView style={{ flex: 1 }}>{currentRender}</SafeAreaView>;
+    return (
+      <SafeAreaView
+        style={{
+          flex: 1
+        }}
+      >
+        {currentRender}
+      </SafeAreaView>
+    );
   }
 }
 
@@ -221,22 +232,26 @@ const mapStateToProps = state => {
 const styles = StyleSheet.create({
   message: {
     margin: "5%",
-    textAlign: "center"
+    textAlign: "center",
+    color: "red"
   },
   welcome: {
     margin: "10%",
-    textAlign: "center",
     fontSize: 40,
     fontWeight: "300"
   },
-  text: {
-    textAlign: "center",
-    color: "grey"
-  },
   fineprint: {
-    color: "grey",
     fontSize: 10,
     marginTop: 10
+  },
+  input: {
+    borderRadius: 0,
+    borderWidth: 0,
+    borderBottomWidth: StyleSheet.hairlineWidth
+  },
+  border: {
+    borderBottomColor: theme.colors.gray2,
+    width: "100%"
   }
 });
 
