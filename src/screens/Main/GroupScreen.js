@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  Dimensions
+  Dimensions,
+  Alert
 } from "react-native";
 import firebase from "react-native-firebase";
 import _ from "lodash";
@@ -20,12 +21,14 @@ import {
 } from "../../store/actions/groups";
 import { connect } from "react-redux";
 import GroupPicture from "../../components/GroupPicture";
+import SwipeOut from "react-native-swipeout";
 
 const cliqueBlue = "#134782";
 
 class GroupScreen extends Component {
   constructor(props) {
     super(props);
+    this.deleteGroupFromDb = this.deleteGroupFromDb.bind(this);
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -109,38 +112,82 @@ class GroupScreen extends Component {
     return `${hours}:${minutes}`;
   };
 
+  deleteGroupFromDb = async (groupID, users) => {
+    await firebase.database().ref(`groups/${groupID}`).remove();
+    await firebase.database().ref(`events/${groupID}`).remove();
+    await firebase.database().ref(`messages/${groupID}`).remove();
+    users = await Object.keys(users).map(async uid => {
+      await firebase.database().ref(`users/${uid}/groups/${groupID}`).remove();
+    })
+    Promise.all(users).then(() => console.log('delete successful'));
+    this.props.fetchGroups();
+  }
+
+
+
   renderRow = ({ item }) => {
-    return (
-      <TouchableOpacity
-        style={styles.chatList}
-        onPress={() =>
-          this.props.navigation.navigate("Chat", {
-            group: item,
-            image: { uri: item.photoURL }
-          })
+    const swipeSettings = {
+      autoClose: true,
+      right: [
+        {
+          onPress: () => {
+            Alert.alert(
+              'Delete Group',
+              'Are you sure you want to delete this group permanently?',
+              [
+                { text: 'No', onPress: () => console.log('Cancel Delete'), style: 'cancel' },
+                {
+                  text: 'Yes', onPress: () => {
+                    this.deleteGroupFromDb(item.groupID, item.users);
+                  }
+                },
+                { cancelable: true }
+              ]
+            )
+          },
+          text: 'Delete',
+          type: 'delete'
         }
+      ],
+      rowId: item.id,
+      backgroundColor: "#fff",
+
+    }
+    return (
+      <SwipeOut
+        {...swipeSettings}
       >
-        <View style={{ flexDirection: "row" }}>
-          <GroupPicture source={{ uri: item.photoURL }} value={0.14} />
-          <View style={{ flexDirection: "column", left: 15 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: Dimensions.get("window").width * 0.75
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                {item.groupName}
-              </Text>
-              <Text>{this.renderTimestamp(item.groupID)}</Text>
-            </View>
-            <View style={{ padding: 2, width: "90%" }}>
-              {this.renderLastMessage(item.groupID)}
+        <TouchableOpacity
+          style={styles.chatList}
+          onPress={() =>
+            this.props.navigation.navigate("Chat", {
+              group: item,
+              image: { uri: item.photoURL }
+            })
+          }
+        >
+          <View style={{ flexDirection: "row" }}>
+            <GroupPicture source={{ uri: item.photoURL }} value={0.14} />
+            <View style={{ flexDirection: "column", left: 15 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: Dimensions.get("window").width * 0.75
+                }}
+              >
+                <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                  {item.groupName}
+                </Text>
+                <Text>{this.renderTimestamp(item.groupID)}</Text>
+              </View>
+              <View style={{ padding: 2, width: "90%" }}>
+                {this.renderLastMessage(item.groupID)}
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </SwipeOut>
     );
   };
 
