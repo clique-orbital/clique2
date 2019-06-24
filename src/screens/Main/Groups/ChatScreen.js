@@ -26,6 +26,8 @@ import EventModal from "../EventModal";
 import { sortBy, values } from "lodash";
 import GroupPicture from "../../../components/GroupPicture";
 import Text from "../../../components/Text";
+import EventBubble from "../../../components/EventBubble";
+import MessageBubble from "../../../components/MessageBubble";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -90,10 +92,7 @@ class ChatScreen extends Component {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
       this.props.dispatch(
-        fetchConversation(
-          groupID,
-          sortBy(values(snapshot.val()), "timestamp")
-        )
+        fetchConversation(groupID, sortBy(values(snapshot.val()), "timestamp"))
       );
     });
     this.keyboardDidShowListener = Keyboard.addListener(
@@ -253,120 +252,36 @@ class ChatScreen extends Component {
   renderRow = ({ item }) => {
     if (item.messageType === "text") {
       return (
-        <View
+        <MessageBubble
           style={[
             { flexDirection: "column" },
             item.sender === this.props.uid
               ? styles.myMessageBubble
               : styles.yourMessageBubble
           ]}
-        >
-          {item.sender !== this.props.uid && (
-            <View style={{ padding: 2 }}>
-              <Text white header semibold>
-                {item.username}
-              </Text>
-            </View>
-          )}
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flexWrap: "wrap" }}>
-              <Text header white style={{ padding: 7 }}>
-                {item.message}
-              </Text>
-            </View>
-            <View style={{ justifyContent: "flex-end" }}>
-              <Text
-                style={{
-                  color: "#eee",
-                  paddingRight: 13,
-                  paddingBottom: 7,
-                  fontSize: 10
-                }}
-              >
-                {this.convertTime(item.timestamp)}
-              </Text>
-            </View>
-          </View>
-        </View>
+          uid={this.props.uid}
+          convertTime={this.convertTime}
+          item={item}
+          maxWidth={Dimensions.get("window").width}
+        />
       );
     } else if (item.messageType === "event") {
       const eventID = item.event.eventID;
       return (
-        <View
+        <EventBubble
           style={
             item.sender === this.props.uid
               ? styles.myEventBubble
               : styles.yourEventBubble
           }
-        >
-          <TouchableOpacity
-            style={styles.eventBubbleContent}
-            onPress={this.showEventModal(item.event)}
-          >
-            <View>
-              <Text semibold h2 style={{ ...styles.eventDetails }}>
-                {item.event.title}
-              </Text>
-              <Text light body style={styles.eventDetails}>
-                {convertDate(item.event.from) +
-                  " to\n" +
-                  convertDate(item.event.to)}
-              </Text>
-              <Text
-                light
-                body
-                style={{
-                  ...styles.eventDetails,
-                  display: item.event.location ? "flex" : "none"
-                }}
-              >
-                Location: {item.event.location}
-              </Text>
-            </View>
-            <View style={{ justifyContent: "flex-end" }}>
-              <Text
-                style={{
-                  color: "#eee",
-                  paddingRight: 13,
-                  paddingBottom: 7,
-                  fontSize: 10
-                }}
-              >
-                {this.convertTime(item.timestamp)}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.eventBubbleButtons}>
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity
-                style={styles.acceptButton}
-                onPress={this.respondToInvitation(eventID, true)}
-                disabled={(item.event.attending || []).includes(this.props.uid)}
-              >
-                <Text style={styles.invitationButton}>
-                  {(item.event.attending || []).includes(this.props.uid)
-                    ? "Accepted!"
-                    : "Accept"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity
-                style={styles.rejectButton}
-                onPress={this.respondToInvitation(eventID, false)}
-                disabled={(item.event.notAttending || []).includes(
-                  this.props.uid
-                )}
-              >
-                <Text style={styles.invitationButton}>
-                  {(item.event.notAttending || []).includes(this.props.uid)
-                    ? "Rejected!"
-                    : "Reject"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+          showEventModal={this.showEventModal}
+          uid={this.props.uid}
+          convertTime={this.convertTime}
+          respondToInvitation={this.respondToInvitation}
+          eventID={eventID}
+          item={item}
+          convertDate={convertDate}
+        />
       );
     }
   };
@@ -462,7 +377,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    maxWidth: "80%"
+    maxWidth: "100%",
+    marginRight: 80
   },
   myMessageBubble: {
     justifyContent: "space-between",
@@ -472,8 +388,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    marginLeft: 40,
-    maxWidth: "80%"
+    marginLeft: 80,
+    maxWidth: "100%"
   },
   yourEventBubble: {
     alignSelf: "flex-start",
@@ -490,40 +406,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#3a8cbc",
     width: "auto",
     marginLeft: 50
-  },
-  invitationButton: {
-    textAlign: "center",
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "bold"
-  },
-  eventDetails: {
-    color: "#fff",
-    padding: 7,
-    flex: 1
-  },
-  eventBubbleContent: {
-    flexWrap: "nowrap",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingLeft: 5
-  },
-  eventBubbleButtons: {
-    height: 40,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  acceptButton: {
-    backgroundColor: "#2cb768",
-    height: 40,
-    justifyContent: "center",
-    borderBottomLeftRadius: 20
-  },
-  rejectButton: {
-    backgroundColor: "#c13f3f",
-    height: 40,
-    justifyContent: "center",
-    borderBottomRightRadius: 20
   }
 });
