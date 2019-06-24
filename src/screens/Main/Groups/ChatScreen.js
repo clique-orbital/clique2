@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import {
-  SafeAreaView,
-  Text,
   View,
   TextInput,
   Dimensions,
@@ -20,12 +18,13 @@ import {
 } from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
 import { fetchConversation } from "../../../store/actions/messages";
-import { convertDate } from "../../../assets/constants";
+import { convertDate, cliqueBlue } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
 import { sortBy, values } from "lodash";
 import GroupPicture from "../../../components/GroupPicture";
+import Text from "../../../components/Text";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -75,9 +74,10 @@ class ChatScreen extends Component {
           }
         >
           <MyIcon
-            name="md-calendar"
-            size={32}
+            name="calendar"
+            size={27}
             color="white"
+            type="material-community"
             style={{ marginRight: 20 }}
           />
         </TouchableOpacity>
@@ -251,28 +251,38 @@ class ChatScreen extends Component {
     if (item.messageType === "text") {
       return (
         <View
-          style={
+          style={[
+            { flexDirection: "column" },
             item.sender === this.props.uid
               ? styles.myMessageBubble
               : styles.yourMessageBubble
-          }
+          ]}
         >
-          <View style={{ flexWrap: "wrap" }}>
-            <Text style={{ color: "#fff", padding: 7, fontSize: 16 }}>
-              {item.message}
-            </Text>
-          </View>
-          <View style={{ justifyContent: "flex-end" }}>
-            <Text
-              style={{
-                color: "#eee",
-                paddingRight: 13,
-                paddingBottom: 7,
-                fontSize: 10
-              }}
-            >
-              {this.convertTime(item.timestamp)}
-            </Text>
+          {item.sender !== this.props.uid && (
+            <View style={{ padding: 2 }}>
+              <Text white header semibold>
+                {item.username}
+              </Text>
+            </View>
+          )}
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flexWrap: "wrap" }}>
+              <Text header white style={{ padding: 7 }}>
+                {item.message}
+              </Text>
+            </View>
+            <View style={{ justifyContent: "flex-end" }}>
+              <Text
+                style={{
+                  color: "#eee",
+                  paddingRight: 13,
+                  paddingBottom: 7,
+                  fontSize: 10
+                }}
+              >
+                {this.convertTime(item.timestamp)}
+              </Text>
+            </View>
           </View>
         </View>
       );
@@ -291,21 +301,23 @@ class ChatScreen extends Component {
             onPress={this.showEventModal(item.event)}
           >
             <View>
-              <Text style={{ ...styles.eventDetails, fontWeight: "bold" }}>
+              <Text semibold h2 style={{ ...styles.eventDetails }}>
                 {item.event.title}
               </Text>
-              <Text style={styles.eventDetails}>
+              <Text light body style={styles.eventDetails}>
                 {convertDate(item.event.from) +
                   " to\n" +
                   convertDate(item.event.to)}
               </Text>
               <Text
+                light
+                body
                 style={{
                   ...styles.eventDetails,
                   display: item.event.location ? "flex" : "none"
                 }}
               >
-                {item.event.location}
+                Location: {item.event.location}
               </Text>
             </View>
             <View style={{ justifyContent: "flex-end" }}>
@@ -357,40 +369,48 @@ class ChatScreen extends Component {
   };
 
   render() {
-    let { height } = Dimensions.get("window");
-    console.log("Rendering")
+    let height = Dimensions.get("window").height;
     return (
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -300}
         style={{ flex: 1 }}
       >
-        <SafeAreaView>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.inner}>
-              <FlatList
-                ref="messageList"
-                onContentSizeChange={this.scrollToBottom}
-                style={{ padding: 10, height: height * 0.8 }}
-                data={this.props.conversation}
-                renderItem={this.renderRow}
-                keyExtractor={(item, index) => index.toString()}
-              />
-              <View style={[styles.chatBox]}>
-                <TextInput
-                  style={styles.chatInput}
-                  value={this.state.textMessage}
-                  onChangeText={this.handleChange("textMessage")}
-                  placeholder="Write a message"
-                />
-                <TouchableOpacity onPress={this.sendMessage} style={{}}>
-                  <Text style={styles.sendBtn}>Send</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-          <EventModal groupID={this.state.groupID} />
-        </SafeAreaView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <FlatList
+            ref="messageList"
+            onContentSizeChange={this.scrollToBottom}
+            style={{ padding: 10 }}
+            data={this.props.conversation.slice()}
+            renderItem={this.renderRow}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </TouchableWithoutFeedback>
+        <View style={{ height: height * 0.07 }} />
+        <View
+          style={[
+            styles.chatBox,
+            {
+              zIndex: 1,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: "lightgrey",
+              position: "absolute",
+              bottom: 0
+            },
+            Platform.OS === "ios" ? styles.iOSmargin : null
+          ]}
+        >
+          <TextInput
+            style={styles.chatInput}
+            value={this.state.textMessage}
+            onChangeText={this.handleChange("textMessage")}
+            placeholder="Message"
+          />
+          <TouchableOpacity onPress={this.sendMessage} style={{}}>
+            <MyIcon name="send" type="material" size={28} color={cliqueBlue} />
+          </TouchableOpacity>
+        </View>
+        <EventModal groupID={this.state.groupID} />
       </KeyboardAvoidingView>
     );
   }
@@ -417,41 +437,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
+  iOSmargin: {
+    margin: 8
+  },
   chatInput: {
-    borderWidth: 1,
-    borderRadius: 7,
-    width: "80%",
+    width: "90%",
     padding: 10,
-    margin: 8,
     color: "black",
-    borderColor: "black",
-    bottom: 0
+    bottom: 0,
+    fontSize: 16
   },
   sendBtn: {
     color: "#1d73d6",
     fontSize: 20
   },
   yourMessageBubble: {
-    flexDirection: "row",
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-start",
     backgroundColor: "#134782",
-    borderRadius: 20,
-    marginBottom: 5,
+    borderRadius: 10,
+    marginBottom: 8,
     paddingLeft: 5,
-    marginRight: 40
+    maxWidth: "80%"
   },
   myMessageBubble: {
-    flexDirection: "row",
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-end",
     backgroundColor: "#3a8cbc",
-    borderRadius: 20,
-    marginBottom: 5,
+    borderRadius: 10,
+    marginBottom: 8,
     paddingLeft: 5,
-    marginLeft: 40
+    marginLeft: 40,
+    maxWidth: "80%"
   },
   yourEventBubble: {
     alignSelf: "flex-start",
@@ -478,8 +497,6 @@ const styles = StyleSheet.create({
   eventDetails: {
     color: "#fff",
     padding: 7,
-    fontSize: 16,
-    textDecorationLine: "underline",
     flex: 1
   },
   eventBubbleContent: {

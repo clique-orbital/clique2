@@ -1,14 +1,14 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
 
-import { cliqueBlue } from "../../assets/constants";
-import icon from "../../assets/icon.png";
 import { setUserDetails } from "../../store/actions/auth";
 import { fetchGroups } from "../../store/actions/groups";
 import { fetchAllEvents } from "../../store/actions/calendar";
+import { populateGroups } from "../../store/actions/messageCounter";
+
 import AsyncStorage from "@react-native-community/async-storage";
+import LoadingView from "../../components/LoadingView";
 
 class AuthLoading extends React.Component {
   storeData = async (key, val) => {
@@ -47,35 +47,16 @@ class AuthLoading extends React.Component {
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        <Image source={icon} style={styles.iconStyle} resizeMode="contain" />
-      </View>
-    );
+    return <LoadingView />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: cliqueBlue,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%"
-  },
-  iconStyle: {
-    width: "50%",
-    height: "50%",
-    marginBottom: "20%"
-  }
-});
 
 export default connect(
   null,
   {
     setUserDetails,
-
     fetchGroups,
-    fetchAllEvents
+    fetchAllEvents,
+    populateGroups
   }
 )(AuthLoading);

@@ -1,13 +1,10 @@
 import React, { Component } from "react";
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
   Dimensions,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   TouchableOpacity
 } from "react-native";
 import { cliqueBlue } from "../../../assets/constants";
@@ -26,6 +23,11 @@ import firebase from "react-native-firebase";
 import _ from "lodash";
 import { convertDate } from "../../../assets/constants";
 import { fetchAllEvents } from "../../../store/actions/calendar";
+import Text from "../../../components/Text";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
+import theme from "../../../assets/theme";
+import MyIcon from "../../../components/MyIcon";
 
 class CreateEvents extends Component {
   constructor(props) {
@@ -43,7 +45,7 @@ class CreateEvents extends Component {
 
   static navigationOptions = () => {
     return {
-      title: "Create Event",
+      title: "New Event",
       headerTintColor: "#fff"
     };
   };
@@ -101,7 +103,6 @@ class CreateEvents extends Component {
         .ref("groups")
         .child(`${groupID}`)
         .once("value");
-      console.log(groupSnapShot.val());
       const members = _.keys(groupSnapShot.val().users);
       const event = {
         title,
@@ -146,73 +147,154 @@ class CreateEvents extends Component {
     }
   }
 
-  render() {
-    const { height, width } = Dimensions.get("window");
+  renderTitle = width => {
+    return (
+      <View style={styles.border}>
+        <Input
+          left
+          placeholder="Add title"
+          style={[
+            styles.input,
+            { fontSize: 20, paddingLeft: 30, paddingVertical: 5 }
+          ]}
+          w={width}
+          value={this.props.title}
+          onChangeText={this.handleTextChange("title")}
+        />
+      </View>
+    );
+  };
 
+  renderDates = width => {
+    return (
+      <View
+        style={[
+          {
+            flexDirection: "row",
+            width: width,
+            paddingVertical: 10
+          },
+          styles.border
+        ]}
+      >
+        <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+          <MyIcon name="ios-time" size={30} color="darkgrey" />
+        </View>
+        <View style={{ margin: 10 }}>
+          <Text
+            medium
+            h3
+            gray
+            style={{
+              paddingBottom: 10,
+              height: 40
+            }}
+          >
+            From:
+          </Text>
+          <Text
+            medium
+            h3
+            gray
+            style={{
+              paddingBottom: 10,
+              height: 40
+            }}
+          >
+            To:
+          </Text>
+        </View>
+        <View style={{ margin: 10 }}>
+          <TouchableOpacity
+            style={{
+              height: 40,
+              paddingBottom: 10
+            }}
+            onPress={this.showFromDatePicker}
+          >
+            <Text medium h3 gray>
+              {convertDate(this.props.fromDate)}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              height: 40,
+              paddingBottom: 10
+            }}
+            onPress={this.showToDatePicker}
+          >
+            <Text medium h3 gray>
+              {convertDate(this.props.toDate)}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  renderItem = (width, item, iconName) => {
+    return (
+      <View
+        style={[
+          {
+            width: width,
+            flexDirection: "row",
+            paddingVertical: 10,
+            alignItems: "center"
+          },
+          styles.border
+        ]}
+      >
+        <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+          <MyIcon name={iconName} size={30} color="darkgrey" />
+        </View>
+        {item}
+      </View>
+    );
+  };
+
+  render() {
+    const width = Dimensions.get("window").width;
     return (
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : -200}
-        style={{ flex: 1 }}
+        style={{ flex: 1, top: 20 }}
       >
-        <ScrollView style={styles.container}>
-          <View style={{ flex: 1, justifyContent: "flex-end" }}>
-            <View style={styles.textInputView}>
-              <TextInput
-                placeholder="Title"
-                style={{ ...styles.textInput, width: width }}
-                value={this.props.title}
-                onChangeText={this.handleTextChange("title")}
-              />
-            </View>
-            <View style={styles.textInputView}>
-              <TouchableOpacity
-                style={{
-                  width: width,
-                  height: 40,
-                  justifyContent: "center",
-                  paddingBottom: 10
-                }}
-                onPress={this.showFromDatePicker}
-              >
-                <Text style={styles.date}>
-                  From: {convertDate(this.props.fromDate)}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.textInputView}>
-              <TouchableOpacity
-                style={{
-                  width: width,
-                  height: 40,
-                  justifyContent: "center",
-                  paddingBottom: 10
-                }}
-                onPress={this.showToDatePicker}
-              >
-                <Text style={styles.date}>
-                  To: {convertDate(this.props.toDate)}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.textInputView}>
-              <TextInput
-                placeholder="Location"
-                style={{ ...styles.textInput, width: width }}
-                value={this.props.location}
-                onChangeText={this.handleTextChange("location")}
-              />
-            </View>
-            <View style={styles.textInputView}>
-              <TextInput
-                placeholder="Notes"
-                style={{ ...styles.textInput, width: width }}
-                value={this.props.notes}
-                onChangeText={this.handleTextChange("notes")}
-              />
-            </View>
-          </View>
-        </ScrollView>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          {this.renderTitle(width)}
+          {this.renderDates(width)}
+          {this.renderItem(
+            width,
+            <Input
+              placeholder="Add location"
+              style={({ ...styles.input }, { marginLeft: 10 })}
+              value={this.props.location}
+              onChangeText={this.handleTextChange("location")}
+            />,
+            "md-map"
+          )}
+          {this.renderItem(
+            width,
+            <Input
+              placeholder="Add notes"
+              style={({ ...styles.input }, { marginLeft: 10 })}
+              value={this.props.notes}
+              onChangeText={this.handleTextChange("notes")}
+            />,
+            "md-book"
+          )}
+          <Button
+            shadow
+            style={styles.publishButton}
+            onPress={() => this.publishEvent()}
+          >
+            <Text semibold white center>
+              Publish
+            </Text>
+          </Button>
+        </View>
+
         <DateTimePicker
           isVisible={this.props.fromDateVisibility}
           onConfirm={this.handleFromDatePicked}
@@ -227,12 +309,6 @@ class CreateEvents extends Component {
           mode="datetime"
           date={this.props.toDate}
         />
-        <TouchableOpacity
-          style={styles.publishButton}
-          onPress={() => this.publishEvent()}
-        >
-          <Text style={styles.publishText}>Publish</Text>
-        </TouchableOpacity>
       </KeyboardAvoidingView>
     );
   }
@@ -256,10 +332,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps)(CreateEvents);
 
 const styles = StyleSheet.create({
-  date: {
-    fontSize: 20,
-    color: "grey"
-  },
   container: {
     flex: 1
   },
@@ -269,25 +341,23 @@ const styles = StyleSheet.create({
     color: cliqueBlue,
     height: 40
   },
-  textInputView: {
-    height: 45,
-    margin: 20,
-    borderBottomWidth: 2,
-    borderColor: cliqueBlue
-  },
   publishButton: {
     backgroundColor: cliqueBlue,
-    height: 50,
-    marginBottom: 30,
-    marginTop: 10,
-    marginHorizontal: 20,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center"
+    width: "70%",
+    borderRadius: 10
   },
   publishText: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 15
+  },
+  input: {
+    borderRadius: 0,
+    borderWidth: 0
+  },
+  border: {
+    borderBottomColor: "lightgrey",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    width: "100%"
   }
 });
