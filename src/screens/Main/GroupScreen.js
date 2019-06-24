@@ -53,7 +53,7 @@ class GroupScreen extends Component {
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
 
-    db.ref(`users/${uid}/groups`).on("child_added", () =>
+    db.ref(`users/${uid}/groups`).on("value", () =>
       this.props.fetchGroups()
     );
 
