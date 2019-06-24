@@ -27,19 +27,6 @@ class Auth extends Component {
     };
   }
 
-  //componentWillUnmount() {
-  //this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-  //// User has been signed out, reset the state
-  //this.props.setUserDetails(null);
-  //this.setState({
-  //message: "",
-  //codeInput: "",
-  //phoneNumber: "+65", // need to change
-  //confirmResult: null
-  //});
-  //});
-  //}
-
   componentWillUnmount() {
     if (this.unsubscribe) this.unsubscribe();
   }
