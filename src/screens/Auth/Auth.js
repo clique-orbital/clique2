@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Image, Dimensions } from "react-native";
+import { View, StyleSheet, Image, Dimensions, Platform } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import Button from "../../components/Button";
 import Text from "../../components/Text";
@@ -119,7 +119,11 @@ class Auth extends Component {
         </Text>
         <Input
           phone
-          style={[styles.input, styles.border]}
+          style={[
+            styles.input,
+            styles.border,
+            Platform.OS === "ios" ? { paddingVertical: 10 } : null
+          ]}
           onChangeText={value => this.setState({ phoneNumber: value })}
           value={phoneNumber}
           w={Dimensions.get("window").width * 0.5}

@@ -42,7 +42,9 @@ const AppNavigator = createBottomTabNavigator(
           iconName = `chat${focused ? "" : "-bubble-outline"}`;
         } else if (routeName === "Calendar") {
           iconType = "material-community";
-          iconName = `calendar${focused ? "" : "-blank-outline"}`;
+          iconName = `calendar${
+            focused || Platform.OS === "ios" ? "" : "-blank-outline"
+          }`;
         } else if (routeName === "Notifications") {
           iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {
