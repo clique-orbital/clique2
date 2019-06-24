@@ -7,6 +7,8 @@ import { fetchGroups } from "../../store/actions/groups";
 import { fetchAllEvents } from "../../store/actions/calendar";
 import { populateGroups } from "../../store/actions/messageCounter";
 
+import NetInfo from "@react-native-community/netinfo";
+
 import AsyncStorage from "@react-native-community/async-storage";
 import LoadingView from "../../components/LoadingView";
 
@@ -30,11 +32,17 @@ class AuthLoading extends React.Component {
     await firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         if (user.displayName && user.photoURL) {
-          this.storeData("profilePicture", user.photoURL)
-            .then(() => this.props.setUserDetails(user))
-            .then(() => this.props.fetchGroups())
-            .then(() => this.props.fetchAllEvents(user.uid))
-            .then(() => this.props.navigation.navigate("App"));
+          NetInfo.fetch().then(state => {
+            if (state.isConnected) {
+              this.storeData("profilePicture", user.photoURL)
+                .then(() => this.props.setUserDetails(user))
+                .then(() => this.props.fetchGroups())
+                .then(() => this.props.fetchAllEvents(user.uid))
+                .then(() => this.props.navigation.navigate("App"));
+            } else {
+              this.props.navigation.navigate("App");
+            }
+          });
         } else {
           // get user to set username and profile picture
           this.props.navigation.navigate("UserDetails");
