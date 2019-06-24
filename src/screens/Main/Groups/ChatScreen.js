@@ -24,7 +24,7 @@ import { convertDate } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
-import _ from "lodash";
+import { sortBy, values } from "lodash";
 import GroupPicture from "../../../components/GroupPicture";
 
 class ChatScreen extends Component {
@@ -41,7 +41,7 @@ class ChatScreen extends Component {
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
-    this.sameDay = this.sameDay.bind(this);
+    // this.sameDay = this.sameDay.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -91,13 +91,13 @@ class ChatScreen extends Component {
       this.props.dispatch(
         fetchConversation(
           groupID,
-          _.sortBy(_.values(snapshot.val()), "timestamp")
+          sortBy(values(snapshot.val()), "timestamp")
         )
       );
     });
     this.keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      this.scrollToBottom
+      // this.scrollToBottom
     );
     this.keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
@@ -230,22 +230,22 @@ class ChatScreen extends Component {
     this.props.dispatch(toggleEventModal(true, event));
   };
 
-  sameDay = (dateOfLastMsg, dayOfLastMsg) => {
-    console.log("props date = " + this.props.prevDate);
-    if (
-      dateOfLastMsg === this.state.dateOfLastMsg &&
-      dayOfLastMsg === this.state.dayOfLastMsg
-    ) {
-      console.log("in true. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
-      return true;
-    }
-    console.log("in false. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
-    this.setState({
-      dateOfLastMsg,
-      dayOfLastMsg
-    });
-    return false;
-  };
+  // sameDay = (dateOfLastMsg, dayOfLastMsg) => {
+  //   console.log("props date = " + this.props.prevDate);
+  //   if (
+  //     dateOfLastMsg === this.state.dateOfLastMsg &&
+  //     dayOfLastMsg === this.state.dayOfLastMsg
+  //   ) {
+  //     console.log("in true. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
+  //     return true;
+  //   }
+  //   console.log("in false. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
+  //   this.setState({
+  //     dateOfLastMsg,
+  //     dayOfLastMsg
+  //   });
+  //   return false;
+  // };
 
   renderRow = ({ item }) => {
     if (item.messageType === "text") {
@@ -358,6 +358,7 @@ class ChatScreen extends Component {
 
   render() {
     let { height } = Dimensions.get("window");
+    console.log("Rendering")
     return (
       <KeyboardAvoidingView
         behavior="padding"
@@ -371,11 +372,11 @@ class ChatScreen extends Component {
                 ref="messageList"
                 onContentSizeChange={this.scrollToBottom}
                 style={{ padding: 10, height: height * 0.8 }}
-                data={this.props.conversation.slice()}
+                data={this.props.conversation}
                 renderItem={this.renderRow}
                 keyExtractor={(item, index) => index.toString()}
               />
-              <View style={[styles.chatBox, { zIndex: 1 }]}>
+              <View style={[styles.chatBox]}>
                 <TextInput
                   style={styles.chatInput}
                   value={this.state.textMessage}
@@ -386,11 +387,10 @@ class ChatScreen extends Component {
                   <Text style={styles.sendBtn}>Send</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{ flex: 1 }} />
             </View>
           </TouchableWithoutFeedback>
+          <EventModal groupID={this.state.groupID} />
         </SafeAreaView>
-        <EventModal groupID={this.state.groupID} />
       </KeyboardAvoidingView>
     );
   }
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     backgroundColor: "#134782",
     borderRadius: 20,
-    marginBottom: 8,
+    marginBottom: 5,
     paddingLeft: 5,
     marginRight: 40
   },
@@ -449,14 +449,14 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     backgroundColor: "#3a8cbc",
     borderRadius: 20,
-    marginBottom: 8,
+    marginBottom: 5,
     paddingLeft: 5,
     marginLeft: 40
   },
   yourEventBubble: {
     alignSelf: "flex-start",
     borderRadius: 20,
-    marginBottom: 8,
+    marginBottom: 5,
     backgroundColor: "#134782",
     width: "auto",
     marginRight: 40
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   myEventBubble: {
     alignSelf: "flex-end",
     borderRadius: 20,
-    marginBottom: 8,
+    marginBottom: 5,
     backgroundColor: "#3a8cbc",
     width: "auto",
     marginLeft: 50

@@ -25,6 +25,7 @@ class EventModal extends Component {
     super(props);
     this.hideModal = this.hideModal.bind(this);
     this.respondToInvitation = this.respondToInvitation.bind(this);
+    this.handleEditButtonPress = this.handleEditButtonPress.bind(this);
   }
 
   hideModal() {
@@ -101,6 +102,11 @@ class EventModal extends Component {
     this.props.dispatch(populateNotAttending(notAttendingNames));
   };
 
+  handleEditButtonPress = () => {
+    // this.hideModal();
+    (this.props.navigation || {}).navigate("CreateEvents");
+  }
+
   render() {
     if (Platform.OS === "android") {
       if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
@@ -133,9 +139,12 @@ class EventModal extends Component {
                     marginLeft: 13,
                     marginTop: 10,
                     height: 20,
-                    width: 20
+                    width: 20,
                   }}
                 />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ flex: 1, height: 50, flexDirection: "row-reverse" }} onPress={this.handleEditButtonPress}>
+                <Text style={{ fontSize: 23, marginTop: 10, color: cliqueBlue, marginRight: 17 }}>Edit</Text>
               </TouchableOpacity>
             </View>
             <View style={{ height: "50%", justifyContent: "space-between" }}>
