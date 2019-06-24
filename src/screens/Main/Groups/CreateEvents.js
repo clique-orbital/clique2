@@ -155,7 +155,12 @@ class CreateEvents extends Component {
           placeholder="Add title"
           style={[
             styles.input,
-            { fontSize: 20, paddingLeft: 30, paddingVertical: 5 }
+            {
+              fontSize: 22,
+              paddingLeft: 30,
+              paddingVertical: 5,
+              fontWeight: "400"
+            }
           ]}
           w={width}
           value={this.props.title}
@@ -245,7 +250,7 @@ class CreateEvents extends Component {
           styles.border
         ]}
       >
-        <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+        <View style={{ marginHorizontal: 20 }}>
           <MyIcon name={iconName} size={30} color="darkgrey" />
         </View>
         {item}
@@ -267,6 +272,7 @@ class CreateEvents extends Component {
           {this.renderItem(
             width,
             <Input
+              left
               placeholder="Add location"
               style={({ ...styles.input }, { marginLeft: 10 })}
               value={this.props.location}
@@ -277,6 +283,7 @@ class CreateEvents extends Component {
           {this.renderItem(
             width,
             <Input
+              left
               placeholder="Add notes"
               style={({ ...styles.input }, { marginLeft: 10 })}
               value={this.props.notes}
@@ -344,7 +351,8 @@ const styles = StyleSheet.create({
   publishButton: {
     backgroundColor: cliqueBlue,
     width: "70%",
-    borderRadius: 10
+    borderRadius: 10,
+    marginTop: 10
   },
   publishText: {
     color: "#fff",

@@ -11,7 +11,7 @@ class EventBubble extends React.Component {
           onPress={this.props.showEventModal(this.props.item.event)}
         >
           <View>
-            <Text semibold h2 style={{ ...styles.eventDetails }}>
+            <Text medium h2 style={{ ...styles.eventDetails }}>
               {this.props.item.event.title}
             </Text>
             <Text light body style={styles.eventDetails}>
@@ -33,7 +33,7 @@ class EventBubble extends React.Component {
           <View style={{ justifyContent: "flex-end" }}>
             <Text
               style={{
-                color: "#eee",
+                color: "white",
                 paddingRight: 13,
                 paddingBottom: 7,
                 fontSize: 10
@@ -72,7 +72,7 @@ class EventBubble extends React.Component {
                 this.props.uid
               )}
             >
-              <Text style={styles.invitationButton}>
+              <Text white style={styles.invitationButton}>
                 {(this.props.item.event.notAttending || []).includes(
                   this.props.uid
                 )
@@ -90,12 +90,12 @@ class EventBubble extends React.Component {
 const styles = StyleSheet.create({
   invitationButton: {
     textAlign: "center",
-    color: "#fff",
+    color: "white",
     fontSize: 15,
     fontWeight: "bold"
   },
   eventDetails: {
-    color: "#fff",
+    color: "black",
     padding: 7,
     flex: 1
   },
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   acceptButton: {
-    backgroundColor: "#2cb768",
+    backgroundColor: "#65c681",
     height: 40,
     justifyContent: "center",
     borderBottomLeftRadius: 20

@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import Text from "./Text";
+import theme from "../assets/theme";
 
 class MessageBubble extends React.Component {
   render() {
@@ -16,7 +17,7 @@ class MessageBubble extends React.Component {
                 justifyContent: "space-between"
               }}
             >
-              <Text white header semibold>
+              <Text header semibold color={theme.colors.light_chat_username}>
                 {this.props.item.username}
               </Text>
             </View>
@@ -24,7 +25,7 @@ class MessageBubble extends React.Component {
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
             <Text
               header
-              white
+              black
               style={{
                 paddingTop: 4,
                 paddingBottom: 7,
@@ -39,8 +40,8 @@ class MessageBubble extends React.Component {
         </View>
         <View style={{ alignItems: "flex-end", justifyContent: "flex-end" }}>
           <Text
+            black
             style={{
-              color: "#eee",
               paddingBottom: 7,
               paddingRight: 10,
               fontSize: 10

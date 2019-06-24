@@ -1,9 +1,18 @@
 const colors = {
-  cliqueBlue: "#134782",
+  cliqueBlue: "#0f3764",
   black: "#323643",
   white: "#FFFFFF",
-  gray: "darkgrey",
-  gray2: "grey"
+  grey: "darkgrey",
+  grey2: "grey",
+  lightgrey: "lightgrey",
+  light_chat_mine: "#effedd",
+  light_chat_yours: "white",
+  light_chat_background: "#87b3e2",
+  light_chat_username: "#3e5d76",
+  dark_chat_mine: "#3e6189",
+  dark_chat_yours: "#2f3f4f",
+  dark_chat_background: "#151e27",
+  dark_chat_username: "#8fc5f1"
 };
 
 const sizes = {

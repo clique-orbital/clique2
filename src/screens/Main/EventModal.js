@@ -3,7 +3,6 @@ import Modal from "react-native-modal";
 import {
   View,
   StatusBar,
-  Text,
   FlatList,
   Image,
   StyleSheet,
@@ -19,6 +18,8 @@ import {
 } from "../../store/actions/eventModal";
 import { cliqueBlue, getDate, getDay, getTime } from "../../assets/constants";
 import firebase from "react-native-firebase";
+import Text from "../../components/Text";
+import MyIcon from "../../components/MyIcon";
 
 class EventModal extends Component {
   constructor(props) {
@@ -36,7 +37,7 @@ class EventModal extends Component {
     return (
       <View style={{ flex: 1, height: 30, justifyContent: "center" }}>
         <Text style={{ textAlign: "center", fontSize: 18, color: cliqueBlue }}>
-          {item}
+          @{item}
         </Text>
       </View>
     );
@@ -106,7 +107,64 @@ class EventModal extends Component {
     (this.props.navigation || {}).navigate("CreateEvents", {
       groupID: this.props.event.groupID
     });
-  }
+  };
+
+  renderTitle = () => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 20
+        }}
+      >
+        <Text h1 center black medium>
+          {(this.props.event || {}).title}
+        </Text>
+      </View>
+    );
+  };
+
+  renderNote = (string, event) => {
+    return (
+      <View style={styles.eventDetailsView}>
+        <MyIcon
+          name={string}
+          size={40}
+          color="grey"
+          style={{ marginTop: 20 }}
+        />
+        <Text h3 grey>
+          {event || "-"}
+        </Text>
+      </View>
+    );
+  };
+
+  renderSameDate = date => {};
+
+  renderDate = date => {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <Text h3 grey center>
+          {getDay(date)}
+        </Text>
+        <Text h3 grey center>
+          {getDate(date)}
+        </Text>
+        <Text h3 grey center>
+          {getTime(date)}
+        </Text>
+      </View>
+    );
+  };
+
+  renderArrow = () => {
+    return (
+      <MyIcon name="arrow-forward" size={40} color="grey" type="material" />
+    );
+  };
 
   render() {
     if (Platform.OS === "android") {
@@ -140,34 +198,28 @@ class EventModal extends Component {
                     marginLeft: 13,
                     marginTop: 10,
                     height: 20,
-                    width: 20,
+                    width: 20
                   }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={{ flex: 1, height: 50, flexDirection: "row-reverse" }} onPress={this.handleEditButtonPress}>
-                <Text style={{ fontSize: 23, marginTop: 10, color: cliqueBlue, marginRight: 17 }}>Edit</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ height: "50%", justifyContent: "space-between" }}>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: 20
-                }}
+              <TouchableOpacity
+                style={{ flex: 1, height: 50, flexDirection: "row-reverse" }}
+                onPress={this.handleEditButtonPress}
               >
                 <Text
                   style={{
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    color: cliqueBlue,
-                    fontSize: 35
+                    fontSize: 18,
+                    marginTop: 10,
+                    color: "black",
+                    marginRight: 17
                   }}
                 >
-                  {(this.props.event || {}).title}
+                  Edit
                 </Text>
-              </View>
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: "50%", justifyContent: "space-between" }}>
+              {this.renderTitle()}
               <View
                 style={{
                   flex: 1,
@@ -177,53 +229,13 @@ class EventModal extends Component {
                   marginHorizontal: 20
                 }}
               >
-                <View style={{ flex: 1, justifyContent: "center" }}>
-                  <Text style={styles.dateFormat}>
-                    {getDay(this.props.event.from)}
-                  </Text>
-                  <Text style={styles.dateFormat}>
-                    {getDate(this.props.event.from)}
-                  </Text>
-                  <Text style={styles.dateFormat}>
-                    {getTime(this.props.event.from)}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flex: 0.5,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <Image
-                    source={require("../../assets/arrow.png")}
-                    style={{ height: 28, width: 40 }}
-                  />
-                </View>
-                <View style={{ flex: 1, justifyContent: "center" }}>
-                  <Text style={styles.dateFormat}>
-                    {getDay(this.props.event.to)}
-                  </Text>
-                  <Text style={styles.dateFormat}>
-                    {getDate(this.props.event.to)}
-                  </Text>
-                  <Text style={styles.dateFormat}>
-                    {getTime(this.props.event.to)}
-                  </Text>
-                </View>
+                {this.renderDate(this.props.event.from)}
+                {this.renderArrow()}
+                {this.renderDate(this.props.event.to)}
               </View>
-              <View style={styles.eventDetailsView}>
-                <Text style={styles.eventDetailsHeader}>Location</Text>
-                <Text style={styles.eventDetailsBody}>
-                  {this.props.event.location || "-"}
-                </Text>
-              </View>
-              <View style={styles.eventDetailsView}>
-                <Text style={styles.eventDetailsHeader}>Notes</Text>
-                <Text style={styles.eventDetailsBody}>
-                  {this.props.event.notes || "-"}
-                </Text>
-              </View>
+
+              {this.renderNote("md-map", this.props.event.location)}
+              {this.renderNote("md-book", this.props.event.notes)}
             </View>
             <View
               style={{ flexDirection: "row", marginTop: 30, height: "30%" }}
@@ -267,7 +279,7 @@ class EventModal extends Component {
                 <TouchableOpacity
                   style={[
                     styles.respondInvitationButton,
-                    { backgroundColor: "#2AC58B" }
+                    { backgroundColor: "#65c681" }
                   ]}
                   onPress={this.respondToInvitation(
                     this.props.event.eventID,
@@ -335,12 +347,6 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps)(EventModal);
 
 const styles = StyleSheet.create({
-  dateFormat: {
-    textAlign: "center",
-    fontSize: 20,
-    color: cliqueBlue,
-    fontWeight: "bold"
-  },
   attendanceHeader: {
     textAlign: "center",
     fontSize: 18,
@@ -360,7 +366,7 @@ const styles = StyleSheet.create({
   },
   eventDetailsView: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center"
   },
   respondInvitationButton: {
