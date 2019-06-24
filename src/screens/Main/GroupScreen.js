@@ -85,7 +85,7 @@ class GroupScreen extends Component {
     if (isText) {
       const message = (groups[groupId].last_message || {}).message;
       return (
-        <Text body style={{ top: 5 }} numberOfLines={1}>
+        <Text header style={{ top: 5 }} numberOfLines={1}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username}
           </Text>
@@ -96,8 +96,8 @@ class GroupScreen extends Component {
     } else {
       const eventTitle = (groups[groupId].last_message || {}).event.title;
       return (
-        <Text body style={{ top: 5 }} numberOfLines={1}>
-          <Text medium body style={{ color: cliqueBlue, fontWeight: "400" }}>
+        <Text header style={{ top: 5 }} numberOfLines={1}>
+          <Text medium header style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username + " "}
           </Text>
           created a new event: {eventTitle}
@@ -138,7 +138,7 @@ class GroupScreen extends Component {
                 width: Dimensions.get("window").width * 0.75
               }}
             >
-              <Text h3 medium style={{ fontWeight: "500" }}>
+              <Text title medium style={{ fontWeight: "500" }}>
                 {item.groupName}
               </Text>
               <Text>{this.renderTimestamp(item.groupID)}</Text>

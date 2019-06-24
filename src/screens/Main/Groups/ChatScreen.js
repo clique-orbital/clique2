@@ -75,7 +75,7 @@ class ChatScreen extends Component {
         >
           <MyIcon
             name="calendar"
-            size={32}
+            size={27}
             color="white"
             type="material-community"
             style={{ marginRight: 20 }}
@@ -260,14 +260,14 @@ class ChatScreen extends Component {
         >
           {item.sender !== this.props.uid && (
             <View style={{ padding: 2 }}>
-              <Text white semibold>
+              <Text white header semibold>
                 {item.username}
               </Text>
             </View>
           )}
           <View style={{ flexDirection: "row" }}>
             <View style={{ flexWrap: "wrap" }}>
-              <Text body white style={{ padding: 7 }}>
+              <Text header white style={{ padding: 7 }}>
                 {item.message}
               </Text>
             </View>
