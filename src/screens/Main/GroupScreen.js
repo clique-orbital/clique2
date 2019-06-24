@@ -51,6 +51,11 @@ class GroupScreen extends Component {
   async componentDidMount() {
     this.scrollToTop();
     const db = firebase.database();
+    const uid = firebase.auth().currentUser.uid;
+
+    db.ref(`users/${uid}/groups`).on("child_added", () =>
+      this.props.fetchGroups()
+    );
 
     if (this.props.groups) {
       for (let groupId of Object.keys(this.props.groups)) {
@@ -121,17 +126,27 @@ class GroupScreen extends Component {
   };
 
   deleteGroupFromDb = async (groupID, users) => {
-    await firebase.database().ref(`groups/${groupID}`).remove();
-    await firebase.database().ref(`events/${groupID}`).remove();
-    await firebase.database().ref(`messages/${groupID}`).remove();
+    await firebase
+      .database()
+      .ref(`groups/${groupID}`)
+      .remove();
+    await firebase
+      .database()
+      .ref(`events/${groupID}`)
+      .remove();
+    await firebase
+      .database()
+      .ref(`messages/${groupID}`)
+      .remove();
     users = await Object.keys(users).map(async uid => {
-      await firebase.database().ref(`users/${uid}/groups/${groupID}`).remove();
-    })
-    Promise.all(users).then(() => console.log('delete successful'));
+      await firebase
+        .database()
+        .ref(`users/${uid}/groups/${groupID}`)
+        .remove();
+    });
+    Promise.all(users).then(() => console.log("delete successful"));
     this.props.fetchGroups();
-  }
-
-
+  };
 
   renderRow = ({ item }) => {
     const swipeSettings = {
@@ -140,31 +155,33 @@ class GroupScreen extends Component {
         {
           onPress: () => {
             Alert.alert(
-              'Delete Group',
-              'Are you sure you want to delete this group permanently?',
+              "Delete Group",
+              "Are you sure you want to delete this group permanently?",
               [
-                { text: 'No', onPress: () => console.log('Cancel Delete'), style: 'cancel' },
                 {
-                  text: 'Yes', onPress: () => {
+                  text: "No",
+                  onPress: () => console.log("Cancel Delete"),
+                  style: "cancel"
+                },
+                {
+                  text: "Yes",
+                  onPress: () => {
                     this.deleteGroupFromDb(item.groupID, item.users);
                   }
                 },
                 { cancelable: true }
               ]
-            )
+            );
           },
-          text: 'Delete',
-          type: 'delete'
+          text: "Delete",
+          type: "delete"
         }
       ],
       rowId: item.id,
-      backgroundColor: "#fff",
-
-    }
+      backgroundColor: "#fff"
+    };
     return (
-      <SwipeOut
-        {...swipeSettings}
-      >
+      <SwipeOut {...swipeSettings}>
         <TouchableOpacity
           style={styles.chatList}
           onPress={() =>
