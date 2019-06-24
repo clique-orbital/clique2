@@ -53,9 +53,7 @@ class GroupScreen extends Component {
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
 
-    db.ref(`users/${uid}/groups`).on("child_added", () =>
-      this.props.fetchGroups()
-    );
+    db.ref(`users/${uid}/groups`).on("value", () => this.props.fetchGroups());
 
     if (this.props.groups) {
       for (let groupId of Object.keys(this.props.groups)) {
@@ -149,6 +147,7 @@ class GroupScreen extends Component {
   };
 
   renderRow = ({ item }) => {
+    item = item || {};
     const swipeSettings = {
       autoClose: true,
       right: [
