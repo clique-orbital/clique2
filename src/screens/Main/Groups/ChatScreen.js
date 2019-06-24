@@ -8,7 +8,8 @@ import {
   Keyboard,
   Platform,
   TouchableOpacity,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  SafeAreaView
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import {
@@ -49,7 +50,7 @@ class ChatScreen extends Component {
     return {
       headerTintColor: "#fff",
       headerTitle: (
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <GroupPicture source={navigation.getParam("image")} value={0.1} />
           <Text
             style={{
@@ -97,7 +98,7 @@ class ChatScreen extends Component {
     });
     this.keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      // this.scrollToBottom
+      this.scrollToBottom
     );
     this.keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
@@ -226,8 +227,10 @@ class ChatScreen extends Component {
     Promise.all(notAttending).then(members => {
       this.props.dispatch(populateNotAttending(members));
     });
-
     this.props.dispatch(toggleEventModal(true, event));
+    // this.props.navigation.navigate("EventModal", {
+    //   modalVisibility: true
+    // });
   };
 
   // sameDay = (dateOfLastMsg, dayOfLastMsg) => {
@@ -373,44 +376,44 @@ class ChatScreen extends Component {
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -300}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -300}
         style={{ flex: 1 }}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <FlatList
-            ref="messageList"
-            onContentSizeChange={this.scrollToBottom}
-            style={{ padding: 10 }}
-            data={this.props.conversation.slice()}
-            renderItem={this.renderRow}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </TouchableWithoutFeedback>
-        <View style={{ height: height * 0.07 }} />
-        <View
-          style={[
-            styles.chatBox,
-            {
-              zIndex: 1,
-              borderTopWidth: StyleSheet.hairlineWidth,
-              borderTopColor: "lightgrey",
-              position: "absolute",
-              bottom: 0
-            },
-            Platform.OS === "ios" ? styles.iOSmargin : null
-          ]}
-        >
-          <TextInput
-            style={styles.chatInput}
-            value={this.state.textMessage}
-            onChangeText={this.handleChange("textMessage")}
-            placeholder="Message"
-          />
-          <TouchableOpacity onPress={this.sendMessage} style={{}}>
-            <MyIcon name="send" type="material" size={28} color={cliqueBlue} />
-          </TouchableOpacity>
-        </View>
-        <EventModal groupID={this.state.groupID} />
+        <SafeAreaView style={{ flex: 1 }}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <FlatList
+              ref="messageList"
+              onContentSizeChange={this.scrollToBottom}
+              style={{ padding: 10, height: height }}
+              data={this.props.conversation.slice()}
+              renderItem={this.renderRow}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </TouchableWithoutFeedback>
+          <View
+            style={[
+              styles.chatBox,
+              {
+                zIndex: 1,
+                borderTopWidth: StyleSheet.hairlineWidth,
+                borderTopColor: "lightgrey",
+                bottom: 0,
+              },
+              Platform.OS === "ios" ? styles.iOSmargin : null
+            ]}
+          >
+            <TextInput
+              style={styles.chatInput}
+              value={this.state.textMessage}
+              onChangeText={this.handleChange("textMessage")}
+              placeholder="Message"
+            />
+            <TouchableOpacity onPress={this.sendMessage} style={{ justifyContent: "center" }}>
+              <MyIcon name="send" type="material" size={28} color={cliqueBlue} />
+            </TouchableOpacity>
+          </View>
+          <EventModal groupID={this.state.groupID} />
+        </SafeAreaView>
       </KeyboardAvoidingView>
     );
   }
@@ -435,7 +438,7 @@ const styles = StyleSheet.create({
   },
   chatBox: {
     flexDirection: "row",
-    alignItems: "center"
+    // alignItems: "center"
   },
   iOSmargin: {
     margin: 8

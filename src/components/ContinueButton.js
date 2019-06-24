@@ -16,6 +16,7 @@ const ContinueButton = props => {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
+        elevation: 2
       }}
     >
       <MyIcon name={props.name} size={30} color="white" type="material" />

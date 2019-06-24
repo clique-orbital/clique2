@@ -103,8 +103,9 @@ class EventModal extends Component {
   };
 
   handleEditButtonPress = () => {
-    // this.hideModal();
-    (this.props.navigation || {}).navigate("CreateEvents");
+    (this.props.navigation || {}).navigate("CreateEvents", {
+      groupID: this.props.event.groupID
+    });
   }
 
   render() {
@@ -164,7 +165,7 @@ class EventModal extends Component {
                     fontSize: 35
                   }}
                 >
-                  {this.props.event.title}
+                  {(this.props.event || {}).title}
                 </Text>
               </View>
               <View

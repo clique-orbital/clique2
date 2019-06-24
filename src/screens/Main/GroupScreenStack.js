@@ -16,7 +16,7 @@ const GroupScreenStack = createStackNavigator(
     GroupDetails: GroupDetails,
     GroupCalendar: CalendarScreen,
     CreateEvents: CreateEvents,
-    EventModal: EventModal
+    // EventModal: EventModal
   },
   {
     initialRouteName: "Main",
