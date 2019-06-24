@@ -374,7 +374,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    maxWidth: "100%"
+    maxWidth: "100%",
+    marginRight: 80
   },
   myMessageBubble: {
     justifyContent: "space-between",
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    marginLeft: 40,
+    marginLeft: 80,
     maxWidth: "100%"
   },
   yourEventBubble: {

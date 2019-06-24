@@ -10,7 +10,8 @@ class MessageBubble extends React.Component {
           {this.props.item.sender !== this.props.uid && (
             <View
               style={{
-                padding: 2,
+                paddingLeft: 7,
+                paddingTop: 3,
                 flexDirection: "row",
                 justifyContent: "space-between"
               }}
@@ -25,7 +26,9 @@ class MessageBubble extends React.Component {
               header
               white
               style={{
-                padding: 7,
+                paddingTop: 4,
+                paddingBottom: 7,
+                paddingHorizontal: 7,
                 width: "auto",
                 maxWidth: this.props.maxWidth * 0.85
               }}
