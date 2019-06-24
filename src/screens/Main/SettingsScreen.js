@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform, StatusBar } from "react-native";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
 import firebase from "react-native-firebase";
@@ -66,6 +66,7 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
+    if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
     return (
       <View style={styles.container}>
         {this.renderProfilePic()}

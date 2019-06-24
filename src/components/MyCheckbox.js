@@ -50,13 +50,10 @@ export default class MyCheckBox extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
-    width: "100%",
-    display: "flex",
+    width: "80%",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    borderColor: "#eee",
-    borderBottomWidth: 1
+    alignItems: "center"
   },
   text: {
     paddingLeft: "5%",
@@ -65,7 +62,6 @@ const styles = StyleSheet.create({
     left: "5%"
   },
   icon: {
-    paddingRight: "5%",
-    paddingTop: "3%"
+    // margin: 0
   }
 });
