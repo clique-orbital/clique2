@@ -2,7 +2,6 @@ import React from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   PermissionsAndroid,
@@ -17,6 +16,8 @@ import ContinueButton from "../../../components/ContinueButton";
 import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
 import Spinner from "../../../components/Spinner";
+import GroupPicture from "../../../components/GroupPicture";
+import defaultPicture from "../../../assets/default_profile.png";
 
 class GroupMembersSelect extends React.Component {
   static navigationOptions = () => {
@@ -128,16 +129,40 @@ class GroupMembersSelect extends React.Component {
   };
 
   renderRow = ({ item }) => {
+    const number = item.phoneNumbers.map(n => n.number)[0].replace(/\s/g, "");
+    let fulfilled = false;
+    const profilePicture = firebase
+      .database()
+      .ref(`phoneNumbers/${number}/photoURL`)
+      .once("value")
+      .then(ss => {
+        fulfilled = true;
+        this.setState(this.state);
+        return ss.val();
+      });
+
     return (
-      <Field
-        name={`contact${item.givenName}`}
-        component={this.renderCheckBox}
-        user={item}
-        label={item.givenName + " " + item.familyName}
+      <View
         style={{
-          paddingBottom: 5
+          flexDirection: "row",
+          width: "100%",
+          paddingVertical: 5,
+          alignItems: "center",
+          borderBottomColor: "lightgrey",
+          borderBottomWidth: StyleSheet.hairlineWidth
         }}
-      />
+      >
+        <GroupPicture
+          source={fulfilled ? { uri: profilePicture } : defaultPicture}
+          value={0.1}
+        />
+        <Field
+          name={`contact${item.givenName}`}
+          component={this.renderCheckBox}
+          user={item}
+          label={item.givenName + " " + item.familyName}
+        />
+      </View>
     );
   };
 
