@@ -5,6 +5,7 @@ import { groupsReducer } from "./groupsReducer";
 import { messagesReducer } from "./messagesReducer";
 import { createEventsReducer } from "./createEventsReducer";
 import { eventModalReducer } from "./eventModalReducer";
+import { messageCounterReducer } from "./messageCounterReducer";
 import { calendarReducer } from "./calendarReducer";
 
 export default combineReducers({
@@ -14,5 +15,6 @@ export default combineReducers({
   createEventsReducer,
   eventModalReducer,
   form: formReducer,
-  calendar: calendarReducer
+  calendar: calendarReducer,
+  messageCounterReducer
 });

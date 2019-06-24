@@ -4,7 +4,7 @@ import { View, ActivityIndicator, StyleSheet } from "react-native";
 class Spinner extends React.Component {
   render() {
     return (
-      <View style={styles.loading} pointerEvents="none">
+      <View style={styles.loading}>
         <ActivityIndicator size="large" />
       </View>
     );

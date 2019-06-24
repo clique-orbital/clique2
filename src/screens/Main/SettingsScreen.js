@@ -1,7 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-import { Button } from "react-native-elements";
-import { createStackNavigator } from "react-navigation";
+import { View, StyleSheet, Platform, StatusBar } from "react-native";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
 import firebase from "react-native-firebase";
@@ -9,6 +7,10 @@ import { connect } from "react-redux";
 import { SIGN_OUT } from "../../store/constants";
 import defaultPicture from "../../assets/default_profile.png";
 import AsyncStorage from "@react-native-community/async-storage";
+
+import Text from "../../components/Text";
+import Button from "../../components/Button";
+import GroupPicture from "../../components/GroupPicture";
 
 class SettingsScreen extends React.Component {
   constructor(props) {
@@ -57,50 +59,47 @@ class SettingsScreen extends React.Component {
 
   renderProfilePic() {
     if (this.state.uri === "") {
-      return <Image source={defaultPicture} style={styles.profilePic} />;
+      return <GroupPicture source={defaultPicture} value={0.4} />;
     } else {
-      return (
-        <Image source={{ uri: this.state.uri }} style={styles.profilePic} />
-      );
+      return <GroupPicture source={{ uri: this.state.uri }} value={0.4} />;
     }
   }
 
   render() {
+    if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
     return (
       <View style={styles.container}>
         {this.renderProfilePic()}
-        <Text>Your name: {this.props.username}</Text>
-        <Text>Your phone number: {this.props.phoneNumber}</Text>
+        <Text center h3 light style={{ marginTop: 50 }}>
+          @{this.props.username}
+        </Text>
+        <Text center h3 light>
+          {this.props.phoneNumber}
+        </Text>
         <Button
-          title="Sign Out"
-          type="clear"
+          shadow
           onPress={this.signOut}
-          buttonStyle={{ top: 10 }}
-        />
+          color="white"
+          style={{ top: 10, width: "50%" }}
+        >
+          <Text center semibold>
+            Sign Out
+          </Text>
+        </Button>
       </View>
     );
   }
 }
-
-const SettingsStack = createStackNavigator({
-  Main: SettingsScreen
-});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 50
   }
 });
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   return {
     phoneNumber: state.authReducer.user.phoneNumber,
     username: state.authReducer.user.displayName

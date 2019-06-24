@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   FlatList,
@@ -22,6 +21,8 @@ import {
 import { connect } from "react-redux";
 import GroupPicture from "../../components/GroupPicture";
 import SwipeOut from "react-native-swipeout";
+import { incrementCount, setToZero } from "../../store/actions/messageCounter";
+import Text from "../../components/Text";
 
 const cliqueBlue = "#134782";
 
@@ -56,6 +57,13 @@ class GroupScreen extends Component {
         db.ref(`groups/${groupId}/last_message`).on(
           "child_changed",
           snapshot => {
+            db.ref(`groups/${groupId}/last_message/username`)
+              .once("value")
+              .then(res => {
+                if (res.val() !== firebase.auth().currentUser.displayName) {
+                  this.props.incrementCount(groupId);
+                }
+              });
             this.fetchGroup(groupId).then(() => this.props.sortGroups());
           }
         );
@@ -81,7 +89,7 @@ class GroupScreen extends Component {
     if (isText) {
       const message = (groups[groupId].last_message || {}).message;
       return (
-        <Text style={{ top: 5 }} numberOfLines={1}>
+        <Text header style={{ top: 5 }} numberOfLines={1}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username}
           </Text>
@@ -92,8 +100,8 @@ class GroupScreen extends Component {
     } else {
       const eventTitle = (groups[groupId].last_message || {}).event.title;
       return (
-        <Text style={{ top: 5 }} numberOfLines={1}>
-          <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
+        <Text header style={{ top: 5 }} numberOfLines={1}>
+          <Text medium header style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username + " "}
           </Text>
           created a new event: {eventTitle}
@@ -176,7 +184,7 @@ class GroupScreen extends Component {
                   width: Dimensions.get("window").width * 0.75
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                <Text header semibold>
                   {item.groupName}
                 </Text>
                 <Text>{this.renderTimestamp(item.groupID)}</Text>
@@ -184,6 +192,23 @@ class GroupScreen extends Component {
               <View style={{ padding: 2, width: "90%" }}>
                 {this.renderLastMessage(item.groupID)}
               </View>
+            </View>
+            <View>
+              {this.props.groupsMessageCounter[item.groupID] > 0 ? (
+                <View
+                  style={{
+                    backgroundColor: "#3a8cbc",
+                    height: 20,
+                    width: 20,
+                    borderRadius: 10,
+                    position: "absolute",
+                    right: 10,
+                    bottom: 1
+                  }}
+                />
+              ) : (
+                  undefined
+                )}
             </View>
           </View>
         </TouchableOpacity>
@@ -220,11 +245,19 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    groups: state.groupsReducer.groups
+    groups: state.groupsReducer.groups,
+    groupsMessageCounter: state.messageCounterReducer.groups
   };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchAGroup, fetchedGroups, sortGroups, fetchGroups }
+  {
+    fetchAGroup,
+    fetchedGroups,
+    sortGroups,
+    fetchGroups,
+    incrementCount,
+    setToZero
+  }
 )(GroupScreen);

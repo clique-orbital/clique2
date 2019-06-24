@@ -1,15 +1,15 @@
 import React from "react";
-import { Text } from "react-native";
+import Text from "./Text";
 
 const HeaderTitle = props => {
   return (
     <Text
+      semibold
+      h2
+      white
+      left
       style={{
-        fontWeight: "400",
-        color: "white",
-        fontSize: 20,
-        textAlign: "left",
-        marginLeft: 10
+        marginLeft: 20
       }}
     >
       {props.title}
