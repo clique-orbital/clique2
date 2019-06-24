@@ -168,6 +168,7 @@ class Auth extends Component {
         <Input
           phone
           h={100}
+          w={200}
           style={[
             styles.input,
             {
@@ -177,7 +178,6 @@ class Auth extends Component {
           color={cliqueBlue}
           onChangeText={value => this.setState({ codeInput: value })}
           value={codeInput}
-          placeholder={"_ _ _ _ _ _"}
         />
         <Button shadow onPress={this.confirmCode} style={{ width: "70%" }}>
           <Text center semibold>

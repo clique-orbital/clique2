@@ -153,7 +153,10 @@ class CreateEvents extends Component {
         <Input
           left
           placeholder="Add title"
-          style={[styles.input, { fontSize: 20, paddingLeft: 30 }]}
+          style={[
+            styles.input,
+            { fontSize: 20, paddingLeft: 30, paddingVertical: 5 }
+          ]}
           w={width}
           value={this.props.title}
           onChangeText={this.handleTextChange("title")}
@@ -189,7 +192,15 @@ class CreateEvents extends Component {
           >
             From:
           </Text>
-          <Text medium h3 gray>
+          <Text
+            medium
+            h3
+            gray
+            style={{
+              paddingBottom: 10,
+              height: 40
+            }}
+          >
             To:
           </Text>
         </View>
@@ -197,7 +208,6 @@ class CreateEvents extends Component {
           <TouchableOpacity
             style={{
               height: 40,
-              justifyContent: "center",
               paddingBottom: 10
             }}
             onPress={this.showFromDatePicker}
@@ -209,7 +219,6 @@ class CreateEvents extends Component {
           <TouchableOpacity
             style={{
               height: 40,
-              justifyContent: "center",
               paddingBottom: 10
             }}
             onPress={this.showToDatePicker}
@@ -230,7 +239,8 @@ class CreateEvents extends Component {
           {
             width: width,
             flexDirection: "row",
-            paddingVertical: 10
+            paddingVertical: 10,
+            alignItems: "center"
           },
           styles.border
         ]}
@@ -274,7 +284,6 @@ class CreateEvents extends Component {
             />,
             "md-book"
           )}
-          <View style={{ height: 30 }} />
           <Button
             shadow
             style={styles.publishButton}
@@ -334,7 +343,7 @@ const styles = StyleSheet.create({
   },
   publishButton: {
     backgroundColor: cliqueBlue,
-    width: "30%",
+    width: "70%",
     borderRadius: 10
   },
   publishText: {

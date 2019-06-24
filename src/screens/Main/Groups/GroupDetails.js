@@ -1,16 +1,15 @@
 import React from "react";
 import {
   View,
-  Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   Dimensions
 } from "react-native";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 
+import Text from "../../../components/Text";
 import ContinueButton from "../../../components/ContinueButton";
 import { createGroup } from "../../../store/actions/groups";
 import defaultPicture from "../../../assets/default_profile.png";
@@ -74,7 +73,7 @@ class GroupDetails extends React.Component {
     return (
       <View style={styles.container}>
         <View style={{ marginTop: "15%" }}>
-          <Text style={styles.text}>
+          <Text body grey style={styles.text}>
             Enter your group name and group picture!
           </Text>
           <Field
@@ -114,10 +113,12 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   text: {
-    fontSize: 16,
     marginBottom: 10
   },
   textInput: {
+    fontWeight: "500",
+    fontSize: 18,
+    textAlign: "center",
     top: "20%",
     height: 40,
     borderBottomColor: "#bbb",

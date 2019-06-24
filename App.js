@@ -53,7 +53,7 @@ const AppNavigator = createBottomTabNavigator(
           <View style={{ paddingTop: 5 }}>
             <IconComponent
               name={iconName}
-              size={30}
+              size={28}
               color={tintColor}
               type={iconType}
             />
