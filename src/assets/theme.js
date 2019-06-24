@@ -2,8 +2,8 @@ const colors = {
   cliqueBlue: "#134782",
   black: "#323643",
   white: "#FFFFFF",
-  gray: "#9DA3B4",
-  gray2: "#C5CCD6"
+  gray: "darkgrey",
+  gray2: "grey"
 };
 
 const sizes = {

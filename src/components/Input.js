@@ -65,13 +65,19 @@ export default class Input extends Component {
       value,
       h,
       w,
+      left,
       ...props
     } = this.props;
 
     const { toggleSecure } = this.state;
     const isSecure = toggleSecure ? false : secure;
 
-    const inputStyles = [styles.input, style, { height: h, width: w }];
+    const inputStyles = [
+      styles.input,
+      style,
+      { height: h, width: w },
+      left && { textAlign: "left" }
+    ];
 
     const inputType = email
       ? "email-address"

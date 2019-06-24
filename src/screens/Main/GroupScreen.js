@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   FlatList,
@@ -20,6 +19,7 @@ import {
 import { connect } from "react-redux";
 import GroupPicture from "../../components/GroupPicture";
 import { incrementCount, setToZero } from "../../store/actions/messageCounter";
+import Text from "../../components/Text";
 
 const cliqueBlue = "#134782";
 
@@ -85,7 +85,7 @@ class GroupScreen extends Component {
     if (isText) {
       const message = (groups[groupId].last_message || {}).message;
       return (
-        <Text style={{ top: 5 }} numberOfLines={1}>
+        <Text body style={{ top: 5 }} numberOfLines={1}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username}
           </Text>
@@ -96,8 +96,8 @@ class GroupScreen extends Component {
     } else {
       const eventTitle = (groups[groupId].last_message || {}).event.title;
       return (
-        <Text style={{ top: 5 }} numberOfLines={1}>
-          <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
+        <Text body style={{ top: 5 }} numberOfLines={1}>
+          <Text medium body style={{ color: cliqueBlue, fontWeight: "400" }}>
             {username + " "}
           </Text>
           created a new event: {eventTitle}
@@ -138,7 +138,7 @@ class GroupScreen extends Component {
                 width: Dimensions.get("window").width * 0.75
               }}
             >
-              <Text style={{ fontSize: 16, fontWeight: "500" }}>
+              <Text h3 semibold style={{ fontWeight: "500" }}>
                 {item.groupName}
               </Text>
               <Text>{this.renderTimestamp(item.groupID)}</Text>

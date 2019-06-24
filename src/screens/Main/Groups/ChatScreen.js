@@ -75,9 +75,10 @@ class ChatScreen extends Component {
           }
         >
           <MyIcon
-            name="md-calendar"
+            name="calendar"
             size={32}
             color="white"
+            type="material-community"
             style={{ marginRight: 20 }}
           />
         </TouchableOpacity>
@@ -301,21 +302,23 @@ class ChatScreen extends Component {
             onPress={this.showEventModal(item.event)}
           >
             <View>
-              <Text style={{ ...styles.eventDetails, fontWeight: "bold" }}>
+              <Text semibold h2 style={{ ...styles.eventDetails }}>
                 {item.event.title}
               </Text>
-              <Text style={styles.eventDetails}>
+              <Text light body style={styles.eventDetails}>
                 {convertDate(item.event.from) +
                   " to\n" +
                   convertDate(item.event.to)}
               </Text>
               <Text
+                light
+                body
                 style={{
                   ...styles.eventDetails,
                   display: item.event.location ? "flex" : "none"
                 }}
               >
-                {item.event.location}
+                Location: {item.event.location}
               </Text>
             </View>
             <View style={{ justifyContent: "flex-end" }}>
@@ -487,8 +490,6 @@ const styles = StyleSheet.create({
   eventDetails: {
     color: "#fff",
     padding: 7,
-    fontSize: 16,
-    textDecorationLine: "underline",
     flex: 1
   },
   eventBubbleContent: {
