@@ -152,10 +152,12 @@ class GroupMembersSelect extends React.Component {
           borderBottomWidth: StyleSheet.hairlineWidth
         }}
       >
-        <GroupPicture
-          source={fulfilled ? { uri: profilePicture } : defaultPicture}
-          value={0.1}
-        />
+        <View style={{ paddingLeft: 10 }}>
+          <GroupPicture
+            source={fulfilled ? { uri: profilePicture } : defaultPicture}
+            value={0.1}
+          />
+        </View>
         <Field
           name={`contact${item.givenName}`}
           component={this.renderCheckBox}
