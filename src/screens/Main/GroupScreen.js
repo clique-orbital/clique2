@@ -138,7 +138,7 @@ class GroupScreen extends Component {
                 width: Dimensions.get("window").width * 0.75
               }}
             >
-              <Text h3 semibold style={{ fontWeight: "500" }}>
+              <Text h3 medium style={{ fontWeight: "500" }}>
                 {item.groupName}
               </Text>
               <Text>{this.renderTimestamp(item.groupID)}</Text>

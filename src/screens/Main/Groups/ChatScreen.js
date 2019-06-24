@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  SafeAreaView,
   View,
   TextInput,
   Dimensions,
@@ -19,7 +18,7 @@ import {
 } from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
 import { fetchConversation } from "../../../store/actions/messages";
-import { convertDate } from "../../../assets/constants";
+import { convertDate, cliqueBlue } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
@@ -370,39 +369,47 @@ class ChatScreen extends Component {
   };
 
   render() {
-    let { height } = Dimensions.get("window");
+    let height = Dimensions.get("window").height;
     return (
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -300}
         style={{ flex: 1 }}
       >
-        <SafeAreaView>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.inner}>
-              <FlatList
-                ref="messageList"
-                onContentSizeChange={this.scrollToBottom}
-                style={{ padding: 10, height: height * 0.8 }}
-                data={this.props.conversation.slice()}
-                renderItem={this.renderRow}
-                keyExtractor={(item, index) => index.toString()}
-              />
-              <View style={[styles.chatBox, { zIndex: 1 }]}>
-                <TextInput
-                  style={styles.chatInput}
-                  value={this.state.textMessage}
-                  onChangeText={this.handleChange("textMessage")}
-                  placeholder="Write a message"
-                />
-                <TouchableOpacity onPress={this.sendMessage} style={{}}>
-                  <Text style={styles.sendBtn}>Send</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ flex: 1 }} />
-            </View>
-          </TouchableWithoutFeedback>
-        </SafeAreaView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <FlatList
+            ref="messageList"
+            onContentSizeChange={this.scrollToBottom}
+            style={{ padding: 10 }}
+            data={this.props.conversation.slice()}
+            renderItem={this.renderRow}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </TouchableWithoutFeedback>
+        <View style={{ height: height * 0.07 }} />
+        <View
+          style={[
+            styles.chatBox,
+            {
+              zIndex: 1,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: "lightgrey",
+              position: "absolute",
+              bottom: 0
+            },
+            Platform.OS === "ios" ? styles.iOSmargin : null
+          ]}
+        >
+          <TextInput
+            style={styles.chatInput}
+            value={this.state.textMessage}
+            onChangeText={this.handleChange("textMessage")}
+            placeholder="Message"
+          />
+          <TouchableOpacity onPress={this.sendMessage} style={{}}>
+            <MyIcon name="send" type="material" size={28} color={cliqueBlue} />
+          </TouchableOpacity>
+        </View>
         <EventModal groupID={this.state.groupID} />
       </KeyboardAvoidingView>
     );
@@ -430,15 +437,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
+  iOSmargin: {
+    margin: 8
+  },
   chatInput: {
-    borderWidth: 1,
-    borderRadius: 7,
-    width: "80%",
+    width: "90%",
     padding: 10,
-    margin: 8,
     color: "black",
-    borderColor: "black",
-    bottom: 0
+    bottom: 0,
+    fontSize: 16
   },
   sendBtn: {
     color: "#1d73d6",
