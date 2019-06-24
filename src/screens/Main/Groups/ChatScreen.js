@@ -259,6 +259,7 @@ class ChatScreen extends Component {
           uid={this.props.uid}
           convertTime={this.convertTime}
           item={item}
+          maxWidth={Dimensions.get("window").width}
         />
       );
     } else if (item.messageType === "event") {
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
-    maxWidth: "80%"
+    maxWidth: "100%"
   },
   myMessageBubble: {
     justifyContent: "space-between",
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingLeft: 5,
     marginLeft: 40,
-    maxWidth: "80%"
+    maxWidth: "100%"
   },
   yourEventBubble: {
     alignSelf: "flex-start",
