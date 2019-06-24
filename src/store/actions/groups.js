@@ -110,18 +110,18 @@ export const createGroup = (
   let users_info = { [myuser]: true };
   const groupID = uuidv4();
   addGroupToUser(groupID, myuser);
-  for (let user of users) {
-    db.ref("phoneNumbers")
-      .child(`${user.phoneNumbers[0].number.replace(/\s/g, "")}`)
-      .once("value", data => {
-        uid = data.child("uid").val();
-        users_info = { ...users_info, [uid]: true };
-        addGroupToUser(groupID, uid);
-      });
-  }
 
   const url = await addGroupPicture(groupPicture);
   newGroupCreator(groupName, groupID, url, users_info, data).then(() => {
+    for (let user of users) {
+      db.ref("phoneNumbers")
+        .child(`${user.phoneNumbers[0].number.replace(/\s/g, "")}`)
+        .once("value", data => {
+          uid = data.child("uid").val();
+          users_info = { ...users_info, [uid]: true };
+          addGroupToUser(groupID, uid);
+        });
+    }
     return db
       .ref("groups")
       .child(`${groupID}`)
