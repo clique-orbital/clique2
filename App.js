@@ -5,7 +5,6 @@ import {
   createAppContainer,
   createSwitchNavigator
 } from "react-navigation";
-import firebase from "react-native-firebase";
 import {
   fetchGroups,
   fetchGroup,
@@ -38,25 +37,33 @@ const AppNavigator = createBottomTabNavigator(
         const { routeName } = navigation.state;
         let IconComponent = MyIcon;
         let iconName;
+        let iconType = "material";
         if (routeName === "Groups") {
-          iconName = `md-chatboxes`;
+          iconName = `chat${focused ? "" : "-bubble-outline"}`;
         } else if (routeName === "Calendar") {
-          iconName = `md-calendar`;
+          iconType = "material-community";
+          iconName = `calendar${focused ? "" : "-blank-outline"}`;
         } else if (routeName === "Notifications") {
-          iconName = `md-notifications`;
+          iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {
-          iconName = `md-contact`;
+          iconName = `person${focused ? "" : "-outline"}`;
           // return <ProfilePicture value={this.props.user.photoURL} width={28} />;
         }
         return (
           <View style={{ paddingTop: 5 }}>
-            <IconComponent name={iconName} size={28} color={tintColor} />
+            <IconComponent
+              name={iconName}
+              size={30}
+              color={tintColor}
+              type={iconType}
+            />
           </View>
         );
       }
     }),
     tabBarOptions: {
-      activeTintColor: cliqueBlue,
+      showLabel: false,
+      activeTintColor: "black",
       inactiveTintColor: "gray"
     }
   }
