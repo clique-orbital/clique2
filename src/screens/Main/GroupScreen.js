@@ -58,7 +58,7 @@ class GroupScreen extends Component {
     );
 
     if (this.props.groups) {
-      for (let groupId of Object.keys(this.props.groups)) {
+      for (let groupId of _.keys(this.props.groups)) {
         db.ref(`groups/${groupId}/last_message`).on(
           "child_changed",
           snapshot => {
@@ -126,29 +126,32 @@ class GroupScreen extends Component {
   };
 
   deleteGroupFromDb = async (groupID, users) => {
-    await firebase
-      .database()
-      .ref(`groups/${groupID}`)
-      .remove();
-    await firebase
-      .database()
-      .ref(`events/${groupID}`)
-      .remove();
-    await firebase
-      .database()
-      .ref(`messages/${groupID}`)
-      .remove();
-    users = await Object.keys(users).map(async uid => {
-      await firebase
+    users = _.keys(users).map(uid => {
+      return firebase
         .database()
         .ref(`users/${uid}/groups/${groupID}`)
         .remove();
     });
-    Promise.all(users).then(() => console.log("delete successful"));
-    this.props.fetchGroups();
+    Promise.all(users).then(async () => {
+      this.props.fetchGroups()
+      await firebase
+        .database()
+        .ref(`events/${groupID}`)
+        .remove();
+      await firebase
+        .database()
+        .ref(`messages/${groupID}`)
+        .remove();
+      await firebase
+        .database()
+        .ref(`groups/${groupID}`)
+        .remove();
+    });
+
   };
 
   renderRow = ({ item }) => {
+    item = item || {};
     const swipeSettings = {
       autoClose: true,
       right: [

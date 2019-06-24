@@ -1,5 +1,6 @@
 import firebase from "react-native-firebase";
 import { FETCH_EVENTS, CLEAR_EVENTS } from "../constants";
+import _ from "lodash"
 
 const db = firebase.database();
 
@@ -25,7 +26,7 @@ const storeEvents = (groupid, events) => {
 
 export const fetchAllEvents = uid => dispatch => {
   return db.ref(`users/${uid}/groups`).once("value", snapshot => {
-    Object.keys(snapshot.val()).forEach(groupId => {
+    _.keys(snapshot.val()).forEach(groupId => {
       dispatch(fetchEvents(groupId));
     });
   });
