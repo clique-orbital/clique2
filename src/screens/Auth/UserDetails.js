@@ -37,7 +37,11 @@ class UserDetails extends React.Component {
   handleSubmit = async values => {
     this.setState({ loading: true });
     this.storeData("profilePicture", values.profilepicture.uri);
-    await this.props.createAccount(values.username, values.profilepicture.uri);
+    await this.props.createAccount(
+      values.username,
+      values.profilepicture.uri,
+      values.profilepicture.fileName.split(".")[1]
+    );
     this.props.navigation.navigate("App");
   };
 
