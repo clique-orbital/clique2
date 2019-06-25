@@ -62,7 +62,11 @@ class ChatScreen extends Component {
             })
           }
         >
-          <GroupPicture source={navigation.getParam("image")} value={0.1} />
+          <GroupPicture
+            cached
+            source={navigation.getParam("image")}
+            value={0.1}
+          />
           <Text
             style={{
               color: "#fff",
