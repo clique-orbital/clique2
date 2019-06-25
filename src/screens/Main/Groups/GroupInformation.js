@@ -1,16 +1,30 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 
-import { connect } from "react-redux";
 import GroupPicture from "../../../components/GroupPicture";
 import firebase from "react-native-firebase";
 import Text from "../../../components/Text";
 
 class GroupInformation extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    const group = navigation.getParam("group");
+    return {
+      headerTintColor: "#fff",
+      headerTitle: (
+        <View style={{ bottom: 5, justifyContent: "center" }}>
+          <GroupPicture value={0.14} source={{ uri: group.photoURL }} />
+          <Text white medium h2>
+            {group.groupName}
+          </Text>
+        </View>
+      )
+    };
+  };
+
   state = { users: [] };
 
   componentDidMount() {
-    for (let uid in this.props.group.users) {
+    for (let uid in this.props.navigation.getParam("group").users) {
       firebase
         .database()
         .ref(`users/${uid}`)
@@ -66,10 +80,4 @@ class GroupInformation extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    group: state.groupsReducer.groups[ownProps.navigation.getParam("groupID")]
-  };
-};
-
-export default connect(mapStateToProps)(GroupInformation);
+export default GroupInformation;
