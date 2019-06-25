@@ -122,7 +122,6 @@ class ChatScreen extends Component {
 
   convertTime = time => {
     let d = new Date(time);
-    let c = new Date();
     let result = (d.getHours() < 10 ? 0 : "") + d.getHours() + ":";
     result += (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
     return result;
@@ -286,12 +285,18 @@ class ChatScreen extends Component {
     }
   };
 
+  renderFooter = () => {
+    return (
+      <View style={{ height: 10 }}></View>
+    )
+  }
+
   render() {
     let height = Dimensions.get("window").height;
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -300}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -300}
         style={{ flex: 1 }}
       >
         <SafeAreaView style={{ flex: 1 }}>
@@ -299,10 +304,11 @@ class ChatScreen extends Component {
             <FlatList
               ref="messageList"
               onContentSizeChange={this.scrollToBottom}
-              style={{ padding: 10, height: height }}
+              style={{ padding: 10, height: height, paddingBottom: 100 }}
               data={this.props.conversation.slice()}
               renderItem={this.renderRow}
               keyExtractor={(item, index) => index.toString()}
+              ListFooterComponent={this.renderFooter}
             />
           </TouchableWithoutFeedback>
           <View
@@ -313,8 +319,10 @@ class ChatScreen extends Component {
                 borderTopWidth: StyleSheet.hairlineWidth,
                 borderTopColor: "lightgrey",
                 bottom: 0,
+                height: 40,
+                backgroundColor: "transparent",
+                alignItems: "center"
               },
-              Platform.OS === "ios" ? styles.iOSmargin : null
             ]}
           >
             <TextInput
@@ -329,7 +337,7 @@ class ChatScreen extends Component {
           </View>
           <EventModal groupID={this.state.groupID} />
         </SafeAreaView>
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView >
     );
   }
 }
@@ -363,7 +371,8 @@ const styles = StyleSheet.create({
     padding: 10,
     color: "black",
     bottom: 0,
-    fontSize: 16
+    fontSize: 16,
+    backgroundColor: 'transparent'
   },
   sendBtn: {
     color: "#1d73d6",
