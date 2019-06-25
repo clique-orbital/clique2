@@ -58,7 +58,7 @@ class ChatScreen extends Component {
           style={{ flexDirection: "row", justifyContent: "center" }}
           onPress={() =>
             navigation.navigate("GroupInformation", {
-              groupID: navigation.getParam("group").groupID
+              group: navigation.getParam("group")
             })
           }
         >
