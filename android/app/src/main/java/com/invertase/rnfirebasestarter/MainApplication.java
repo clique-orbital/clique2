@@ -3,6 +3,7 @@ package com.invertase.rnfirebasestarter;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
+import com.dylanvann.fastimage.FastImageViewPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -51,6 +52,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new FastImageViewPackage(),
             new NetInfoPackage(),
             new AsyncStoragePackage(),
             new ImageResizerPackage(),
