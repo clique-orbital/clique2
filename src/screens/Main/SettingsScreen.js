@@ -61,7 +61,13 @@ class SettingsScreen extends React.Component {
     if (this.state.uri === "") {
       return <GroupPicture source={defaultPicture} value={0.4} />;
     } else {
-      return <GroupPicture source={{ uri: this.state.uri }} value={0.4} />;
+      return (
+        <GroupPicture
+          cached={true}
+          source={{ uri: this.state.uri }}
+          value={0.4}
+        />
+      );
     }
   }
 
