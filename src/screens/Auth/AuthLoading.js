@@ -9,23 +9,9 @@ import { populateGroups } from "../../store/actions/messageCounter";
 
 import NetInfo from "@react-native-community/netinfo";
 
-import AsyncStorage from "@react-native-community/async-storage";
 import LoadingView from "../../components/LoadingView";
 
 class AuthLoading extends React.Component {
-  storeData = async (key, val) => {
-    try {
-      val = JSON.stringify(val);
-      if (val) {
-        return AsyncStorage.setItem(key, val);
-      } else {
-        return Promise.reject("no value");
-      }
-    } catch (e) {
-      return Promise.reject(e);
-    }
-  };
-
   // preload data (loading screen)
   async componentDidMount() {
     //firebase.auth().currentUser.delete();
@@ -34,9 +20,9 @@ class AuthLoading extends React.Component {
         if (user.displayName && user.photoURL) {
           NetInfo.fetch().then(state => {
             if (state.isConnected) {
-              this.storeData("profilePicture", user.photoURL)
-                .then(() => this.props.setUserDetails(user))
-                .then(() => this.props.fetchGroups())
+              this.props.setUserDetails(user);
+              this.props
+                .fetchGroups()
                 .then(() => this.props.fetchAllEvents(user.uid))
                 .then(() => this.props.navigation.navigate("App"));
             } else {

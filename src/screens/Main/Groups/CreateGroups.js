@@ -17,7 +17,6 @@ import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
 import Spinner from "../../../components/Spinner";
 import GroupPicture from "../../../components/GroupPicture";
-import defaultPicture from "../../../assets/default_profile.png";
 
 class GroupMembersSelect extends React.Component {
   static navigationOptions = () => {
