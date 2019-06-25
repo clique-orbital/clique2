@@ -42,10 +42,9 @@ class ImagePickerComponent extends React.Component {
       } else if (response.customButton) {
         console.log("User tapped custom button: ", response.customButton);
       } else {
-        const source = { uri: response.uri };
-        this.setState({ profilePicture: source });
+        this.setState({ profilePicture: response });
         // for redux-form to know that there is an input/value change
-        this.props.onChange(source);
+        this.props.onChange(response);
       }
     });
   };

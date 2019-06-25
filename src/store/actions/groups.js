@@ -85,10 +85,10 @@ const newGroupCreator = async (groupName, groupID, photoURL, users, data) => {
     .catch(err => console.log(err));
 };
 
-const addGroupPicture = async pictureUri => {
+const addGroupPicture = async (pictureUri, filetype) => {
   return firebase
     .storage()
-    .ref(`images/group_pictures/${new Date().getTime()}`)
+    .ref(`images/group_pictures/${new Date().getTime()}.jpeg`)
     .put(pictureUri)
     .then(snapshot => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
@@ -103,6 +103,7 @@ const addGroupPicture = async pictureUri => {
 export const createGroup = (
   groupName,
   groupPicture,
+  filetype,
   myuser,
   data,
   users = []
@@ -118,7 +119,7 @@ export const createGroup = (
       });
   }
 
-  const url = await addGroupPicture(groupPicture);
+  const url = await addGroupPicture(groupPicture, filetype);
   newGroupCreator(groupName, groupID, url, users_info, data).then(() => {
     return db
       .ref("groups")

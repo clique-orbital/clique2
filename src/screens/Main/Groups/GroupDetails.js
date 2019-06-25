@@ -39,6 +39,7 @@ class GroupDetails extends React.Component {
         createGroup(
           values.groupname,
           values.grouppicture.uri,
+          values.grouppicture.fileName.split(".")[1],
           this.props.user.uid,
           "This is a new clique!",
           Object.values(this.props.navigation.getParam("users"))
