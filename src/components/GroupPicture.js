@@ -1,13 +1,14 @@
 import React from "react";
-import { View, Image, Dimensions } from "react-native";
+import { View, Dimensions } from "react-native";
+import FastImage from "react-native-fast-image";
 import imageCacheHoc from "react-native-image-cache-hoc";
 import defaultPicture from "../assets/default_profile.png";
 
 class GroupPicture extends React.Component {
   cacheImage = (source, style) => {
-    const CacheableImage = imageCacheHoc(Image, {
+    const CacheableImage = imageCacheHoc(FastImage, {
       defaultPlaceholder: {
-        component: Image,
+        component: FastImage,
         props: {
           style: style,
           source: defaultPicture

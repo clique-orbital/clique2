@@ -20,6 +20,7 @@
     "react-native-calendars": "^1.187.0",
     "react-native-contacts": "^4.0.2",
     "react-native-elements": "^1.1.0",
+    "react-native-fast-image": "^6.0.3",
     "react-native-firebase": "^5.4.0",
     "react-native-gesture-handler": "^1.2.2",
     "react-native-gifted-chat": "^0.9.3",
