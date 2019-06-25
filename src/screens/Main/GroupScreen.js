@@ -192,7 +192,11 @@ class GroupScreen extends Component {
           }
         >
           <View style={{ flexDirection: "row" }}>
-            <GroupPicture source={{ uri: item.photoURL }} value={0.14} />
+            <GroupPicture
+              cached={true}
+              source={{ uri: item.photoURL }}
+              value={0.14}
+            />
             <View style={{ flexDirection: "column", left: 15 }}>
               <View
                 style={{

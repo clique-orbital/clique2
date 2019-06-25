@@ -21,8 +21,13 @@ class GroupPicture extends React.Component {
   };
 
   render() {
-    const { value } = this.props;
+    const { value, cached } = this.props;
     let src = this.props.source;
+    const style = {
+      height: Dimensions.get("window").width * value,
+      width: Dimensions.get("window").width * value,
+      borderRadius: (Dimensions.get("window").width * value) / 2
+    };
     if (!this.props.source.uri) {
       src = {
         uri: "https://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
@@ -30,11 +35,11 @@ class GroupPicture extends React.Component {
     }
     return (
       <View>
-        {this.cacheImage(src, {
-          height: Dimensions.get("window").width * value,
-          width: Dimensions.get("window").width * value,
-          borderRadius: (Dimensions.get("window").width * value) / 2
-        })}
+        {cached ? (
+          this.cacheImage(src, style)
+        ) : (
+          <FastImage source={src} style={style} />
+        )}
       </View>
     );
   }

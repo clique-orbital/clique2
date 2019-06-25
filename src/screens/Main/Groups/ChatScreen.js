@@ -54,7 +54,14 @@ class ChatScreen extends Component {
     return {
       headerTintColor: "#fff",
       headerTitle: (
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <TouchableOpacity
+          style={{ flexDirection: "row", justifyContent: "center" }}
+          onPress={() =>
+            navigation.navigate("GroupInformation", {
+              groupID: navigation.getParam("group").groupID
+            })
+          }
+        >
           <GroupPicture source={navigation.getParam("image")} value={0.1} />
           <Text
             style={{
@@ -67,7 +74,7 @@ class ChatScreen extends Component {
           >
             {navigation.getParam("group").groupName}
           </Text>
-        </View>
+        </TouchableOpacity>
       ),
       headerRight: (
         <TouchableOpacity

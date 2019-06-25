@@ -34,7 +34,7 @@ class GroupMembersSelect extends React.Component {
     };
   };
 
-  state = { users: [], count: 0, loading: true };
+  state = { contacts: [], count: 0, loading: true };
 
   async componentWillMount() {
     if (Platform.OS === "android") {
