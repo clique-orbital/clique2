@@ -3,7 +3,6 @@ import { View, Text } from "react-native";
 import ContactsList from "../../../components/ContactsList";
 import { addMembers } from "../../../store/actions/groups";
 import { connect } from "react-redux";
-import firebase from "react-native-firebase";
 
 class AddMembers extends React.Component {
   static navigationOptions = () => {
