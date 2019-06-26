@@ -1,7 +1,7 @@
 import {
   TOGGLE_EVENT_MODAL,
   POPULATE_ATTENDING,
-  POPULATE_NOTATTENDING
+  POPULATE_NOTATTENDING,
 } from "../constants";
 
 export const toggleEventModal = (mode, event) => {

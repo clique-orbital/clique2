@@ -59,6 +59,8 @@ class CalendarComponent extends React.Component {
   };
 
   showEventModal = event => async () => {
+    console.log("Opened Event Modal");
+    console.log(event)
     let attending = event.attending || [];
     let notAttending = event.notAttending || [];
     attending = await attending.map(async uid => {
@@ -86,9 +88,13 @@ class CalendarComponent extends React.Component {
     });
 
     this.props.dispatch(toggleEventModal(true, event));
+
+    // this.forceUpdate(() => console.log("forcedUpdate"));
   };
 
   renderItem(item) {
+    console.log("rendering item");
+    console.log(item);
     const fromTime = new Date(item.event.from).toTimeString().slice(0, 5);
     const toTime = new Date(item.event.to).toTimeString().slice(0, 5);
     return (
@@ -129,7 +135,10 @@ class CalendarComponent extends React.Component {
   }
 
   rowHasChanged(r1, r2) {
-    return r1.name !== r2.name;
+    // console.log("Inside rowHasChanged")
+    // console.log(r1);
+    // return r1.name !== r2.name;
+    return !(_.isEqual(r1, r2));
   }
 
   timeToString(time) {
@@ -166,7 +175,7 @@ class CalendarComponent extends React.Component {
             renderEmptyDate={this.renderEmptyDate.bind(this)}
             rowHasChanged={this.rowHasChanged.bind(this)}
             onDayPress={day => this.dayPress(day)}
-            loadItemsForMonth={this.loadItems}
+            loadItemsForMonth={this.props.loadItems}
             renderEmptyData={this.renderEmptyData.bind(this)}
           />
           {this.renderButton()}
@@ -211,7 +220,6 @@ const mapStateToProps = (state, ownProps) => {
 
   const events = {};
   sortedEventsArr.forEach(event => {
-    console.log(event);
     const date = event.from.split("T");
     const day = date[0];
     if (!events[day]) {
@@ -221,7 +229,9 @@ const mapStateToProps = (state, ownProps) => {
   });
 
   return {
-    events
+    events,
+    loadItems: () => this.events,
+    modalVisibility: state.eventModalReducer.modalVisibility
   }
 
   // let events = {};

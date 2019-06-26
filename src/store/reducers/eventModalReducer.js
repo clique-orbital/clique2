@@ -1,11 +1,11 @@
-import { TOGGLE_EVENT_MODAL, POPULATE_ATTENDING,  POPULATE_NOTATTENDING} from "../constants";
+import { TOGGLE_EVENT_MODAL, POPULATE_ATTENDING, POPULATE_NOTATTENDING } from "../constants";
 
 const initialState = {
     modalVisibility: false
 }
 
 export const eventModalReducer = (state = initialState, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case TOGGLE_EVENT_MODAL:
             return {
                 ...state,

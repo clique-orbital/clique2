@@ -523,13 +523,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
 				9FE2675122C202D90014FBB7 /* libFastImage.a in Frameworks */,
 				9FE2674922C202820014FBB7 /* libRNCNetInfo.a in Frameworks */,
-=======
-				5629CB4122C202D8002D1FC3 /* libFastImage.a in Frameworks */,
-				56FA686622C201CA002D06E5 /* libRNCNetInfo.a in Frameworks */,
->>>>>>> cb50fc3ebf411ff26c67e2c9709f57776d130515
 				9F83692122A95EC100A6B336 /* libRNCAsyncStorage.a in Frameworks */,
 				9F83685B22A8E6F200A6B336 /* libRCTContacts.a in Frameworks */,
 				9F83685A22A8E19500A6B336 /* libRNFetchBlob.a in Frameworks */,
