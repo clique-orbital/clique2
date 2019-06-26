@@ -14,6 +14,10 @@ import firebase from "react-native-firebase";
 import Text from "../../../components/Text";
 import MyIcon from "../../../components/MyIcon";
 import theme from "../../../assets/theme";
+import { connect } from "react-redux";
+import { removeUser, removeGroup } from "../../../store/actions/groups";
+import { removeGroupEvents } from "../../../store/actions/calendar";
+import { removeGroupMessages } from "../../../store/actions/messages";
 
 class GroupInformation extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -55,7 +59,12 @@ class GroupInformation extends React.Component {
   state = { users: [] };
 
   componentDidMount() {
-    for (let uid in this.props.navigation.getParam("group").users) {
+    this.populateState();
+  }
+
+  populateState = () => {
+    this.setState({ users: [] });
+    for (let uid in this.props.group.users) {
       firebase
         .database()
         .ref(`users/${uid}`)
@@ -69,17 +78,21 @@ class GroupInformation extends React.Component {
           });
         });
     }
-  }
+  };
 
   renderRow = ({ item }) => {
+    const uid = this.props.self.uid;
+
     const swipeSettings = {
       autoClose: true,
       right: [
         {
           onPress: () => {
             Alert.alert(
-              "Remove member",
-              "Are you sure you want to remove this member?",
+              item.uid === uid ? "Leave group" : "Remove member",
+              item.uid === uid
+                ? "Are you sure you want to leave this group?"
+                : "Are you sure you want to remove this member?",
               [
                 {
                   text: "No",
@@ -88,13 +101,18 @@ class GroupInformation extends React.Component {
                 },
                 {
                   text: "Yes",
-                  onPress: () => {}
+                  onPress: () =>
+                    this.remove(
+                      item.uid,
+                      this.props.navigation.getParam("group").groupID,
+                      item.uid === uid
+                    )
                 },
                 { cancelable: true }
               ]
             );
           },
-          text: "Remove",
+          text: item.uid === uid ? "Leave" : "Remove",
           type: "delete"
         }
       ],
@@ -124,10 +142,31 @@ class GroupInformation extends React.Component {
     );
   };
 
+  remove = (uid, groupID, leave) => {
+    this.props
+      .removeUser(uid, groupID)
+      .then(() => {
+        this.populateState();
+      })
+      .then(() => {
+        if (leave) {
+          this.props.removeGroup(groupID);
+          this.props.removeGroupEvents(groupID);
+          this.props.removeGroupMessages(groupID);
+          this.props.navigation.navigate("Main");
+        }
+      });
+  };
+
   renderAddMember = () => {
     return (
       <TouchableOpacity
-        onPress={this.addMember}
+        onPress={() =>
+          this.props.navigation.navigate("AddMembers", {
+            group: this.props.navigation.getParam("group"),
+            populateState: this.populateState
+          })
+        }
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -169,7 +208,6 @@ class GroupInformation extends React.Component {
   };
 
   render() {
-    console.log(this.state.users);
     return (
       <View style={{ display: "flex", height: "100%" }}>
         {this.renderFlatList()}
@@ -178,4 +216,15 @@ class GroupInformation extends React.Component {
   }
 }
 
-export default GroupInformation;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    self: state.authReducer.user,
+    group:
+      state.groupsReducer.groups[ownProps.navigation.getParam("group").groupID]
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { removeUser, removeGroup, removeGroupEvents, removeGroupMessages }
+)(GroupInformation);
