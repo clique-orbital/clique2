@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingLeft: "5%",
-    paddingTop: "3%",
     fontSize: 18,
     left: "5%"
   },
