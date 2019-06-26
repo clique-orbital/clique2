@@ -62,11 +62,10 @@ class ContactsList extends React.Component {
         throw err;
       }
       let dbRef = firebase.database().ref("phoneNumbers");
-      dbRef
-        .once("value")
-        .then(snapshot => {
-          this.setState(prevState => {
-            contacts = contacts.filter(contact => {
+      dbRef.once("value").then(snapshot => {
+        this.setState(prevState => {
+          contacts = contacts
+            .map(contact => {
               const contactPhoneNumbers = contact.phoneNumbers.map(
                 phoneNumber => phoneNumber.number
               );
@@ -74,40 +73,19 @@ class ContactsList extends React.Component {
                 if (
                   snapshot.child(`${phoneNumber}`.replace(/\s/g, "")).exists()
                 ) {
-                  return true;
+                  return snapshot.val()[phoneNumber];
                 }
               }
-              return false;
-            });
+              return;
+            })
+            .filter(x => x);
 
-            return {
-              ...prevState,
-              contacts
-            };
-          });
-        })
-        .then(() => {
-          for (let i = 0; i < this.state.contacts.length; i++) {
-            const number = this.state.contacts[i].phoneNumbers
-              .map(n => n.number)[0]
-              .replace(/\s/g, "");
-            firebase
-              .database()
-              .ref(`phoneNumbers/${number}/`)
-              .once("value")
-              .then(snapshot => {
-                this.setState(prevState => {
-                  const newContacts = [...prevState.contacts];
-                  newContacts[i].photoURL = snapshot.val().photoURL;
-                  newContacts[i].uid = snapshot.val().uid;
-                  return {
-                    ...prevState,
-                    contacts: newContacts
-                  };
-                });
-              });
-          }
+          return {
+            ...prevState,
+            contacts
+          };
         });
+      });
     });
 
     this.setState({ loading: false });
@@ -152,14 +130,15 @@ class ContactsList extends React.Component {
           <GroupPicture source={{ uri: item.photoURL }} value={0.1} />
         </View>
         <Field
-          name={`contact${item.givenName}`}
+          name={`contact${item.displayName}`}
           component={this.renderCheckBox}
           user={item}
-          label={item.givenName + " " + item.familyName}
+          label={item.displayName}
         />
       </View>
     );
   };
+
   removeDuplicates = (groupUsers, contacts) => {
     let obj = {};
     for (let user in contacts) {
@@ -189,6 +168,7 @@ class ContactsList extends React.Component {
 
   renderFlatList = () => {
     let contacts = this.state.contacts;
+    console.log(contacts);
     if (this.props.removeDuplicates) {
       contacts = contacts.filter(
         user => !this.props.removeDuplicates[user.uid]
@@ -200,7 +180,7 @@ class ContactsList extends React.Component {
         <FlatList
           data={contacts}
           renderItem={this.renderRow}
-          keyExtractor={item => item.recordID}
+          keyExtractor={item => item.uid}
         />
         {this.state.count > 0 ? this.renderButton() : null}
       </View>
