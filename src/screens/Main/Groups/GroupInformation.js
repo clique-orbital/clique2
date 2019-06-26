@@ -63,6 +63,7 @@ class GroupInformation extends React.Component {
   }
 
   populateState = () => {
+    this.setState({ users: [] });
     for (let uid in this.props.group.users) {
       firebase
         .database()
@@ -145,7 +146,6 @@ class GroupInformation extends React.Component {
     this.props
       .removeUser(uid, groupID)
       .then(() => {
-        this.setState({ users: [] });
         this.populateState();
       })
       .then(() => {
@@ -158,12 +158,15 @@ class GroupInformation extends React.Component {
       });
   };
 
-  addMember = () => {};
-
   renderAddMember = () => {
     return (
       <TouchableOpacity
-        onPress={this.addMember}
+        onPress={() =>
+          this.props.navigation.navigate("AddMembers", {
+            group: this.props.navigation.getParam("group"),
+            populateState: this.populateState
+          })
+        }
         style={{
           flexDirection: "row",
           alignItems: "center",

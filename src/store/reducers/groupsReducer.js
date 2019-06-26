@@ -4,6 +4,7 @@ import {
   FETCH_GROUP,
   SORT_GROUPS,
   REMOVE_GROUP,
+  ADD_MEMBER_TO_GROUP,
   REMOVE_USER_FROM_GROUP_REDUX
 } from "../constants";
 import _ from "lodash";
@@ -58,6 +59,19 @@ export const groupsReducer = (state = initialState, action) => {
           [groupID]: {
             ...state.groups[groupID],
             users: _.omit(state.groups[groupID].users, action.payload.uid)
+          }
+        }
+      };
+    case ADD_MEMBER_TO_GROUP:
+      const uid = action.payload.uid;
+      const groupid = action.payload.groupID;
+      return {
+        ...state,
+        groups: {
+          ...state.groups,
+          [groupid]: {
+            ...state.groups[groupid],
+            users: { ...state.groups[groupid].users, [uid]: true }
           }
         }
       };
