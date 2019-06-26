@@ -29,7 +29,6 @@ const storeEvents = (groupid, events) => {
 };
 
 export const fetchAllEvents = uid => dispatch => {
-  console.log("Fetching all events")
   return db.ref(`users/${uid}/groups`).once("value", snapshot => {
     _.keys(snapshot.val()).forEach(groupId => {
       dispatch(fetchEvents(groupId));
@@ -38,7 +37,6 @@ export const fetchAllEvents = uid => dispatch => {
 };
 
 export const fetchPersonalEvents = uid => async (dispatch) => {
-  console.log("Fetching personal events")
   const attendingSnapshot = await db.ref(`users/${uid}/attending`).once('value');
   if (!attendingSnapshot) return [];
   const attending = (attendingSnapshot || {}).val();

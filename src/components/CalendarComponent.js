@@ -59,8 +59,6 @@ class CalendarComponent extends React.Component {
   };
 
   showEventModal = event => async () => {
-    console.log("Opened Event Modal");
-    console.log(event)
     let attending = event.attending || [];
     let notAttending = event.notAttending || [];
     attending = await attending.map(async uid => {
@@ -88,13 +86,9 @@ class CalendarComponent extends React.Component {
     });
 
     this.props.dispatch(toggleEventModal(true, event));
-
-    // this.forceUpdate(() => console.log("forcedUpdate"));
   };
 
   renderItem(item) {
-    console.log("rendering item");
-    console.log(item);
     const fromTime = new Date(item.event.from).toTimeString().slice(0, 5);
     const toTime = new Date(item.event.to).toTimeString().slice(0, 5);
     return (
@@ -135,9 +129,6 @@ class CalendarComponent extends React.Component {
   }
 
   rowHasChanged(r1, r2) {
-    // console.log("Inside rowHasChanged")
-    // console.log(r1);
-    // return r1.name !== r2.name;
     return !(_.isEqual(r1, r2));
   }
 
@@ -164,8 +155,6 @@ class CalendarComponent extends React.Component {
   };
 
   render() {
-    console.log("render");
-    console.log(this.props.events);
     return (
       <View>
         <View style={{ display: "flex", height: "100%" }}>
@@ -210,12 +199,10 @@ const mapStateToProps = (state, ownProps) => {
     sortedEventsArr = state.calendar.personalEvents.sort((a, b) => {
       return new Date(a.from).getTime() - new Date(b.from).getTime();
     });
-    console.log(sortedEventsArr);
   } else { // group calendar
     sortedEventsArr = _.values(state.calendar.events[ownProps.groupID]).sort((a, b) => {
       return new Date(a.from).getTime() - new Date(b.from).getTime();
     });
-    console.log(sortedEventsArr);
   }
 
   const events = {};

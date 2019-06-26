@@ -19,7 +19,6 @@ const GroupScreenStack = createStackNavigator(
     CreateEvents,
     GroupInformation,
     AddMembers
-    // EventModal: EventModal
   },
   {
     initialRouteName: "Main",
