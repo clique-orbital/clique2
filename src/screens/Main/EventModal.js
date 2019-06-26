@@ -13,6 +13,7 @@ import {
 import { connect } from "react-redux";
 import {
   toggleEventModal,
+  toggleHidingModal,
   populateAttending,
   populateNotAttending
 } from "../../store/actions/eventModal";
@@ -31,7 +32,9 @@ class EventModal extends Component {
   }
 
   hideModal() {
+    console.log("hiding modal");
     this.props.dispatch(toggleEventModal(false, null));
+    this.props.dispatch(toggleHidingModal(true));
   }
 
   renderRow = ({ item }) => {
@@ -45,6 +48,7 @@ class EventModal extends Component {
   };
 
   respondToInvitation = (eventID, response) => async () => {
+    console.log("Responding to Event")
     const groupID = this.props.event.groupID;
     const eventSnapshot = await firebase
       .database()
@@ -188,6 +192,7 @@ class EventModal extends Component {
   };
 
   render() {
+    console.log(this.props.event);
     if (Platform.OS === "android") {
       if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
       else StatusBar.setBackgroundColor(cliqueBlue);
