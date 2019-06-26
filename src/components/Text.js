@@ -32,8 +32,8 @@ export default class Typography extends React.Component {
 
       black,
       white,
-      gray,
-      gray2,
+      grey,
+      grey2,
       style,
       children,
       ...props
@@ -65,8 +65,8 @@ export default class Typography extends React.Component {
       color && !styles[color] && { color },
       black && styles.black,
       white && styles.white,
-      gray && styles.gray,
-      gray2 && styles.gray2,
+      grey && styles.grey,
+      grey2 && styles.grey2,
       style // rewrite predefined styles
     ];
 
@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
   right: { textAlign: "right" },
   black: { color: theme.colors.black },
   white: { color: theme.colors.white },
-  gray: { color: theme.colors.gray },
-  gray2: { color: theme.colors.gray2 },
+  grey: { color: theme.colors.grey },
+  grey2: { color: theme.colors.grey2 },
   // fonts
   h1: theme.fonts.h1,
   h2: theme.fonts.h2,

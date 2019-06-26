@@ -28,6 +28,9 @@ import GroupPicture from "../../../components/GroupPicture";
 import Text from "../../../components/Text";
 import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
+import theme from "../../../assets/theme";
+import BackgroundColor from "../../../components/BackgroundColor";
+import { fetchPersonalEvents } from "../../../store/actions/calendar";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -52,7 +55,14 @@ class ChatScreen extends Component {
     return {
       headerTintColor: "#fff",
       headerTitle: (
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <TouchableOpacity
+          style={{ flexDirection: "row", justifyContent: "center" }}
+          onPress={() =>
+            navigation.navigate("GroupInformation", {
+              group: navigation.getParam("group")
+            })
+          }
+        >
           <GroupPicture source={navigation.getParam("image")} value={0.1} />
           <Text
             style={{
@@ -65,7 +75,7 @@ class ChatScreen extends Component {
           >
             {navigation.getParam("group").groupName}
           </Text>
-        </View>
+        </TouchableOpacity>
       ),
       headerRight: (
         <TouchableOpacity
@@ -175,6 +185,15 @@ class ChatScreen extends Component {
         notAttending,
         noResponse
       };
+      firebase
+        .database()
+        .ref(`users/${this.props.uid}/attending/${this.state.groupID}/${event.eventID}`)
+        .set(true)
+      firebase
+        .database()
+        .ref(`users/${this.props.uid}/notAttending/${this.state.groupID}/${event.eventID}`)
+        .remove()
+      this.props.dispatch(fetchPersonalEvents(this.props.uid))
     } else {
       updatedEvent = {
         ...event,
@@ -182,13 +201,22 @@ class ChatScreen extends Component {
         noResponse,
         notAttending: [...notAttending, this.props.uid]
       };
+      firebase
+        .database()
+        .ref(`users/${this.props.uid}/notAttending/${this.state.groupID}/${event.eventID}`)
+        .set(true)
+      firebase
+        .database()
+        .ref(`users/${this.props.uid}/attending/${this.state.groupID}/${event.eventID}`)
+        .remove()
+      this.props.dispatch(fetchPersonalEvents(this.props.uid))
     }
     firebase
       .database()
       .ref(`events/${this.state.groupID}/${eventID}`)
       .set(updatedEvent);
 
-    // Updates event in message the event is attached to
+    // Updates event chat message the event is attached to
     const msgID = updatedEvent.msgID;
     firebase
       .database()
@@ -262,6 +290,7 @@ class ChatScreen extends Component {
           convertTime={this.convertTime}
           item={item}
           maxWidth={Dimensions.get("window").width}
+          mine={item.sender === this.props.uid}
         />
       );
     } else if (item.messageType === "event") {
@@ -299,6 +328,7 @@ class ChatScreen extends Component {
         keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -300}
         style={{ flex: 1 }}
       >
+        <BackgroundColor />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <FlatList
@@ -320,7 +350,6 @@ class ChatScreen extends Component {
                 borderTopColor: "lightgrey",
                 bottom: 0,
                 height: 40,
-                backgroundColor: "transparent",
                 alignItems: "center"
               },
             ]}
@@ -331,8 +360,16 @@ class ChatScreen extends Component {
               onChangeText={this.handleChange("textMessage")}
               placeholder="Message"
             />
-            <TouchableOpacity onPress={this.sendMessage} style={{ justifyContent: "center" }}>
-              <MyIcon name="send" type="material" size={28} color={cliqueBlue} />
+            <TouchableOpacity
+              onPress={this.sendMessage}
+              style={{ justifyContent: "center" }}
+            >
+              <MyIcon
+                name="send"
+                type="material"
+                size={28}
+                color={cliqueBlue}
+              />
             </TouchableOpacity>
           </View>
           <EventModal groupID={this.state.groupID} />
@@ -360,7 +397,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end"
   },
   chatBox: {
-    flexDirection: "row",
+    flexDirection: "row"
     // alignItems: "center"
   },
   iOSmargin: {
@@ -374,15 +411,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: 'transparent'
   },
-  sendBtn: {
-    color: "#1d73d6",
-    fontSize: 20
-  },
   yourMessageBubble: {
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-start",
-    backgroundColor: "#134782",
+    backgroundColor: theme.colors.light_chat_yours,
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
@@ -393,7 +426,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-end",
-    backgroundColor: "#3a8cbc",
+    backgroundColor: theme.colors.light_chat_mine,
     borderRadius: 10,
     marginBottom: 8,
     paddingLeft: 5,
@@ -404,7 +437,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     borderRadius: 20,
     marginBottom: 5,
-    backgroundColor: "#134782",
+    backgroundColor: theme.colors.light_chat_yours,
     width: "auto",
     marginRight: 40
   },
@@ -412,7 +445,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     borderRadius: 20,
     marginBottom: 5,
-    backgroundColor: "#3a8cbc",
+    backgroundColor: theme.colors.light_chat_mine,
     width: "auto",
     marginLeft: 50
   }

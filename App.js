@@ -16,7 +16,8 @@ import _ from "lodash";
 import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
 import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
-import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
+// import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
+import CalendarStack from "./src/screens/Main/CalendarStack"
 import AuthLoading from "./src/screens/Auth/AuthLoading";
 import Auth from "./src/screens/Auth/Auth";
 import UserDetails from "./src/screens/Auth/UserDetails";
@@ -27,7 +28,7 @@ import { cliqueBlue } from "./src/assets/constants";
 const AppNavigator = createBottomTabNavigator(
   {
     Groups: GroupScreenStack,
-    Calendar: PersonalCalendar,
+    Calendar: CalendarStack,
     Notifications: NotificationsScreen,
     Profile: SettingsScreen
   },
@@ -44,7 +45,7 @@ const AppNavigator = createBottomTabNavigator(
           iconType = "material-community";
           iconName = `calendar${
             focused || Platform.OS === "ios" ? "" : "-blank-outline"
-          }`;
+            }`;
         } else if (routeName === "Notifications") {
           iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {

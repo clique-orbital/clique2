@@ -6,16 +6,17 @@ import GroupDetails from "./Groups/GroupDetails";
 import GroupScreen from "./GroupScreen";
 import CreateEvents from "./Groups/CreateEvents";
 import CalendarScreen from "./Groups/CalendarScreen";
-import EventModal from "./EventModal"
+import GroupInformation from "./Groups/GroupInformation";
 
 const GroupScreenStack = createStackNavigator(
   {
     Main: GroupScreen,
-    CreateGroups: CreateGroups,
+    CreateGroups,
     Chat: ChatScreen,
-    GroupDetails: GroupDetails,
+    GroupDetails,
     GroupCalendar: CalendarScreen,
-    CreateEvents: CreateEvents,
+    CreateEvents,
+    GroupInformation
     // EventModal: EventModal
   },
   {

@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
-import MyIcon from "../components/MyIcon";
-import cliqueBlue from "../assets/constants";
+import Text from "./Text";
+import MyIcon from "./MyIcon";
 
 // props: title, value
 export default class MyCheckBox extends React.Component {
@@ -21,7 +21,7 @@ export default class MyCheckBox extends React.Component {
       if (checked) {
         this.props.onChange(this.state.value);
         name = "ios-checkmark-circle";
-        color = "#134782";
+        color = "green";
         this.props.callback(true);
       } else {
         this.props.onChange("");
@@ -36,7 +36,9 @@ export default class MyCheckBox extends React.Component {
   render() {
     return (
       <TouchableOpacity onPress={this.check} style={styles.row}>
-        <Text style={styles.text}>{this.props.title}</Text>
+        <Text black style={styles.text}>
+          {this.props.title}
+        </Text>
         <MyIcon
           name={this.state.name}
           color={this.state.color}

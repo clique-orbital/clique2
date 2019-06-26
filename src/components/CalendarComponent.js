@@ -10,6 +10,7 @@ import {
   populateNotAttending
 } from "../store/actions/eventModal";
 import EventModal from "../screens/Main/EventModal";
+import _ from "lodash";
 
 const date = new Date();
 const day = date.getDate();
@@ -33,6 +34,7 @@ class CalendarComponent extends React.Component {
       events: {}
     };
     this.showEventModal = this.showEventModal.bind(this);
+    this.loadItems = this.loadItems.bind(this);
   }
 
   renderButton = () => {
@@ -54,22 +56,6 @@ class CalendarComponent extends React.Component {
 
   dayPress = day => {
     this.setState({ selectedDate: day });
-  };
-
-  loadItems = () => {
-    const arrEvents = Object.values(this.props.events).sort((a, b) => {
-      return new Date(a.from).getTime() - new Date(b.from).getTime();
-    });
-    const events = {};
-    arrEvents.forEach(event => {
-      const date = event.from.split("T");
-      const day = date[0];
-      if (!events[day]) {
-        events[day] = [];
-      }
-      events[day] = [...events[day], { event }];
-    });
-    this.setState({ events });
   };
 
   showEventModal = event => async () => {
@@ -151,17 +137,36 @@ class CalendarComponent extends React.Component {
     return date.toISOString().split("T")[0];
   }
 
+  loadItems = () => {
+    // const arrEvents = _.values(this.props.events).sort((a, b) => {
+    //   return new Date(a.from).getTime() - new Date(b.from).getTime();
+    // });
+    // const events = {};
+    // arrEvents.forEach(event => {
+    //   const date = event.from.split("T");
+    //   const day = date[0];
+    //   if (!events[day]) {
+    //     events[day] = [];
+    //   }
+    //   events[day] = [...events[day], { event }];
+    // });
+    // this.setState({ events });
+    return this.props.events;
+  };
+
   render() {
+    console.log("render");
+    console.log(this.props.events);
     return (
       <View>
         <View style={{ display: "flex", height: "100%" }}>
           <Agenda
-            items={this.state.events}
+            items={this.props.events}
             renderItem={this.renderItem.bind(this)}
             renderEmptyDate={this.renderEmptyDate.bind(this)}
             rowHasChanged={this.rowHasChanged.bind(this)}
             onDayPress={day => this.dayPress(day)}
-            loadItemsForMonth={this.loadItems.bind(this)}
+            loadItemsForMonth={this.loadItems}
             renderEmptyData={this.renderEmptyData.bind(this)}
           />
           {this.renderButton()}
@@ -190,22 +195,53 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, ownProps) => {
-  let events = {};
-  if (!ownProps.groupID) {
-    const allEvents = state.calendar.events;
-    for (gid in allEvents) {
-      for (event in allEvents[gid]) {
-        events[event] = allEvents[gid][event];
-      }
+  let sortedEventsArr = [];
+
+  if (ownProps.personal) { //personal calendar
+    sortedEventsArr = state.calendar.personalEvents.sort((a, b) => {
+      return new Date(a.from).getTime() - new Date(b.from).getTime();
+    });
+    console.log(sortedEventsArr);
+  } else { // group calendar
+    sortedEventsArr = _.values(state.calendar.events[ownProps.groupID]).sort((a, b) => {
+      return new Date(a.from).getTime() - new Date(b.from).getTime();
+    });
+    console.log(sortedEventsArr);
+  }
+
+  const events = {};
+  sortedEventsArr.forEach(event => {
+    console.log(event);
+    const date = event.from.split("T");
+    const day = date[0];
+    if (!events[day]) {
+      events[day] = [];
     }
-    return { events };
+    events[day] = [...events[day], { event }];
+  });
+
+  return {
+    events
   }
-  const groupId = ownProps.groupID;
-  events = state.calendar.events[groupId];
-  if (!events) {
-    return { events: {} };
-  }
-  return { events };
+
+  // let events = {};
+  // if (!ownProps.groupID) {
+  //   const allEvents = state.calendar.events;
+  //   for (gid in allEvents) {
+  //     for (event in allEvents[gid]) {
+  //       events[event] = allEvents[gid][event];
+  //     }
+  //   }
+  //   return { events };
+  // }
+  // const groupId = ownProps.groupID;
+  // events = state.calendar.events[groupId];
+  // if (!events) {
+  //   return { events: {} };
+  // }
+  // return { events };
 };
 
-export default connect(mapStateToProps)(CalendarComponent);
+export default connect(
+  mapStateToProps
+)(CalendarComponent);
