@@ -17,7 +17,6 @@ import MyCheckBox from "../../../components/MyCheckbox";
 import { createGroup } from "../../../store/actions/groups";
 import Spinner from "../../../components/Spinner";
 import GroupPicture from "../../../components/GroupPicture";
-import defaultPicture from "../../../assets/default_profile.png";
 
 class GroupMembersSelect extends React.Component {
   static navigationOptions = () => {
@@ -36,7 +35,7 @@ class GroupMembersSelect extends React.Component {
 
   state = { contacts: [], count: 0, loading: true };
 
-  async componentWillMount() {
+  askPermissionAndGetContacts() {
     if (Platform.OS === "android") {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
         title: "Clique Contacts Permission",
@@ -67,35 +66,63 @@ class GroupMembersSelect extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.askPermissionAndGetContacts();
+  }
+
   getContacts() {
     Contacts.getAll((err, contacts) => {
       if (err) {
         throw err;
       }
       let dbRef = firebase.database().ref("phoneNumbers");
-      dbRef.once("value").then(snapshot => {
-        this.setState(prevState => {
-          contacts = contacts.filter(contact => {
-            const contactPhoneNumbers = contact.phoneNumbers.map(
-              phoneNumber => phoneNumber.number
-            );
-            for (let phoneNumber of contactPhoneNumbers) {
-              if (
-                snapshot.child(`${phoneNumber}`.replace(/\s/g, "")).exists()
-              ) {
-                return true;
+      dbRef
+        .once("value")
+        .then(snapshot => {
+          this.setState(prevState => {
+            contacts = contacts.filter(contact => {
+              const contactPhoneNumbers = contact.phoneNumbers.map(
+                phoneNumber => phoneNumber.number
+              );
+              for (let phoneNumber of contactPhoneNumbers) {
+                if (
+                  snapshot.child(`${phoneNumber}`.replace(/\s/g, "")).exists()
+                ) {
+                  return true;
+                }
               }
-            }
-            return false;
-          });
+              return false;
+            });
 
-          return {
-            ...prevState,
-            contacts
-          };
+            return {
+              ...prevState,
+              contacts
+            };
+          });
+        })
+        .then(() => {
+          for (let i = 0; i < this.state.contacts.length; i++) {
+            const number = this.state.contacts[i].phoneNumbers
+              .map(n => n.number)[0]
+              .replace(/\s/g, "");
+            firebase
+              .database()
+              .ref(`phoneNumbers/${number}/photoURL`)
+              .once("value")
+              .then(snapshot => {
+                this.setState(prevState => {
+                  const newContacts = [...prevState.contacts];
+                  newContacts[i].photoURL = snapshot.val();
+                  return {
+                    ...prevState,
+                    contacts: newContacts
+                  };
+                });
+              });
+          }
         });
-      });
     });
+
     this.setState({ loading: false });
   }
 
@@ -129,18 +156,6 @@ class GroupMembersSelect extends React.Component {
   };
 
   renderRow = ({ item }) => {
-    const number = item.phoneNumbers.map(n => n.number)[0].replace(/\s/g, "");
-    let fulfilled = false;
-    const profilePicture = firebase
-      .database()
-      .ref(`phoneNumbers/${number}/photoURL`)
-      .once("value")
-      .then(ss => {
-        fulfilled = true;
-        this.setState(this.state);
-        return ss.val();
-      });
-
     return (
       <View
         style={{
@@ -153,10 +168,7 @@ class GroupMembersSelect extends React.Component {
         }}
       >
         <View style={{ paddingLeft: 10 }}>
-          <GroupPicture
-            source={fulfilled ? { uri: profilePicture } : defaultPicture}
-            value={0.1}
-          />
+          <GroupPicture source={{ uri: item.photoURL }} value={0.1} />
         </View>
         <Field
           name={`contact${item.givenName}`}

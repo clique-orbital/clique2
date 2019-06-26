@@ -1,4 +1,4 @@
-export const cliqueBlue = "#134782";
+export const cliqueBlue = "#0f3764";
 export const getDay = dateObj => {
   dateObj = new Date(dateObj);
   let day = dateObj.getDay();
