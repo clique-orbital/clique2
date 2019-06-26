@@ -1,9 +1,11 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { createStackNavigator } from "react-navigation";
 import HeaderTitle from "../../components/HeaderTitle";
 import { cliqueBlue } from "../../assets/constants";
 import CalendarComponent from "../../components/CalendarComponent";
+import { connect } from "react-redux";
+import { fetchPersonalEvents } from "../../store/actions/calendar";
+import firebase from "react-native-firebase";
 
 class PersonalCalendar extends React.Component {
   static navigationOptions = {
@@ -14,10 +16,23 @@ class PersonalCalendar extends React.Component {
   };
 
   render() {
-    return <CalendarComponent hasButton={false} />;
+    return <CalendarComponent hasButton={false} personal={true} />;
   }
 }
 
-const calendarStack = createStackNavigator({ Main: PersonalCalendar });
+// const calendarStack = createStackNavigator({ Main: PersonalCalendar });
 
-export default calendarStack;
+// export default calendarStack;
+
+const mapStateToProps = state => {
+  return {
+    uid: state.authReducer.user.uid
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  { fetchPersonalEvents }
+)(PersonalCalendar);
+
+// export default PersonalCalendar;

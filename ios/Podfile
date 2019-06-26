@@ -35,6 +35,10 @@ target 'RNFirebaseStarter' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
+  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+
+  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
+
 end
 
 target 'RNFirebaseStarter-tvOS' do

@@ -11,12 +11,12 @@ export const setUserDetails = userDetails => {
   };
 };
 
-export const createAccount = (username, pictureUri) => dispatch => {
+export const createAccount = (username, pictureUri, fileType) => dispatch => {
   //upload picture to firebase storage
   let user = firebase.auth().currentUser;
   firebase
     .storage()
-    .ref(`images/profile_pictures/${new Date().getTime()}`)
+    .ref(`images/profile_pictures/${new Date().getTime()}.jpeg`)
     .put(pictureUri)
     .then(snapshot => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {

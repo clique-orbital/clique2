@@ -53,9 +53,7 @@ class GroupScreen extends Component {
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
 
-    db.ref(`users/${uid}/groups`).on("value", () =>
-      this.props.fetchGroups()
-    );
+    db.ref(`users/${uid}/groups`).on("value", () => this.props.fetchGroups());
 
     if (this.props.groups) {
       for (let groupId of _.keys(this.props.groups)) {
@@ -133,7 +131,7 @@ class GroupScreen extends Component {
         .remove();
     });
     Promise.all(users).then(async () => {
-      this.props.fetchGroups()
+      this.props.fetchGroups();
       await firebase
         .database()
         .ref(`events/${groupID}`)
@@ -147,7 +145,6 @@ class GroupScreen extends Component {
         .ref(`groups/${groupID}`)
         .remove();
     });
-
   };
 
   renderRow = ({ item }) => {
@@ -195,7 +192,11 @@ class GroupScreen extends Component {
           }
         >
           <View style={{ flexDirection: "row" }}>
-            <GroupPicture source={{ uri: item.photoURL }} value={0.14} />
+            <GroupPicture
+              cached={true}
+              source={{ uri: item.photoURL }}
+              value={0.14}
+            />
             <View style={{ flexDirection: "column", left: 15 }}>
               <View
                 style={{
@@ -204,7 +205,7 @@ class GroupScreen extends Component {
                   width: Dimensions.get("window").width * 0.75
                 }}
               >
-                <Text header semibold>
+                <Text h3 semibold>
                   {item.groupName}
                 </Text>
                 <Text>{this.renderTimestamp(item.groupID)}</Text>
@@ -227,8 +228,8 @@ class GroupScreen extends Component {
                   }}
                 />
               ) : (
-                  undefined
-                )}
+                undefined
+              )}
             </View>
           </View>
         </TouchableOpacity>
