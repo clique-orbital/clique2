@@ -1,11 +1,15 @@
 import firebase from "react-native-firebase";
-import { FETCH_EVENTS, CLEAR_EVENTS } from "../constants";
-import _ from "lodash"
+import { FETCH_EVENTS, CLEAR_EVENTS, REMOVE_GROUP_EVENTS } from "../constants";
+import _ from "lodash";
 
 const db = firebase.database();
 
 export const clearEvents = () => {
   return { type: CLEAR_EVENTS };
+};
+
+export const removeGroupEvents = groupID => {
+  return { type: REMOVE_GROUP_EVENTS, payload: groupID };
 };
 
 // get events from database

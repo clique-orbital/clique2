@@ -2,9 +2,11 @@ import firebase from "react-native-firebase";
 import uuidv4 from "uuid/v4";
 import {
   INITIALIZE_GROUPS,
+  REMOVE_GROUP,
   ADD_NEW_GROUP,
   FETCH_GROUP,
-  SORT_GROUPS
+  SORT_GROUPS,
+  REMOVE_USER_FROM_GROUP_REDUX
 } from "../constants";
 import _ from "lodash";
 
@@ -14,12 +16,17 @@ export const sortGroups = () => {
   return { type: SORT_GROUPS };
 };
 
+export const removeGroup = groupID => {
+  return { type: REMOVE_GROUP, payload: groupID };
+};
+
 export const fetchedGroups = groups => {
   return {
     type: INITIALIZE_GROUPS,
     payload: groups
   };
 };
+
 export const fetchAGroup = (groupId, message) => {
   return {
     type: FETCH_GROUP,
@@ -44,10 +51,7 @@ export const fetchGroups = () => async dispatch => {
   const groups = {};
   return Promise.all(
     groupIDs.map(async groupID => {
-      const data = await firebase
-        .database()
-        .ref(`groups/${groupID}`)
-        .once("value");
+      const data = await db.ref(`groups/${groupID}`).once("value");
       groups[groupID] = data.val();
     })
   )
@@ -85,7 +89,7 @@ const newGroupCreator = async (groupName, groupID, photoURL, users, data) => {
     .catch(err => console.log(err));
 };
 
-const addGroupPicture = async (pictureUri, filetype) => {
+const addGroupPicture = async pictureUri => {
   return firebase
     .storage()
     .ref(`images/group_pictures/${new Date().getTime()}.jpeg`)
@@ -144,5 +148,42 @@ export const createGroup = (
         addGroupToUser(groupID, myuser);
         return true;
       });
+  });
+};
+
+const removeUserFromGroupInStore = (uid, groupID) => {
+  return { type: REMOVE_USER_FROM_GROUP_REDUX, payload: { uid, groupID } };
+};
+
+export const removeUser = (uid, groupID) => async dispatch => {
+  return db
+    .ref(`users/${uid}/groups/${groupID}`)
+    .remove()
+    .then(() => {
+      dispatch(removeUserFromGroupInStore(uid, groupID));
+      return db.ref(`groups/${groupID}/users/${uid}`).remove();
+    });
+};
+
+export const deleteGroupFromDb = async (groupID, users) => {
+  users = _.keys(users).map(uid => {
+    return firebase
+      .database()
+      .ref(`users/${uid}/groups/${groupID}`)
+      .remove();
+  });
+  Promise.all(users).then(async () => {
+    await firebase
+      .database()
+      .ref(`events/${groupID}`)
+      .remove();
+    await firebase
+      .database()
+      .ref(`messages/${groupID}`)
+      .remove();
+    await firebase
+      .database()
+      .ref(`groups/${groupID}`)
+      .remove();
   });
 };

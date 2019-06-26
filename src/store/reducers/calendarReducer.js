@@ -1,4 +1,5 @@
-import { FETCH_EVENTS, CLEAR_EVENTS } from "../constants";
+import { FETCH_EVENTS, CLEAR_EVENTS, REMOVE_GROUP_EVENTS } from "../constants";
+import _ from "lodash";
 
 const initialState = {
   events: {}
@@ -12,6 +13,8 @@ export const calendarReducer = (state = initialState, action) => {
     };
   } else if (action.type === CLEAR_EVENTS) {
     return { ...state, events: {} };
+  } else if (action.type === REMOVE_GROUP_EVENTS) {
+    return _.omit(state, action.payload);
   }
   return state;
 };
