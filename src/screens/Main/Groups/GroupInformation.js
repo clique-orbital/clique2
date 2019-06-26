@@ -163,7 +163,7 @@ class GroupInformation extends React.Component {
       })
       .then(() => {
         this.removeEventsFromUser(uid, groupID);
-        this.props.navigation.navigate("Main");
+        if (leave) this.props.navigation.navigate("Main");
       });
   };
 
