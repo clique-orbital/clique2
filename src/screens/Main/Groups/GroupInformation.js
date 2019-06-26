@@ -142,19 +142,28 @@ class GroupInformation extends React.Component {
     );
   };
 
+  removeEventsFromUser = (uid, groupID) => {
+    return firebase
+      .database()
+      .ref(`users/${uid}/attending/${groupID}`)
+      .remove();
+  };
+
   remove = (uid, groupID, leave) => {
     this.props
-      .removeUser(uid, groupID)
+      .removeUser(uid, groupID, leave)
       .then(() => {
-        this.populateState();
-      })
-      .then(() => {
-        if (leave) {
+        if (!leave) {
+          this.populateState();
           this.props.removeGroup(groupID);
+        } else {
           this.props.removeGroupEvents(groupID);
           this.props.removeGroupMessages(groupID);
-          this.props.navigation.navigate("Main");
         }
+      })
+      .then(() => {
+        this.removeEventsFromUser(uid, groupID);
+        this.props.navigation.navigate("Main");
       });
   };
 

@@ -10,6 +10,8 @@ import {
   ADD_MEMBER_TO_GROUP
 } from "../constants";
 import _ from "lodash";
+import { removeGroupEvents } from "./calendar";
+import { removeGroupMessages } from "./messages";
 
 const db = firebase.database();
 
@@ -147,25 +149,30 @@ const removeUserFromGroupInStore = (uid, groupID) => {
   return { type: REMOVE_USER_FROM_GROUP_REDUX, payload: { uid, groupID } };
 };
 
-export const removeUser = (uid, groupID) => async dispatch => {
+export const removeUser = (uid, groupID, leave) => async dispatch => {
   return db
     .ref(`users/${uid}/groups/${groupID}`)
     .remove()
     .then(() => {
-      dispatch(removeUserFromGroupInStore(uid, groupID));
+      if (!leave) dispatch(removeUserFromGroupInStore(uid, groupID));
       return db.ref(`groups/${groupID}/users/${uid}`).remove();
     });
 };
 
-export const deleteGroupFromDb = async (groupID, users) => {
+export const deleteGroupFromDb = (groupID, users) => async dispatch => {
   users = _.keys(users).map(uid => {
     return db.ref(`users/${uid}/groups/${groupID}`).remove();
   });
-  Promise.all(users).then(async () => {
-    await db.ref(`events/${groupID}`).remove();
-    await db.ref(`messages/${groupID}`).remove();
-    await db.ref(`groups/${groupID}`).remove();
-  });
+  Promise.all(users)
+    .then(async () => {
+      await db.ref(`events/${groupID}`).remove();
+      await db.ref(`messages/${groupID}`).remove();
+      await db.ref(`groups/${groupID}`).remove();
+    })
+    .then(() => {
+      dispatch(removeGroupEvents(groupID));
+      dispatch(removeGroupMessages(groupID));
+    });
 };
 
 const addMemberToGroup = (uid, groupID) => {
