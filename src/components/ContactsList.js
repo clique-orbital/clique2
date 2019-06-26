@@ -93,12 +93,13 @@ class ContactsList extends React.Component {
               .replace(/\s/g, "");
             firebase
               .database()
-              .ref(`phoneNumbers/${number}/photoURL`)
+              .ref(`phoneNumbers/${number}/`)
               .once("value")
               .then(snapshot => {
                 this.setState(prevState => {
                   const newContacts = [...prevState.contacts];
-                  newContacts[i].photoURL = snapshot.val();
+                  newContacts[i].photoURL = snapshot.val().photoURL;
+                  newContacts[i].uid = snapshot.val().uid;
                   return {
                     ...prevState,
                     contacts: newContacts
@@ -159,6 +160,15 @@ class ContactsList extends React.Component {
       </View>
     );
   };
+  removeDuplicates = (groupUsers, contacts) => {
+    let obj = {};
+    for (let user in contacts) {
+      if (!groupUsers[user]) {
+        obj[user] = true;
+      }
+    }
+    return obj;
+  };
 
   handleSubmit = formValues => {
     console.log(formValues);
@@ -178,10 +188,17 @@ class ContactsList extends React.Component {
   };
 
   renderFlatList = () => {
+    let contacts = this.state.contacts;
+    if (this.props.removeDuplicates) {
+      contacts = contacts.filter(
+        user => !this.props.removeDuplicates[user.uid]
+      );
+    }
+
     return (
       <View style={{ display: "flex", height: "100%" }}>
         <FlatList
-          data={this.state.contacts}
+          data={contacts}
           renderItem={this.renderRow}
           keyExtractor={item => item.recordID}
         />
