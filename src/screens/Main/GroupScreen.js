@@ -44,7 +44,7 @@ class GroupScreen extends Component {
     };
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     this.scrollToTop();
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
