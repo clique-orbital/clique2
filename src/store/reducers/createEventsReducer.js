@@ -1,8 +1,8 @@
-import { 
-    TOGGLE_FROMDATEPICKER, 
-    TOGGLE_TODATEPICKER, 
-    PICK_FROM_DATE, 
-    PICK_TO_DATE, 
+import {
+    TOGGLE_FROMDATEPICKER,
+    TOGGLE_TODATEPICKER,
+    PICK_FROM_DATE,
+    PICK_TO_DATE,
     SET_GROUPID,
     CHANGE_TEXT,
     RESET_EVENT_TYPE
@@ -20,7 +20,7 @@ const initialState = {
 }
 
 export const createEventsReducer = (state = initialState, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case RESET_EVENT_TYPE:
             return initialState;
         case CHANGE_TEXT:

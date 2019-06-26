@@ -39,8 +39,6 @@ class CreateEvents extends Component {
     this.handleTextChange = this.handleTextChange.bind(this);
     this.publishEvent = this.publishEvent.bind(this);
     this.props.dispatch(setGroupID(this.props.navigation.getParam("groupID")));
-    this.props.dispatch(pickFromDate(this.props.navigation.getParam("date")));
-    this.props.dispatch(pickToDate(this.props.navigation.getParam("date")));
   }
 
   static navigationOptions = () => {
@@ -141,9 +139,9 @@ class CreateEvents extends Component {
         .ref(`groups/${groupID}`)
         .child("last_message")
         .set(message);
-      this.props.dispatch(resetEventState());
       await this.props.dispatch(fetchAllEvents(this.props.uid));
       this.props.navigation.goBack();
+      this.props.dispatch(resetEventState());
     }
   }
 
@@ -260,6 +258,7 @@ class CreateEvents extends Component {
 
   render() {
     const width = Dimensions.get("window").width;
+    console.log(this.props.fromDate)
     return (
       <KeyboardAvoidingView
         behavior="padding"
@@ -323,12 +322,13 @@ class CreateEvents extends Component {
 
 const mapStateToProps = state => {
   const createEventsReducerState = state.createEventsReducer || {};
+  console.log(createEventsReducerState.fromDate);
   return {
     title: createEventsReducerState.title,
     fromDateVisibility: createEventsReducerState.fromDateVisibility,
     toDateVisibility: createEventsReducerState.toDateVisibility,
     fromDate: createEventsReducerState.fromDate || new Date(),
-    toDate: createEventsReducerState.toDate || new Date(),
+    toDate: createEventsReducerState.toDate || createEventsReducerState.fromDate || new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid,
