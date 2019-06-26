@@ -2,8 +2,11 @@ import {
   INITIALIZE_GROUPS,
   ADD_NEW_GROUP,
   FETCH_GROUP,
-  SORT_GROUPS
+  SORT_GROUPS,
+  REMOVE_GROUP,
+  REMOVE_USER_FROM_GROUP_REDUX
 } from "../constants";
+import _ from "lodash";
 
 const initialState = {
   groups: {}
@@ -44,6 +47,20 @@ export const groupsReducer = (state = initialState, action) => {
         sortedGroups[group.groupID] = group;
       });
       return { ...state, groups: sortedGroups };
+    case REMOVE_GROUP:
+      return _.omit(state, action.payload);
+    case REMOVE_USER_FROM_GROUP_REDUX:
+      const groupID = action.payload.groupID;
+      return {
+        ...state,
+        groups: {
+          ...state.groups,
+          [groupID]: {
+            ...state.groups[groupID],
+            users: _.omit(state.groups[groupID].users, action.payload.uid)
+          }
+        }
+      };
     default:
       return state;
   }
