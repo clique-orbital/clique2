@@ -16,7 +16,8 @@ import {
   fetchedGroups,
   fetchAGroup,
   sortGroups,
-  fetchGroups
+  fetchGroups,
+  deleteGroupFromDb
 } from "../../store/actions/groups";
 import { connect } from "react-redux";
 import GroupPicture from "../../components/GroupPicture";
@@ -27,11 +28,6 @@ import Text from "../../components/Text";
 const cliqueBlue = "#134782";
 
 class GroupScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.deleteGroupFromDb = this.deleteGroupFromDb.bind(this);
-  }
-
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: <HeaderTitle title="Groups" />,
@@ -123,30 +119,6 @@ class GroupScreen extends Component {
     return `${hours}:${minutes}`;
   };
 
-  deleteGroupFromDb = async (groupID, users) => {
-    users = _.keys(users).map(uid => {
-      return firebase
-        .database()
-        .ref(`users/${uid}/groups/${groupID}`)
-        .remove();
-    });
-    Promise.all(users).then(async () => {
-      this.props.fetchGroups();
-      await firebase
-        .database()
-        .ref(`events/${groupID}`)
-        .remove();
-      await firebase
-        .database()
-        .ref(`messages/${groupID}`)
-        .remove();
-      await firebase
-        .database()
-        .ref(`groups/${groupID}`)
-        .remove();
-    });
-  };
-
   renderRow = ({ item }) => {
     item = item || {};
     const swipeSettings = {
@@ -166,7 +138,7 @@ class GroupScreen extends Component {
                 {
                   text: "Yes",
                   onPress: () => {
-                    this.deleteGroupFromDb(item.groupID, item.users);
+                    deleteGroupFromDb(item.groupID, item.users);
                   }
                 },
                 { cancelable: true }

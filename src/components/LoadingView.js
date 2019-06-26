@@ -16,7 +16,7 @@ class LoadingView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#134782",
+    backgroundColor: cliqueBlue,
     justifyContent: "center",
     alignItems: "center",
     width: "100%"

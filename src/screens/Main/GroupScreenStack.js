@@ -7,6 +7,7 @@ import GroupScreen from "./GroupScreen";
 import CreateEvents from "./Groups/CreateEvents";
 import CalendarScreen from "./Groups/CalendarScreen";
 import GroupInformation from "./Groups/GroupInformation";
+import AddMembers from "./Groups/AddMembers";
 
 const GroupScreenStack = createStackNavigator(
   {
@@ -16,7 +17,8 @@ const GroupScreenStack = createStackNavigator(
     GroupDetails,
     GroupCalendar: CalendarScreen,
     CreateEvents,
-    GroupInformation
+    GroupInformation,
+    AddMembers
     // EventModal: EventModal
   },
   {

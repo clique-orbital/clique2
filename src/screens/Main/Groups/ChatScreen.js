@@ -29,7 +29,6 @@ import Text from "../../../components/Text";
 import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
 import theme from "../../../assets/theme";
-import BackgroundColor from "../../../components/BackgroundColor";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
 
 class ChatScreen extends Component {
@@ -332,19 +331,23 @@ class ChatScreen extends Component {
 
   render() {
     let height = Dimensions.get("window").height;
+
     return (
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -300}
         style={{ flex: 1 }}
       >
-        <BackgroundColor />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <FlatList
               ref="messageList"
               onContentSizeChange={this.scrollToBottom}
-              style={{ padding: 10, height: height, paddingBottom: 100 }}
+              style={{
+                padding: 10,
+                height: height,
+                backgroundColor: theme.colors.light_chat_background
+              }}
               data={this.props.conversation.slice()}
               renderItem={this.renderRow}
               keyExtractor={(item, index) => index.toString()}
@@ -359,9 +362,8 @@ class ChatScreen extends Component {
                 borderTopWidth: StyleSheet.hairlineWidth,
                 borderTopColor: "lightgrey",
                 bottom: 0,
-                height: 40,
-                alignItems: "center"
-              },
+                backgroundColor: "white"
+              }
             ]}
           >
             <TextInput
@@ -409,9 +411,6 @@ const styles = StyleSheet.create({
   chatBox: {
     flexDirection: "row"
     // alignItems: "center"
-  },
-  iOSmargin: {
-    margin: 8
   },
   chatInput: {
     width: "90%",
