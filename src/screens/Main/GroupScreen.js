@@ -45,11 +45,14 @@ class GroupScreen extends Component {
   };
 
   componentDidMount() {
+    console.log("mounted groupScreen");
     this.scrollToTop();
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
 
-    db.ref(`users/${uid}/groups`).on("value", () => this.props.fetchGroups());
+    db.ref(`users/${uid}/groups`).on("value", () => {
+      this.props.fetchGroups()
+    });
 
     if (this.props.groups) {
       for (let groupId of _.keys(this.props.groups)) {
@@ -63,7 +66,9 @@ class GroupScreen extends Component {
                   this.props.incrementCount(groupId);
                 }
               });
-            this.fetchGroup(groupId).then(() => this.props.sortGroups());
+            this.fetchGroup(groupId).then(() => {
+              this.props.sortGroups()
+            });
           }
         );
       }
@@ -138,7 +143,8 @@ class GroupScreen extends Component {
                 {
                   text: "Yes",
                   onPress: () => {
-                    deleteGroupFromDb(item.groupID, item.users);
+                    console.log("deleting");
+                    this.props.deleteGroupFromDb(item.groupID, item.users);
                   }
                 },
                 { cancelable: true }
@@ -200,8 +206,8 @@ class GroupScreen extends Component {
                   }}
                 />
               ) : (
-                undefined
-              )}
+                  undefined
+                )}
             </View>
           </View>
         </TouchableOpacity>
@@ -251,6 +257,7 @@ export default connect(
     sortGroups,
     fetchGroups,
     incrementCount,
-    setToZero
+    setToZero,
+    deleteGroupFromDb
   }
 )(GroupScreen);

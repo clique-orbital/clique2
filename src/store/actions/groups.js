@@ -160,16 +160,22 @@ export const removeUser = (uid, groupID, leave) => async dispatch => {
 };
 
 export const deleteGroupFromDb = (groupID, users) => async dispatch => {
+  console.log("Inside deleteGroupFromDb");
   users = _.keys(users).map(uid => {
-    return db.ref(`users/${uid}/groups/${groupID}`).remove();
+    const userAttendingPromise = db.ref(`users/${uid}/attending/${groupID}`).remove();
+    const userNotAttendingPromise = db.ref(`users/${uid}/notAttending/${groupID}`).remove();
+    const userGroupPromise = db.ref(`users/${uid}/groups/${groupID}`).remove();
+    return [userAttendingPromise, userGroupPromise, userNotAttendingPromise];
   });
-  Promise.all(users)
+  Promise.all(_.flatten(users))
     .then(async () => {
+      console.log("inside promise.all.then()")
       await db.ref(`events/${groupID}`).remove();
       await db.ref(`messages/${groupID}`).remove();
       await db.ref(`groups/${groupID}`).remove();
     })
     .then(() => {
+      console.log("inside promise.all.then().then()")
       dispatch(removeGroupEvents(groupID));
       dispatch(removeGroupMessages(groupID));
     });
