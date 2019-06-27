@@ -23,7 +23,9 @@ class GroupMembersSelect extends React.Component {
         goBack={() => this.props.navigation.goBack()}
         onSubmit={formValues =>
           this.props.navigation.navigate("GroupDetails", {
-            users: formValues
+            users: formValues,
+            title: "Create Groups",
+            type: "create",
           })
         }
       />
