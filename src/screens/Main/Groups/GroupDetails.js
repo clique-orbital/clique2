@@ -11,7 +11,7 @@ import { Field, reduxForm } from "redux-form";
 
 import Text from "../../../components/Text";
 import ContinueButton from "../../../components/ContinueButton";
-import { createGroup } from "../../../store/actions/groups";
+import { createGroup, editGroup } from "../../../store/actions/groups";
 import defaultPicture from "../../../assets/default_profile.png";
 import ImagePicker from "../../../components/ImagePickerComponent";
 import HeaderTitle from "../../../components/HeaderTitle";
@@ -20,19 +20,25 @@ import Spinner from "../../../components/Spinner";
 const required = value => (value ? undefined : "Required");
 
 class GroupDetails extends React.Component {
-  static navigationOptions = () => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+    }
+    this.handleSubmitCreate = this.handleSubmitCreate.bind(this);
+  }
+
+  static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: (
         <View style={{ bottom: 5 }}>
-          <HeaderTitle title="New Group" />
+          <HeaderTitle title={navigation.getParam("title")} />
         </View>
       )
     };
   };
 
-  state = { loading: false };
-
-  handleSubmit = values => {
+  handleSubmitCreate = values => {
     this.setState({ loading: true });
     this.props
       .dispatch(
@@ -47,6 +53,24 @@ class GroupDetails extends React.Component {
       )
       .then(() => {
         this.props.navigation.navigate("Main");
+      });
+  };
+
+  handleSubmitEdit = values => {
+    this.setState({ loading: true });
+    this.props
+      .dispatch(
+        editGroup(
+          this.props.navigation.getParam("groupID"),
+          values.groupname,
+          values.grouppicture.uri,
+        )
+      )
+      .then(group => {
+        this.props.navigation.navigate("GroupInformation", {
+          group,
+          image: { uri: group.photoURL }
+        })
       });
   };
 
@@ -70,7 +94,7 @@ class GroupDetails extends React.Component {
     );
   };
 
-  renderGroupPicture = () => {
+  render() {
     return (
       <View style={styles.container}>
         <View style={{ marginTop: "15%" }}>
@@ -91,7 +115,7 @@ class GroupDetails extends React.Component {
         </View>
         <TouchableOpacity
           title="Create"
-          onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+          onPress={this.props.handleSubmit(this.props.navigation.getParam("type") === "create" ? this.handleSubmitCreate : this.handleSubmitEdit)}
           style={{ position: "absolute", top: "90%", left: "80%" }}
         >
           <ContinueButton name="arrow-forward" />
@@ -99,10 +123,6 @@ class GroupDetails extends React.Component {
         {this.state.loading && <Spinner />}
       </View>
     );
-  };
-
-  render() {
-    return this.renderGroupPicture();
   }
 }
 
@@ -127,8 +147,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
-  return { user: state.authReducer.user };
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: state.authReducer.user,
+    group: state.groupsReducer.groups[ownProps.navigation.getParam("groupID")]
+  };
 };
 
 let form = reduxForm({ form: "groupDetails" })(GroupDetails);

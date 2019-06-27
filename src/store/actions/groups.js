@@ -107,6 +107,19 @@ const addGroupPicture = async pictureUri => {
     });
 };
 
+export const editGroup = (groupID, groupName, groupPicture) => async dispatch => {
+  const url = await addGroupPicture(groupPicture);
+  await db.ref(`groups/${groupID}/groupName`).set(groupName);
+  await db.ref(`groups/${groupID}/photoURL`).set(url);
+  const groupSnapshot = await db.ref(`groups/${groupID}`).once("value");
+  const group = groupSnapshot.val();
+  dispatch(addNewGroup(groupID, group));
+  return group;
+  // db.ref(`groups/${groupID}`).once("value", snapshot => {
+  //   dispatch(addNewGroup(groupID, snapshot.val()))
+  // })
+}
+
 export const createGroup = (
   groupName,
   groupPicture,
@@ -121,7 +134,7 @@ export const createGroup = (
     users_info = { ...users_info, [user.uid]: true };
   }
 
-  const url = await addGroupPicture(groupPicture, filetype);
+  const url = await addGroupPicture(groupPicture, filetype); //filetype not used?
   newGroupCreator(groupName, groupID, url, users_info, data).then(() => {
     return db
       .ref("groups")

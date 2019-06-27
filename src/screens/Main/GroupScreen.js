@@ -165,7 +165,8 @@ class GroupScreen extends Component {
           onPress={() =>
             this.props.navigation.navigate("Chat", {
               group: item,
-              image: { uri: item.photoURL }
+              image: { uri: item.photoURL },
+              groupID: item.groupID
             })
           }
         >

@@ -45,12 +45,12 @@ class ChatScreen extends Component {
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
-    // this.sameDay = this.sameDay.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
 
   static navigationOptions = ({ navigation }) => {
+    const group = navigation.getParam("group");
     return {
       headerTintColor: "#fff",
       headerTitle: (
@@ -64,7 +64,7 @@ class ChatScreen extends Component {
           }}
           onPress={() =>
             navigation.navigate("GroupInformation", {
-              group: navigation.getParam("group")
+              group
             })
           }
         >
@@ -82,7 +82,7 @@ class ChatScreen extends Component {
               textAlignVertical: "center"
             }}
           >
-            {navigation.getParam("group").groupName}
+            {group.groupName}
           </Text>
         </TouchableOpacity>
       ),
@@ -90,7 +90,7 @@ class ChatScreen extends Component {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("GroupCalendar", {
-              groupID: navigation.getParam("group").groupID,
+              groupID: group.groupID,
               title: "Group Calendar"
             })
           }
@@ -147,7 +147,6 @@ class ChatScreen extends Component {
   };
 
   sendMessage = () => {
-    console.log("Sending Message");
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
       const msgID = this.messagesRef.child(`${groupID}`).push().key;
@@ -263,27 +262,7 @@ class ChatScreen extends Component {
       this.props.dispatch(populateNotAttending(members));
     });
     this.props.dispatch(toggleEventModal(true, event));
-    // this.props.navigation.navigate("EventModal", {
-    //   modalVisibility: true
-    // });
   };
-
-  // sameDay = (dateOfLastMsg, dayOfLastMsg) => {
-  //   console.log("props date = " + this.props.prevDate);
-  //   if (
-  //     dateOfLastMsg === this.state.dateOfLastMsg &&
-  //     dayOfLastMsg === this.state.dayOfLastMsg
-  //   ) {
-  //     console.log("in true. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
-  //     return true;
-  //   }
-  //   console.log("in false. " + `${dateOfLastMsg}/${dayOfLastMsg}`);
-  //   this.setState({
-  //     dateOfLastMsg,
-  //     dayOfLastMsg
-  //   });
-  //   return false;
-  // };
 
   renderRow = ({ item }) => {
     if (item.messageType === "text") {

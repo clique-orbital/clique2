@@ -8,7 +8,6 @@ import {
   Alert
 } from "react-native";
 import SwipeOut from "react-native-swipeout";
-
 import GroupPicture from "../../../components/GroupPicture";
 import firebase from "react-native-firebase";
 import Text from "../../../components/Text";
@@ -22,7 +21,10 @@ import { removeGroupMessages } from "../../../store/actions/messages";
 class GroupInformation extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const group = navigation.getParam("group");
-
+    navigation.goBack = () => navigation.navigate("Chat", {
+      group,
+      image: navigation.getParam("image")
+    });
     return {
       headerTintColor: "#fff",
       headerStyle: {
@@ -47,10 +49,24 @@ class GroupInformation extends React.Component {
       ),
       headerLeft: (
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            navigation.goBack();
+          }}
           style={{ alignSelf: "flex-start", paddingTop: 10, paddingLeft: 10 }}
         >
           <MyIcon name="arrow-back" color="white" size={25} type="material" />
+        </TouchableOpacity>
+      ),
+      headerRight: (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("GroupDetails", {
+            title: "Edit Group",
+            type: "edit",
+            groupID: group.groupID
+          })}
+          style={{ paddingTop: 12, paddingRight: 10, alignSelf: "flex-start" }}
+        >
+          <Text white style={{ fontSize: 20 }}>Edit</Text>
         </TouchableOpacity>
       )
     };
@@ -228,8 +244,7 @@ class GroupInformation extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     self: state.authReducer.user,
-    group:
-      state.groupsReducer.groups[ownProps.navigation.getParam("group").groupID]
+    group: state.groupsReducer.groups[ownProps.navigation.getParam("group").groupID],
   };
 };
 
