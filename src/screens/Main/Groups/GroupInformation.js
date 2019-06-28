@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Alert
+  Alert,
+  StatusBar
 } from "react-native";
 import SwipeOut from "react-native-swipeout";
 import GroupPicture from "../../../components/GroupPicture";
@@ -26,6 +27,7 @@ class GroupInformation extends React.Component {
       image: navigation.getParam("image")
     });
     return {
+      gesturesEnabled: false,
       headerTintColor: "#fff",
       headerStyle: {
         borderBottomColor: "transparent",
@@ -50,7 +52,10 @@ class GroupInformation extends React.Component {
       headerLeft: (
         <TouchableOpacity
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate("Chat", {
+              group,
+              image: { uri: group.photoURL }
+            });;
           }}
           style={{ alignSelf: "flex-start", paddingTop: 10, paddingLeft: 10 }}
         >
@@ -235,6 +240,7 @@ class GroupInformation extends React.Component {
   render() {
     return (
       <View style={{ display: "flex", height: "100%" }}>
+        <StatusBar barStyle="light-content" />
         {this.renderFlatList()}
       </View>
     );
