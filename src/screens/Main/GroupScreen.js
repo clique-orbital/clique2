@@ -6,7 +6,8 @@ import {
   FlatList,
   Image,
   Dimensions,
-  Alert
+  Alert,
+  StatusBar
 } from "react-native";
 import firebase from "react-native-firebase";
 import _ from "lodash";
@@ -44,8 +45,8 @@ class GroupScreen extends Component {
     };
   };
 
+
   componentDidMount() {
-    console.log("mounted groupScreen");
     this.scrollToTop();
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
@@ -160,6 +161,7 @@ class GroupScreen extends Component {
     };
     return (
       <SwipeOut {...swipeSettings}>
+        <StatusBar barStyle="light-content" />
         <TouchableOpacity
           style={styles.chatList}
           onPress={() =>

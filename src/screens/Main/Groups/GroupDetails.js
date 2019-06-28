@@ -4,7 +4,8 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  StatusBar
 } from "react-native";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
@@ -24,6 +25,7 @@ class GroupDetails extends React.Component {
     super(props);
     this.state = {
       loading: false,
+      groupName: this.props.navigation.getParam("type") === "create" ? "" : this.props.group.groupName
     }
     this.handleSubmitCreate = this.handleSubmitCreate.bind(this);
   }
@@ -34,7 +36,8 @@ class GroupDetails extends React.Component {
         <View style={{ bottom: 5 }}>
           <HeaderTitle title={navigation.getParam("title")} />
         </View>
-      )
+      ),
+      headerTintColor: "#fff"
     };
   };
 
@@ -79,17 +82,21 @@ class GroupDetails extends React.Component {
       <ImagePicker
         width={Dimensions.get("window").width}
         {...props.input}
-        value={defaultPicture}
+        value={this.props.navigation.getParam("type") === "create" ? defaultPicture : { uri: this.props.group.photoURL }}
       />
     );
   };
 
   renderInput = ({ input, label }) => {
+    // console.log(input)
     return (
       <TextInput
         {...input}
+        value={this.state.groupName}
+        onChangeText={text => this.setState({ groupName: text })}
         style={[styles.textInput, { marginTop: 5 }]}
         placeholder={label}
+        defaultValue={this.props.navigation.getParam("type") === "create" ? "" : this.props.group.groupName}
       />
     );
   };
@@ -97,6 +104,7 @@ class GroupDetails extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
         <View style={{ marginTop: "15%" }}>
           <Text body grey style={styles.text}>
             Enter your group name and group picture!
@@ -150,7 +158,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, ownProps) => {
   return {
     user: state.authReducer.user,
-    group: state.groupsReducer.groups[ownProps.navigation.getParam("groupID")]
+    group: state.groupsReducer.groups[ownProps.navigation.getParam("groupID")] || {}
   };
 };
 

@@ -125,9 +125,9 @@ class EventModal extends Component {
   };
 
   handleEditButtonPress = () => {
-    (this.props.navigation || {}).navigate("CreateEvents", {
-      groupID: this.props.event.groupID
-    });
+    // (this.props.navigation || {}).navigate("CreateEvents", {
+    //   groupID: this.props.event.groupID
+    // });
   };
 
   renderTitle = () => {

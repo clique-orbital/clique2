@@ -72,13 +72,12 @@ class ContactsList extends React.Component {
                 if (
                   snapshot.child(`${phoneNumber}`.replace(/\s/g, "")).exists()
                 ) {
-                  return snapshot.val()[phoneNumber];
+                  return snapshot.val()[phoneNumber.replace(/\s/g, "")];
                 }
               }
               return;
             })
             .filter(x => x);
-
           return {
             ...prevState,
             contacts

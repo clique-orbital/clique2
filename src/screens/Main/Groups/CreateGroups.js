@@ -21,13 +21,14 @@ class GroupMembersSelect extends React.Component {
     return (
       <ContactsList
         goBack={() => this.props.navigation.goBack()}
-        onSubmit={formValues =>
+        onSubmit={formValues => {
+          console.log(formValues);
           this.props.navigation.navigate("GroupDetails", {
             users: formValues,
             title: "Create Groups",
             type: "create",
           })
-        }
+        }}
       />
     );
   }

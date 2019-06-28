@@ -25,7 +25,6 @@ class ImagePickerComponent extends React.Component {
   pickImageHandler = () => {
     const options = {
       title: "Select Profile Picture",
-      customButtons: [{ name: "fb", title: "Choose Photo from Facebook" }],
       storageOptions: {
         skipBackup: true,
         path: "images"

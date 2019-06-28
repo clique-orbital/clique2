@@ -9,7 +9,8 @@ import {
   Platform,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  SafeAreaView
+  SafeAreaView,
+  StatusBar
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import {
@@ -39,7 +40,7 @@ class ChatScreen extends Component {
       groupID: this.props.navigation.getParam("group").groupID,
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
-      dateOfLastMsg: new Date().getDate()
+      dateOfLastMsg: new Date().getDate(),
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -106,6 +107,12 @@ class ChatScreen extends Component {
       )
     };
   };
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      groupName: this.props.group.groupName
+    })
+  }
 
   componentWillMount() {
     const groupID = this.state.groupID;
@@ -317,6 +324,7 @@ class ChatScreen extends Component {
         keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -300}
         style={{ flex: 1 }}
       >
+        <StatusBar barStyle="light-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <FlatList
@@ -377,7 +385,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     uid: state.authReducer.user.uid,
     conversation: stateOfGroup.messages || [],
-    username
+    username,
+    group: state.groupsReducer.groups[groupID]
   };
 };
 
