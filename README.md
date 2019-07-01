@@ -25,29 +25,7 @@ Many of our group chats we create involve some form of event that will be planne
 ## Site Map
 
 - User Guide
-- Developer Guide
-
-## Installation
-
-Clone the repository to your local computer
-
-Change directory to ios folder
-
-`cd clique2/ios`
-
-Edit the Podfile
-
-`vim Podfile`
-
-Delete all lines with react in the code, e.g.
-
-`pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'`
-
-Press Esc and save file using :wq
-
-Lastly, change back to root directory, install npm, change to ios directory and install pod, change back to root directory and link all dependencies
-
-`npm i && cd ios && pod install && cd .. && react-native link`
+- [Developer Guide](https://github.com/clique-orbital/clique2/blob/master/DeveloperGuide.md)
 
 ## Contributions
 
