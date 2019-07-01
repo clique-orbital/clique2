@@ -1,4 +1,4 @@
-# Developer Guide
+# Developer Guide :book:
 ### Table of Contents
 1. [Installation](#installation-guide)
     * [Prerequisites](#prerequisites)
@@ -91,6 +91,23 @@ Phone Number/Verification Code
 ```
 
 ## Implementation
-### Authentication
+### Authentication  :unlock::key:
 
 To use Clique, a user must have an account. We use Google’s Firebase to handle our authentication process, where the sign-in method is the user’s phone number. An SMS verification code will be sent to the phone number inputted and used to confirm the authentication of the user.  The app then checks whether it is a first-time sign in or an existing user. If it is the former, it will direct the user to create his name and add a profile picture. 
+
+### Groups  :two_men_holding_hands::two_women_holding_hands:
+
+Groups are essentially chat rooms. They store all the members unique identification (UID), the messages between the members, and the events of that group. A user can create a group with his contacts (those who have signed up with Clique already), give a group name and upload a group picture. Once that is done, the information will be send to our database, users can start texting each other in the group. At the moment of writing, anyone can remove other members of that group inside the group information screen. Members can also edit the group’s display photo and group name. 
+
+### Messages  :speech_balloon::calling:
+
+Users can type and send messages to the group. The messages are first sent to our database, and when the ChatScreen component detects the change in data in the database, it will update the messages on the screen. The most important feature of texting in a group is to know who wrote which texts. Thats why we implement every text message to store the sender’s UID. By comparing that to the user’s UID (stored in the app during authentication), we are able to differentiate the user’s messages and that of other members of the group. Text messages also have different types, from the normal text, to event types, which our ChatScreen component will render accordingly.  
+
+
+### Events  :date::basketball::hamburger::microphone::books::airplane:
+
+Combining messages and events was the core of Clique. Members of a group can create events for that group. By providing a title (minimally), start and end time, location, and notes of the event, the event will be stored in the cloud database when publish. Events have responses in them, mainly accept and reject (may add pending in the near future). Users can then indicate their attendance to the event inside the Event modal. The Event modal is filled with event’s information, and also shows who have accepted and rejected the invitation. 
+
+### Calendar  :calendar:
+
+For Calendar, we figured it will be an uphill task to implement the component ourselves, especially with our inexperience in React Native. To avoid any wastage of time, we used the third-prarty library [react-native-calendars](https://www.npmjs.com/package/react-native-calendars) to aid us in our implementation. For groups, we passed the group’s events data to the component and let it handle the rendering, albeit with a bit of tweaks from our side. For personal calendar, every time the user responds to an event, the database will keep track of whether he/she has accepted/rejected the invitation. The main focus for personal calendars would be the events that the user has accepted, and that data is kept under the user’s data object in the database. We then pass this specific data to the calendar component. 
