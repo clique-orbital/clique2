@@ -99,7 +99,7 @@ To use Clique, a user must have an account. We use Google’s Firebase to handle
 ### Groups
 :two_men_holding_hands::two_women_holding_hands:
 
-Groups are essentially chat rooms. They store all the members unique identification (UID), the messages between the members, and the events of that group. A user can create a group with his contacts (those who have signed up with Clique already), give a group name and upload a group picture. Once that is done, the information will be send to our database, users can start texting each other in the group. At the moment of writing, anyone can remove other members of that group inside the group information screen. Members can also edit the group’s display photo and group name. 
+Groups are essentially chat rooms. They store all the members unique identification (UID), the messages between the members, and the events of that group. A user can create a group with his contacts (those who have signed up with Clique already), give a group name and upload a group picture. Once that is done, the information will be send to our database, and users can start texting each other in the group. At the moment of writing, anyone can remove other members of that group inside the group information screen. Members can also edit the group’s display photo and group name. This work by updating/removing the data in the database.
 
 ### Messages
 :speech_balloon::calling:
@@ -110,7 +110,7 @@ Users can type and send messages to the group. The messages are first sent to ou
 ### Events
 :date::basketball::hamburger::microphone::books::airplane:
 
-Combining messages and events was the core of Clique. Members of a group can create events for that group. By providing a title (minimally), start and end time, location, and notes of the event, the event will be stored in the cloud database when publish. Events have responses in them, mainly accept and reject (may add pending in the near future). Users can then indicate their attendance to the event inside the Event modal. The Event modal is filled with event’s information, and also shows who have accepted and rejected the invitation. 
+Combining messages and events was the core of Clique. Members of a group can create events for that group. By providing a title (minimally), start and end time, location, and notes of the event, the event will be stored in the cloud database when publish. Events have responses in them, mainly accept and reject (may add pending in the near future). Users can then indicate their attendance to the event inside the Event modal. The Event modal is filled with the event’s information, and also shows who have accepted and rejected the invitation. 
 
 ### Calendar
 :calendar:
