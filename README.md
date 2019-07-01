@@ -25,7 +25,7 @@ Many of our group chats we create involve some form of event that will be planne
 ## Site Map
 
 - User Guide
-- Developer Guide
+- [Developer Guide](https://github.com/clique-orbital/clique2/blob/master/DeveloperGuide.md)
 
 ## Installation
 
