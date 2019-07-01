@@ -74,6 +74,7 @@ If you are unsure on how to open an AVD, check out this [link](https://developer
 The app will take some time for the initial build, and once done, it will be running on the AVD.
 
 **For iOS** (only for Mac users)
+
 Open `RNFirebaseStarter.xcworkspace` in the ios directory of the file.
 
 `open ios/RNFirebaseStarter.xcworkspace`
@@ -88,3 +89,8 @@ Phone Number/Verification Code
 +6599999999/999999
 +6588888888/888888
 ```
+
+## Implementation
+### Authentication
+
+To use Clique, a user must have an account. We use Google’s Firebase to handle our authentication process, where the sign-in method is the user’s phone number. An SMS verification code will be sent to the phone number inputted and used to confirm the authentication of the user.  The app then checks whether it is a first-time sign in or an existing user. If it is the former, it will direct the user to create his name and add a profile picture. 
