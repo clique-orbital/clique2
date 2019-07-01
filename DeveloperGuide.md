@@ -2,6 +2,7 @@
 ### Table of Contents
 1. [Installation](#installation-guide)
     * [Prerequisites](#prerequisites)
+    * [Setting Up](#setting-up)
     * [Getting Started](#getting-started)
 
 
@@ -13,7 +14,7 @@
   * npm (v6.4.1^) (if unsure, check out Getting Started)
   * Xcode (only for Mac users)
   
-### Getting Started
+### Setting Up
 Install node and watchman with Homebrew by entering the following commands in the terminal.
 
 ```
@@ -53,6 +54,8 @@ Press Esc and save file using `:wq`
 Lastly, change back to root directory, install npm, change to ios directory and install pod, change back to root directory and link all dependencies
 
 `npm i && cd ios && pod install && cd .. && react-native link`
+
+### Getting Started
 
 **For Android**
 
