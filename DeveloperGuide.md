@@ -91,7 +91,7 @@ Phone Number/Verification Code
 ```
 
 ## Implementation
-### Authentication  :unlock::key:
+### Authentication
 
 To use Clique, a user must have an account. We use Google’s Firebase to handle our authentication process, where the sign-in method is the user’s phone number. An SMS verification code will be sent to the phone number inputted and used to confirm the authentication of the user.  The app then checks whether it is a first-time sign in or an existing user. If it is the former, it will direct the user to create his name and add a profile picture. 
 
