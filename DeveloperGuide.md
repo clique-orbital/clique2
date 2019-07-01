@@ -4,14 +4,21 @@
     * [Prerequisites](#prerequisites)
     * [Setting Up](#setting-up)
     * [Getting Started](#getting-started)
+2. [Design](#design)
+3. [Implementation](#implementation)
+    * [Authentication](#authentication)
+    * [Groups](#groups)
+    * [Messages](#messages)
+    * [Events](#events)
+    * [Calendar](#calendar)
 
 
 ## Installation
 ### Prerequisites
   * Terminal
   * Android Studio
-  * Node (v10.15.3^) (if unsure, check out Getting Started)
-  * npm (v6.4.1^) (if unsure, check out Getting Started)
+  * Node (v10.15.3^) (if unsure, check out Setting Up)
+  * npm (v6.4.1^) (if unsure, check out Setting Up)
   * Xcode (only for Mac users)
   
 ### Setting Up
@@ -73,3 +80,11 @@ Open `RNFirebaseStarter.xcworkspace` in the ios directory of the file.
 
 Once the project has been indexed, choose a simulator device (preferably iPhone XS) at the top left bar. Press the play button to build the app.
 The iOS simulator will automatically open, while the initial build will take some time. Once done, the app will be running on the simulator.
+
+### Signing into the app
+You may use the following pre-authorized phone number and verification code to test and login to the app. 
+```
+Phone Number/Verification Code
++6599999999/999999
++6588888888/888888
+```
