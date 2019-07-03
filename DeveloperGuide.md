@@ -5,6 +5,8 @@
     * [Setting Up](#setting-up)
     * [Getting Started](#getting-started)
 2. [Design](#design)
+    * [UI and Logic](#ui-and-logic)
+    * [Storage](#storage)
 3. [Implementation](#implementation)
     * [Authentication](#authentication)
     * [Groups](#groups)
@@ -89,6 +91,61 @@ Phone Number/Verification Code
 +6599999999/999999
 +6588888888/888888
 ```
+
+## Design
+
+### UI and Logic
+<img src="https://drive.google.com/uc?export=view&id=1k-nm5yk9Qb5YxhPEidg1PIHm9ADbtf63" width="100%">
+
+When the app first launches, it builds and renders the following four components;  Groups Stack, Personal Calendar, Notifications, and Settings. At the time of writing, Notifications and Settings do not have any useful information/features. 
+
+For __Groups Stack__, we can further split it to 6 more Screens.
+
+1. `Groups Screen` - The main screen where the user sees all his chats, sorted according to the timing of the last message. 
+
+2. `Chat Screen` - Renders all the text messages of a group accordingly, ensuring the UI difference between the user’s texts and that of the other group members. 
+
+3. `Create Group` - Allows user to add a group display picture and a group name.
+
+4. `Group Details` - Shows the group name, group picture and all the group’s members.
+
+5. `Group Calendar` - Passes the group’s events to the Calendar Component to render all the events on the calendar.
+
+6. `Create Events` - Allows user to add a title, start and end time, location and notes for the event. 
+
+For the __Personal Calendar__, it passes the user’s accepted events to the Calendar Component.
+
+The Reusable Components includes
+
+1. `Calendar Component` - Renders events that are passed to it as props. Based on third party library [react-native-calendars](https://www.npmjs.com/package/react-native-calendars).
+2. `Event Modal` - Renders the information of the event that is pass as a prop. Display members who have accepted and rejected the event.
+
+### Storage
+<img src="https://drive.google.com/uc?export=view&id=1UUcRNsPpBSJeCtQaQ6yfEKw0XczjLHna" width="100%">
+
+All our data are stored as a JSON tree, inside Firebase’s NoSQL Realtime Database. Relevant user data are also stored on the user’s phone in the same format using Redux Persist.
+
+1. `phoneNumbers`
+
+Contains the UID of the user, photoURL for display photo, the phone number itself, and the user’s display name. Very similar to users object, but we wanted to make phoneNumbers a top level data object since it is accessed frequently. 
+
+2. `users`
+
+Contains the same information as phoneNumbers, and on top of that, the attending and not attending events, and the groups that the user belongs in.
+
+3. `groups`
+
+Contains the groupName, last message of that group, the users of that group, the photo URL for the group display picture, and the group ID.
+
+4. `messages`
+
+Contains the type of message (text or event), the sender’s UID, timestamp of the message send, username of the sender, and the text message itself. Messages from the same group are stored under the same group ID branch.
+
+5. `events`
+
+Contains the title, start (from) and end (to) time, location, notes, groupID of the group that event belongs to, arrays of UID of who is attending, not attending and pending response, and the event ID itself. Events from the same group are stored under the same group ID branch.
+
+
 
 ## Implementation
 ### Authentication
