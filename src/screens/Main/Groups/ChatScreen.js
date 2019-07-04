@@ -31,6 +31,8 @@ import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
 import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
+import SystemMessageBubble from "../../../components/SystemMessageBubble";
+import { getDay, getDate } from "../../../assets/constants"
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -156,6 +158,27 @@ class ChatScreen extends Component {
   sendMessage = () => {
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
+      // const lastMessageSnapshot = await firebase.database().ref(`groups/${groupID}/last_message`).once('value');
+      // const lastMessage = lastMessageSnapshot.val();
+      const lastMessage = this.props.group.last_message;
+      const dateObj = (new Date(lastMessage.timestamp));
+      const currentDate = new Date();
+      const diffDate = dateObj.getDate() !== currentDate.getDate() || dateObj.getMonth() !== currentDate.getMonth();
+
+      if (diffDate || lastMessage.sender === "") {
+        const dateMsgID = this.messagesRef.child(`${groupID}`).push().key;
+        const dateMessage = {
+          messageType: "system",
+          message: `${getDate(currentDate)}`,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          sender: "",
+        }
+        this.messagesRef
+          .child(`${groupID}`)
+          .child(`${dateMsgID}`)
+          .set(dateMessage);
+      }
+
       const msgID = this.messagesRef.child(`${groupID}`).push().key;
       let message = {
         messageType: "text",
@@ -306,6 +329,12 @@ class ChatScreen extends Component {
           convertDate={convertDate}
         />
       );
+    } else if (item.messageType === "system") {
+      return (
+        <SystemMessageBubble
+          message={item.message}
+        />
+      )
     }
   };
 
