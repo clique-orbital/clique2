@@ -5,7 +5,8 @@ import {
   SORT_GROUPS,
   REMOVE_GROUP,
   ADD_MEMBER_TO_GROUP,
-  REMOVE_USER_FROM_GROUP_REDUX
+  REMOVE_USER_FROM_GROUP_REDUX,
+  SIGN_OUT
 } from "../constants";
 import _ from "lodash";
 
@@ -15,6 +16,8 @@ const initialState = {
 
 export const groupsReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SIGN_OUT:
+      return initialState;
     case INITIALIZE_GROUPS:
       return {
         ...state,

@@ -1,7 +1,8 @@
 import {
   FETCH_CONVERSATION,
   CHANGE_PREV_DATE,
-  REMOVE_GROUP_MESSAGES
+  REMOVE_GROUP_MESSAGES,
+  SIGN_OUT
 } from "../constants";
 import _ from "lodash";
 
@@ -26,6 +27,8 @@ export const messagesReducer = (state = {}, action) => {
     };
   } else if (action.type === REMOVE_GROUP_MESSAGES) {
     return _.omit(state, action.payload);
+  } else if (action.type === SIGN_OUT) {
+    return {};
   } else {
     return state;
   }
