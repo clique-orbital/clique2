@@ -20,7 +20,10 @@ import { cliqueBlue, getDate, getDay, getTime } from "../../assets/constants";
 import firebase from "react-native-firebase";
 import Text from "../../components/Text";
 import MyIcon from "../../components/MyIcon";
-import { fetchPersonalEvents, fetchAllEvents } from "../../store/actions/calendar";
+import {
+  fetchPersonalEvents,
+  fetchAllEvents
+} from "../../store/actions/calendar";
 
 class EventModal extends Component {
   constructor(props) {
@@ -68,6 +71,8 @@ class EventModal extends Component {
       name => name !== this.props.displayName
     );
 
+    const db = firebase.database();
+
     let updatedEvent;
     if (response) {
       updatedEvent = {
@@ -76,15 +81,17 @@ class EventModal extends Component {
         notAttending,
         noResponse
       };
-      firebase
-        .database()
-        .ref(`users/${this.props.uid}/attending/${this.props.event.groupID}/${event.eventID}`)
-        .set(true)
-      firebase
-        .database()
-        .ref(`users/${this.props.uid}/notAttending/${this.props.event.groupID}/${event.eventID}`)
-        .remove()
-      this.props.dispatch(fetchPersonalEvents(this.props.uid))
+      db.ref(
+        `users/${this.props.uid}/attending/${this.props.event.groupID}/${
+          event.eventID
+        }`
+      ).set(true);
+      db.ref(
+        `users/${this.props.uid}/notAttending/${this.props.event.groupID}/${
+          event.eventID
+        }`
+      ).remove();
+      this.props.dispatch(fetchPersonalEvents(this.props.uid));
       attendingNames = [...attendingNames, this.props.displayName];
     } else {
       updatedEvent = {
@@ -93,30 +100,26 @@ class EventModal extends Component {
         noResponse,
         notAttending: [...notAttending, this.props.uid]
       };
-      firebase
-        .database()
-        .ref(`users/${this.props.uid}/notAttending/${this.props.event.groupID}/${event.eventID}`)
-        .set(true)
-      firebase
-        .database()
-        .ref(`users/${this.props.uid}/attending/${this.props.event.groupID}/${event.eventID}`)
-        .remove()
-      this.props.dispatch(fetchPersonalEvents(this.props.uid))
+      db.ref(
+        `users/${this.props.uid}/notAttending/${this.props.event.groupID}/${
+          event.eventID
+        }`
+      ).set(true);
+      db.ref(
+        `users/${this.props.uid}/attending/${this.props.event.groupID}/${
+          event.eventID
+        }`
+      ).remove();
+      this.props.dispatch(fetchPersonalEvents(this.props.uid));
       notAttendingNames = [...notAttendingNames, this.props.displayName];
     }
-    // updates the group events 
-    this.props.dispatch(fetchAllEvents(this.props.uid))
-    firebase
-      .database()
-      .ref(`events/${groupID}/${eventID}`)
-      .set(updatedEvent);
+    // updates the group events
+    this.props.dispatch(fetchAllEvents(this.props.uid));
+    db.ref(`events/${groupID}/${eventID}`).set(updatedEvent);
 
     // Updates event in message the event is attached to
     const msgID = updatedEvent.msgID;
-    firebase
-      .database()
-      .ref(`messages/${groupID}/${msgID}/event`)
-      .set(updatedEvent);
+    db.ref(`messages/${groupID}/${msgID}/event`).set(updatedEvent);
 
     // Updates Event Modal
     this.props.dispatch(toggleEventModal(true, updatedEvent));
@@ -163,7 +166,7 @@ class EventModal extends Component {
     );
   };
 
-  renderSameDate = date => { };
+  renderSameDate = date => {};
 
   renderDate = date => {
     return (
