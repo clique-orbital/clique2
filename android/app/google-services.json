@@ -1,21 +1,29 @@
 {
   "project_info": {
-    "project_number": "213063202678",
-    "firebase_url": "https://clique2-777a0.firebaseio.com",
-    "project_id": "clique2-777a0",
-    "storage_bucket": "clique2-777a0.appspot.com"
+    "project_number": "654951934306",
+    "firebase_url": "https://clique-c1fd6.firebaseio.com",
+    "project_id": "clique-c1fd6",
+    "storage_bucket": "clique-c1fd6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:213063202678:android:8d4e41f333ad27fa",
+        "mobilesdk_app_id": "1:654951934306:android:8d4e41f333ad27fa",
         "android_client_info": {
           "package_name": "com.invertase.rnfirebasestarter"
         }
       },
       "oauth_client": [
         {
-          "client_id": "213063202678-176davms5i1uk6ijh33v73tc6fqne3t0.apps.googleusercontent.com",
+          "client_id": "654951934306-l3ajp2ehkormsm8pk68b97j4pjms9jb5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invertase.rnfirebasestarter",
+            "certificate_hash": "7611a37ac5e4d8861986db567cca8b78034450f6"
+          }
+        },
+        {
+          "client_id": "654951934306-lc3tg44rg3qsd61lm3697993aau0m144.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.invertase.rnfirebasestarter",
@@ -23,21 +31,36 @@
           }
         },
         {
-          "client_id": "213063202678-1nckieokmeje71n5eafu3jrve7tsp8f8.apps.googleusercontent.com",
+          "client_id": "654951934306-2qn8f00mc09eohh32dh9inp0in9el1ba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invertase.rnfirebasestarter",
+            "certificate_hash": "82c1898d63745cd90d3113fd6af73aa7545b75a4"
+          }
+        },
+        {
+          "client_id": "654951934306-ck7rjpmcvvhhrfugnr7fmug5238m357q.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDf0LaoODLp-lJVJAUr5cJxy0WFajzNFtA"
+          "current_key": "AIzaSyCnRhz83PVSR9RxRs0KMQ2yiaj1WfowYm4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "213063202678-1nckieokmeje71n5eafu3jrve7tsp8f8.apps.googleusercontent.com",
+              "client_id": "654951934306-ck7rjpmcvvhhrfugnr7fmug5238m357q.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "654951934306-u812skkn1db19je3bdg0bht698ssfgkj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.CliqueOrbital"
+              }
             }
           ]
         }

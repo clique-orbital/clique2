@@ -129,7 +129,7 @@ class CalendarComponent extends React.Component {
   }
 
   rowHasChanged(r1, r2) {
-    return !(_.isEqual(r1, r2));
+    return !_.isEqual(r1, r2);
   }
 
   timeToString(time) {
@@ -195,14 +195,18 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, ownProps) => {
   let sortedEventsArr = [];
 
-  if (ownProps.personal) { //personal calendar
+  if (ownProps.personal) {
+    //personal calendar
     sortedEventsArr = state.calendar.personalEvents.sort((a, b) => {
       return new Date(a.from).getTime() - new Date(b.from).getTime();
     });
-  } else { // group calendar
-    sortedEventsArr = _.values(state.calendar.events[ownProps.groupID]).sort((a, b) => {
-      return new Date(a.from).getTime() - new Date(b.from).getTime();
-    });
+  } else {
+    // group calendar
+    sortedEventsArr = _.values(state.calendar.events[ownProps.groupID]).sort(
+      (a, b) => {
+        return new Date(a.from).getTime() - new Date(b.from).getTime();
+      }
+    );
   }
 
   const events = {};
@@ -219,7 +223,7 @@ const mapStateToProps = (state, ownProps) => {
     events,
     loadItems: () => this.events,
     modalVisibility: state.eventModalReducer.modalVisibility
-  }
+  };
 
   // let events = {};
   // if (!ownProps.groupID) {
@@ -239,6 +243,4 @@ const mapStateToProps = (state, ownProps) => {
   // return { events };
 };
 
-export default connect(
-  mapStateToProps
-)(CalendarComponent);
+export default connect(mapStateToProps)(CalendarComponent);
