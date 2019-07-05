@@ -56,3 +56,4 @@ class MessageBubble extends React.Component {
 }
 
 export default MessageBubble;
+

@@ -178,7 +178,7 @@ class ChatScreen extends Component {
           .child(`${dateMsgID}`)
           .set(dateMessage);
       }
-
+      
       const msgID = this.messagesRef.child(`${groupID}`).push().key;
       let message = {
         messageType: "text",
@@ -227,7 +227,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -235,7 +235,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
@@ -251,7 +251,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -259,7 +259,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
