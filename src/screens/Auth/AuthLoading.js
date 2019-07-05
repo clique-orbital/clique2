@@ -16,7 +16,7 @@ import LoadingView from "../../components/LoadingView";
 
 class AuthLoading extends React.Component {
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
+    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         if (user.displayName && user.photoURL) {
           NetInfo.fetch()
@@ -39,6 +39,10 @@ class AuthLoading extends React.Component {
         this.props.navigation.navigate("Auth");
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   render() {
