@@ -5,7 +5,6 @@ import { cliqueBlue } from "../../assets/constants";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
 import { SIGN_OUT } from "../../store/constants";
-import defaultPicture from "../../assets/default_profile.png";
 
 import Text from "../../components/Text";
 import Button from "../../components/Button";

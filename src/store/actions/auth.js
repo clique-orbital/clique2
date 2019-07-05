@@ -1,6 +1,5 @@
 import firebase from "react-native-firebase";
 import { USER_DETAILS } from "../constants";
-import { createGroup } from "./groups";
 
 // action creator for authDetails for the phone authentication
 // response from sign in after code is sent
@@ -11,42 +10,49 @@ export const setUserDetails = userDetails => {
   };
 };
 
-export const createAccount = (username, pictureUri, fileType) => dispatch => {
+export const createAccount = (username, pictureUri) => async dispatch => {
   //upload picture to firebase storage
   let user = firebase.auth().currentUser;
-  firebase
-    .storage()
-    .ref(`images/profile_pictures/${new Date().getTime()}.jpeg`)
-    .put(pictureUri)
-    .then(snapshot => {
-      if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-        user
-          .updateProfile({
+  return (
+    firebase
+      .storage()
+      .ref(`images/profile_pictures/${new Date().getTime()}.jpeg`)
+      .put(pictureUri)
+      .then(snapshot => {
+        if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+          return user.updateProfile({
             displayName: username,
             photoURL: snapshot.downloadURL
-          })
-          .then(() => {
-            user = firebase.auth().currentUser;
-            user["_user"]["groups"] = "";
-            userDetailsToDatabase(user).then(() =>
-              dispatch(setUserDetails(user))
-            );
           });
-      }
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
+        } else {
+          throw new Error("unable to update profile");
+        }
+      })
+      .then(() => {
+        user = firebase.auth().currentUser;
+        user["_user"]["groups"] = "";
+        return user;
+      })
+      // update user details in db
+      .then(user => {
+        userDetailsToDatabase(user);
+        return user;
+      })
+      // update user details locally (redux store)
+      .then(user => dispatch(setUserDetails(user)))
+      .catch(err => {
+        console.log(err.message);
+      })
+  );
 };
 
-const userDetailsToDatabase = async user => {
+// send user details to the database to be stored during account creation
+const userDetailsToDatabase = user => {
   const uid = user._user.uid;
-  firebase
-    .database()
-    .ref(`users/${uid}`)
-    .set(user);
-  return firebase
-    .database()
-    .ref(`phoneNumbers/${user._user.phoneNumber}`)
-    .set(user);
+  const db = firebase.database();
+  const promises = [
+    db.ref(`users/${uid}`).set(user),
+    db.ref(`phoneNumbers/${user._user.phoneNumber}`).set(user)
+  ];
+  return Promise.all(promises);
 };
