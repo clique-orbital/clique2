@@ -322,16 +322,12 @@ class CreateEvents extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   const createEventsReducerState = state.createEventsReducer || {};
-  console.log(createEventsReducerState.fromDate);
   return {
     title: createEventsReducerState.title,
     fromDateVisibility: createEventsReducerState.fromDateVisibility,
     toDateVisibility: createEventsReducerState.toDateVisibility,
-    fromDate: ownProps.navigation.getParam("date") || new Date(),
-    toDate:
-      ownProps.navigation.getParam("date") ||
-      createEventsReducerState.fromDate ||
-      new Date(),
+    fromDate: ownProps.navigation.getParam("date"),
+    toDate: ownProps.navigation.getParam("date"),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid,

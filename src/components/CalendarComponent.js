@@ -38,15 +38,15 @@ class CalendarComponent extends React.Component {
   }
 
   renderButton = () => {
-    const date = new Date(this.state.selectedDate.dateString);
-    date.setTime(new Date().getTime());
     if (!this.props.hasButton) {
       return <View />;
     }
     return (
       <TouchableOpacity
         title="Create"
-        onPress={() => this.props.nav(date)}
+        onPress={() =>
+          this.props.nav(new Date(this.state.selectedDate.dateString))
+        }
         style={{ position: "absolute", top: "90%", left: "80%" }}
       >
         <ContinueButton name="add" />
