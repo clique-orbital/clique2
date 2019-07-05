@@ -12,7 +12,6 @@ import {
   SafeAreaView,
   StatusBar
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import {
   toggleEventModal,
   populateAttending,
@@ -31,6 +30,7 @@ import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
 import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -334,14 +334,14 @@ class ChatScreen extends Component {
 
     return (
       <KeyboardAvoidingView
-        behavior="padding"
+        behavior={Platform.OS === "ios" ? "padding" : null}
         keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
         style={{ flex: 1 }}
       >
         <StatusBar barStyle="light-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <FlatList
+            <KeyboardAwareFlatList
               ref="messageList"
               onContentSizeChange={this.scrollToBottom}
               style={{

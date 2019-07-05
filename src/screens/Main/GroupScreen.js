@@ -45,14 +45,13 @@ class GroupScreen extends Component {
     };
   };
 
-
   componentDidMount() {
     this.scrollToTop();
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
 
     db.ref(`users/${uid}/groups`).on("value", () => {
-      this.props.fetchGroups()
+      this.props.fetchGroups();
     });
 
     if (this.props.groups) {
@@ -68,7 +67,7 @@ class GroupScreen extends Component {
                 }
               });
             this.fetchGroup(groupId).then(() => {
-              this.props.sortGroups()
+              this.props.sortGroups();
             });
           }
         );
@@ -86,13 +85,18 @@ class GroupScreen extends Component {
   };
 
   renderLastMessage = groupId => {
-    const groups = this.props.groups;
+    const group = this.props.groups[groupId];
 
-    const isText = (groups[groupId].last_message || {}).messageType === "text";
-    const username = (groups[groupId].last_message || {}).username;
+    const isText = (group.last_message || {}).messageType === "text";
+    let username;
+    if (group.last_message.sender === firebase.auth().currentUser.uid) {
+      username = "You";
+    } else {
+      username = (group.last_message || {}).username;
+    }
 
     if (isText) {
-      const message = (groups[groupId].last_message || {}).message;
+      const message = (group.last_message || {}).message;
       return (
         <Text header style={{ top: 5 }} numberOfLines={1}>
           <Text style={{ color: cliqueBlue, fontWeight: "400" }}>
@@ -103,7 +107,7 @@ class GroupScreen extends Component {
         </Text>
       );
     } else {
-      const eventTitle = (groups[groupId].last_message || {}).event.title;
+      const eventTitle = (group.last_message || {}).event.title;
       return (
         <Text header style={{ top: 5 }} numberOfLines={1}>
           <Text medium header style={{ color: cliqueBlue, fontWeight: "400" }}>
@@ -209,8 +213,8 @@ class GroupScreen extends Component {
                   }}
                 />
               ) : (
-                  undefined
-                )}
+                undefined
+              )}
             </View>
           </View>
         </TouchableOpacity>
