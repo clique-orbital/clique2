@@ -31,6 +31,9 @@ import MessageBubble from "../../../components/MessageBubble";
 import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import SystemMessageBubble from "../../../components/SystemMessageBubble";
+import { getDate } from "../../../assets/constants"
+import { FlatList } from "react-native-gesture-handler"
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -156,6 +159,24 @@ class ChatScreen extends Component {
   sendMessage = () => {
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
+      const lastMessage = this.props.group.last_message;
+      const dateObj = (new Date(lastMessage.timestamp));
+      const currentDate = new Date();
+      const diffDate = dateObj.getDate() !== currentDate.getDate() || dateObj.getMonth() !== currentDate.getMonth();
+
+      if (diffDate || lastMessage.sender === "") {
+        const dateMsgID = this.messagesRef.child(`${groupID}`).push().key;
+        const dateMessage = {
+          messageType: "system",
+          message: `${getDate(currentDate)}`,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          sender: "",
+        }
+        this.messagesRef
+          .child(`${groupID}`)
+          .child(`${dateMsgID}`)
+          .set(dateMessage);
+      }
       const msgID = this.messagesRef.child(`${groupID}`).push().key;
       let message = {
         messageType: "text",
@@ -204,7 +225,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .set(true);
@@ -212,7 +233,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .remove();
@@ -228,7 +249,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .set(true);
@@ -236,7 +257,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .remove();
@@ -321,7 +342,13 @@ class ChatScreen extends Component {
           item={item}
           convertDate={convertDate}
         />
-      );
+      )
+    } else if (item.messageType === "system") {
+      return (
+        <SystemMessageBubble
+          message={item.message}
+        />
+      )
     }
   };
 
@@ -341,19 +368,33 @@ class ChatScreen extends Component {
         <StatusBar barStyle="light-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAwareFlatList
-              ref="messageList"
-              onContentSizeChange={this.scrollToBottom}
-              style={{
-                padding: 10,
-                height: height,
-                backgroundColor: theme.colors.light_chat_background
-              }}
-              data={this.props.conversation.slice()}
-              renderItem={this.renderRow}
-              keyExtractor={(item, index) => index.toString()}
-              ListFooterComponent={this.renderFooter}
-            />
+            {Platform.OS === "ios"
+              ? (<FlatList
+                ref="messageList"
+                onContentSizeChange={this.scrollToBottom}
+                style={{
+                  padding: 10,
+                  height: height,
+                  backgroundColor: theme.colors.light_chat_background
+                }}
+                data={this.props.conversation.slice()}
+                renderItem={this.renderRow}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={this.renderFooter}
+              />)
+              : (<KeyboardAwareFlatList
+                ref="messageList"
+                onContentSizeChange={this.scrollToBottom}
+                style={{
+                  padding: 10,
+                  height: height,
+                  backgroundColor: theme.colors.light_chat_background
+                }}
+                data={this.props.conversation.slice()}
+                renderItem={this.renderRow}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={this.renderFooter}
+              />)}
           </TouchableWithoutFeedback>
           <View
             style={[
