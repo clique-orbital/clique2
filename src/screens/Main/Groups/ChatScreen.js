@@ -30,12 +30,9 @@ import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
 import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
-<<<<<<< HEAD
 import SystemMessageBubble from "../../../components/SystemMessageBubble";
 import { getDay, getDate } from "../../../assets/constants"
-=======
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
->>>>>>> 47a77b7bb8f057636c3667bad7e5c6cb9fce8847
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -230,7 +227,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .set(true);
@@ -238,7 +235,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .remove();
@@ -254,7 +251,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .set(true);
@@ -262,7 +259,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .remove();

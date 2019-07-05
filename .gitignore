@@ -29,6 +29,10 @@ build/
 .gradle
 local.properties
 *.iml
+java_pid578.hprof
+java_pid5944.hprof
+java_pid1358.hprof
+java_pid1802.hprof
 
 # node.js
 #
