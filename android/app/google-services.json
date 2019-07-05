@@ -15,6 +15,17 @@
       },
       "oauth_client": [
         {
+<<<<<<< HEAD
+=======
+          "client_id": "654951934306-l3ajp2ehkormsm8pk68b97j4pjms9jb5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invertase.rnfirebasestarter",
+            "certificate_hash": "7611a37ac5e4d8861986db567cca8b78034450f6"
+          }
+        },
+        {
+>>>>>>> 47a77b7bb8f057636c3667bad7e5c6cb9fce8847
           "client_id": "654951934306-lc3tg44rg3qsd61lm3697993aau0m144.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

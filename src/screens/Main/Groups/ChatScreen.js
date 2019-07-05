@@ -12,7 +12,6 @@ import {
   SafeAreaView,
   StatusBar
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import {
   toggleEventModal,
   populateAttending,
@@ -31,8 +30,12 @@ import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
 import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
+<<<<<<< HEAD
 import SystemMessageBubble from "../../../components/SystemMessageBubble";
 import { getDay, getDate } from "../../../assets/constants"
+=======
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+>>>>>>> 47a77b7bb8f057636c3667bad7e5c6cb9fce8847
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -42,7 +45,7 @@ class ChatScreen extends Component {
       groupID: this.props.navigation.getParam("group").groupID,
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
-      dateOfLastMsg: new Date().getDate(),
+      dateOfLastMsg: new Date().getDate()
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -113,7 +116,7 @@ class ChatScreen extends Component {
   componentDidMount() {
     this.props.navigation.setParams({
       groupName: this.props.group.groupName
-    })
+    });
   }
 
   componentWillMount() {
@@ -225,13 +228,21 @@ class ChatScreen extends Component {
       };
       firebase
         .database()
-        .ref(`users/${this.props.uid}/attending/${this.state.groupID}/${event.eventID}`)
-        .set(true)
+        .ref(
+          `users/${this.props.uid}/attending/${this.state.groupID}/${
+            event.eventID
+          }`
+        )
+        .set(true);
       firebase
         .database()
-        .ref(`users/${this.props.uid}/notAttending/${this.state.groupID}/${event.eventID}`)
-        .remove()
-      this.props.dispatch(fetchPersonalEvents(this.props.uid))
+        .ref(
+          `users/${this.props.uid}/notAttending/${this.state.groupID}/${
+            event.eventID
+          }`
+        )
+        .remove();
+      this.props.dispatch(fetchPersonalEvents(this.props.uid));
     } else {
       updatedEvent = {
         ...event,
@@ -241,13 +252,21 @@ class ChatScreen extends Component {
       };
       firebase
         .database()
-        .ref(`users/${this.props.uid}/notAttending/${this.state.groupID}/${event.eventID}`)
-        .set(true)
+        .ref(
+          `users/${this.props.uid}/notAttending/${this.state.groupID}/${
+            event.eventID
+          }`
+        )
+        .set(true);
       firebase
         .database()
-        .ref(`users/${this.props.uid}/attending/${this.state.groupID}/${event.eventID}`)
-        .remove()
-      this.props.dispatch(fetchPersonalEvents(this.props.uid))
+        .ref(
+          `users/${this.props.uid}/attending/${this.state.groupID}/${
+            event.eventID
+          }`
+        )
+        .remove();
+      this.props.dispatch(fetchPersonalEvents(this.props.uid));
     }
     firebase
       .database()
@@ -339,24 +358,22 @@ class ChatScreen extends Component {
   };
 
   renderFooter = () => {
-    return (
-      <View style={{ height: 10 }}></View>
-    )
-  }
+    return <View style={{ height: 10 }} />;
+  };
 
   render() {
     let height = Dimensions.get("window").height;
 
     return (
       <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -300}
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
         style={{ flex: 1 }}
       >
         <StatusBar barStyle="light-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <FlatList
+            <KeyboardAwareFlatList
               ref="messageList"
               onContentSizeChange={this.scrollToBottom}
               style={{
@@ -402,7 +419,7 @@ class ChatScreen extends Component {
           </View>
           <EventModal groupID={this.state.groupID} />
         </SafeAreaView>
-      </KeyboardAvoidingView >
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -435,7 +452,7 @@ const styles = StyleSheet.create({
     color: "black",
     bottom: 0,
     fontSize: 16,
-    backgroundColor: 'transparent'
+    backgroundColor: "transparent"
   },
   yourMessageBubble: {
     justifyContent: "space-between",

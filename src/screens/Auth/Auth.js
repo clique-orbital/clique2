@@ -27,10 +27,6 @@ class Auth extends Component {
     };
   }
 
-  componentWillUnmount() {
-    if (this.unsubscribe) this.unsubscribe();
-  }
-
   signIn = () => {
     this.setState({ loading: true });
     const { phoneNumber } = this.state;
@@ -58,19 +54,21 @@ class Auth extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
-          const ref = firebase.database().ref("users");
-          ref.on(
-            "value",
-            snapshot => {
-              this.setState({ loading: false });
-              this.props.navigation.navigate(
-                snapshot.val()[user._user.uid] ? "App" : "UserDetails"
-              );
-            },
-            err => {
-              console.log("the read failed " + err.code);
-            }
-          );
+          firebase
+            .database()
+            .ref("users")
+            .once(
+              "value",
+              snapshot => {
+                this.setState({ loading: false });
+                this.props.navigation.navigate(
+                  snapshot.val()[user._user.uid] ? "App" : "UserDetails"
+                );
+              },
+              err => {
+                console.log("the read failed " + err.code);
+              }
+            );
         })
         .catch(error => {
           this.setState({ message: `Code Confirm Error: ${error.message}` });
@@ -200,8 +198,6 @@ class Auth extends Component {
           {this.state.loading && !this.state.message && <Spinner />}
         </View>
       );
-    } else {
-      this.props.navigation.navigate("UserDetails");
     }
 
     return (
