@@ -23,9 +23,13 @@ class SettingsScreen extends React.Component {
 
   signOut = () => {
     this.setState({ loading: true });
-    firebase.auth().signOut();
-    this.props.dispatch({ type: SIGN_OUT });
-    setTimeout(() => this.props.navigation.navigate("Auth"), 500);
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        this.props.dispatch({ type: SIGN_OUT });
+      })
+      .then(() => this.props.navigation.navigate("Auth"));
   };
 
   renderProfilePic() {

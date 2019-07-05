@@ -18,7 +18,6 @@ import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
 // import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
 import CalendarStack from "./src/screens/Main/CalendarStack";
-import AuthLoading from "./src/screens/Auth/AuthLoading";
 import Auth from "./src/screens/Auth/Auth";
 import UserDetails from "./src/screens/Auth/UserDetails";
 
@@ -84,13 +83,12 @@ const AuthNavigator = createSwitchNavigator(
 
 const InitialNavigator = createSwitchNavigator(
   {
-    AuthLoading: AuthLoading,
     App: AppNavigator,
     Auth: AuthNavigator
     // UserDetails: UserDetails
   },
   {
-    initialRouteName: "AuthLoading"
+    initialRouteName: "Auth"
   }
 );
 

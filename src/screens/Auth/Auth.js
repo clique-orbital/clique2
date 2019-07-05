@@ -7,14 +7,47 @@ import Input from "../../components/Input";
 
 import { connect } from "react-redux";
 import { setUserDetails } from "../../store/actions/auth";
+import { fetchGroups } from "../../store/actions/groups";
+import {
+  fetchAllEvents,
+  fetchPersonalEvents
+} from "../../store/actions/calendar";
+import { populateGroups } from "../../store/actions/messageCounter";
 import firebase from "react-native-firebase";
 import cliqueBlue from "../../assets/constants";
 import theme from "../../assets/theme";
 import Spinner from "../../components/Spinner";
+import NetInfo from "@react-native-community/netinfo";
 
 import icon from "../../assets/icon.png";
 
 class Auth extends Component {
+  componentDidMount() {
+    this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        if (user.displayName && user.photoURL) {
+          NetInfo.fetch()
+            .then(state => {
+              if (state.isConnected) {
+                this.props.setUserDetails(user);
+                this.props
+                  .fetchGroups()
+                  .then(() => this.props.fetchAllEvents(user.uid))
+                  .then(() => this.props.fetchPersonalEvents(user.uid));
+              }
+            })
+            .then(() => this.props.navigation.navigate("App"));
+        } else {
+          // get user to set username and profile picture
+          this.props.navigation.navigate("UserDetails");
+        }
+      } else {
+        // go to authentication if user is not signed in
+        this.props.navigation.navigate("Auth");
+      }
+    });
+  }
+
   constructor(props) {
     super(props);
     this.unsubscribe = null;
@@ -25,6 +58,10 @@ class Auth extends Component {
       confirmResult: null,
       loading: false
     };
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) this.unsubscribe();
   }
 
   signIn = () => {
@@ -244,5 +281,11 @@ const styles = StyleSheet.create({
 
 export default connect(
   mapStateToProps,
-  { setUserDetails }
+  {
+    setUserDetails,
+    fetchGroups,
+    fetchAllEvents,
+    populateGroups,
+    fetchPersonalEvents
+  }
 )(Auth);
