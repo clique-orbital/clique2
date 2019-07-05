@@ -18,6 +18,7 @@ class CalendarScreen extends React.Component {
         nav={dateString =>
           this.props.navigation.navigate("CreateEvents", {
             groupID: this.props.navigation.getParam("groupID"),
+            date: dateString
           })
         }
       />

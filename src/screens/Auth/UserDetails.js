@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TextInput, Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import ImagePicker from "../../components/ImagePickerComponent";
 import { connect } from "react-redux";
@@ -15,18 +15,14 @@ import Spinner from "../../components/Spinner";
 class UserDetails extends React.Component {
   state = { loading: false };
 
-  handleSubmit = async values => {
+  handleSubmit = values => {
     this.setState({ loading: true });
     this.props
-      .createAccount(
-        values.username,
-        values.profilepicture.uri,
-        values.profilepicture.fileName.split(".")[1]
-      )
+      .createAccount(values.username, values.profilepicture.uri)
       .then(() => this.props.navigation.navigate("App"));
   };
 
-  renderInput = ({ input, label, meta }) => {
+  renderInput = ({ input, label }) => {
     return <Input {...input} style={styles.textInput} placeholder={label} />;
   };
 

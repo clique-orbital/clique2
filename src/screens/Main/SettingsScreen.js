@@ -5,8 +5,8 @@ import { cliqueBlue } from "../../assets/constants";
 import firebase from "react-native-firebase";
 import { connect } from "react-redux";
 import { SIGN_OUT } from "../../store/constants";
-import defaultPicture from "../../assets/default_profile.png";
 
+import Spinner from "../../components/Spinner";
 import Text from "../../components/Text";
 import Button from "../../components/Button";
 import GroupPicture from "../../components/GroupPicture";
@@ -19,10 +19,13 @@ class SettingsScreen extends React.Component {
     }
   };
 
+  state = { loading: false };
+
   signOut = () => {
+    this.setState({ loading: true });
     firebase.auth().signOut();
     this.props.dispatch({ type: SIGN_OUT });
-    this.props.navigation.navigate("Auth");
+    setTimeout(() => this.props.navigation.navigate("Auth"), 500);
   };
 
   renderProfilePic() {
@@ -56,6 +59,7 @@ class SettingsScreen extends React.Component {
             Sign Out
           </Text>
         </Button>
+        {this.state.loading && <Spinner />}
       </View>
     );
   }
