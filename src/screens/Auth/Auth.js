@@ -18,11 +18,22 @@ import cliqueBlue from "../../assets/constants";
 import theme from "../../assets/theme";
 import Spinner from "../../components/Spinner";
 import NetInfo from "@react-native-community/netinfo";
+import LoadingView from "../../components/LoadingView";
 
 import icon from "../../assets/icon.png";
 
 class Auth extends Component {
-  componentDidMount() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: "",
+      codeInput: "",
+      phoneNumber: "+65", // need to change
+      confirmResult: null,
+      loading: false,
+      splash: true
+    };
+
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         if (user.displayName && user.photoURL) {
@@ -36,32 +47,21 @@ class Auth extends Component {
                   .then(() => this.props.fetchPersonalEvents(user.uid));
               }
             })
-            .then(() => this.props.navigation.navigate("App"));
+            .then(() => {
+              this.props.navigation.navigate("App");
+            });
         } else {
           // get user to set username and profile picture
           this.props.navigation.navigate("UserDetails");
         }
       } else {
-        // go to authentication if user is not signed in
-        this.props.navigation.navigate("Auth");
+        this.setState({ splash: false });
       }
     });
   }
 
-  constructor(props) {
-    super(props);
-    this.unsubscribe = null;
-    this.state = {
-      message: "",
-      codeInput: "",
-      phoneNumber: "+65", // need to change
-      confirmResult: null,
-      loading: false
-    };
-  }
-
   componentWillUnmount() {
-    if (this.unsubscribe) this.unsubscribe();
+    this.unsubscribe();
   }
 
   signIn = () => {
@@ -225,16 +225,10 @@ class Auth extends Component {
         <View>
           {this.renderPhoneNumberInput()}
           {this.renderMessage()}
-          {this.state.loading && !this.state.message && <Spinner />}
         </View>
       );
     } else if (!user && confirmResult) {
-      currentRender = (
-        <View>
-          {this.renderVerificationCodeInput()}
-          {this.state.loading && !this.state.message && <Spinner />}
-        </View>
-      );
+      currentRender = <View>{this.renderVerificationCodeInput()}</View>;
     }
 
     return (
@@ -244,6 +238,8 @@ class Auth extends Component {
         }}
       >
         {currentRender}
+        {this.state.loading && !this.state.message && <Spinner />}
+        {this.state.splash && <LoadingView />}
       </SafeAreaView>
     );
   }

@@ -8,6 +8,7 @@ import CreateEvents from "./Groups/CreateEvents";
 import CalendarScreen from "./Groups/CalendarScreen";
 import GroupInformation from "./Groups/GroupInformation";
 import AddMembers from "./Groups/AddMembers";
+import CreatePoll from "./Groups/CreatePoll";
 
 const GroupScreenStack = createStackNavigator(
   {
@@ -18,7 +19,8 @@ const GroupScreenStack = createStackNavigator(
     GroupCalendar: CalendarScreen,
     CreateEvents,
     GroupInformation,
-    AddMembers
+    AddMembers,
+    CreatePoll
   },
   {
     initialRouteName: "Main",

@@ -5,18 +5,11 @@ import {
   createAppContainer,
   createSwitchNavigator
 } from "react-navigation";
-import {
-  fetchGroups,
-  fetchGroup,
-  sortGroups
-} from "./src/store/actions/groups";
 import { connect } from "react-redux";
-import _ from "lodash";
 
 import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
 import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
-// import PersonalCalendar from "./src/screens/Main/PersonalCalendar";
 import CalendarStack from "./src/screens/Main/CalendarStack";
 import Auth from "./src/screens/Auth/Auth";
 import UserDetails from "./src/screens/Auth/UserDetails";
@@ -49,7 +42,6 @@ const AppNavigator = createBottomTabNavigator(
           iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {
           iconName = `person${focused ? "" : "-outline"}`;
-          // return <ProfilePicture value={this.props.user.photoURL} width={28} />;
         }
         return (
           <View style={{ paddingTop: 5 }}>
@@ -85,7 +77,6 @@ const InitialNavigator = createSwitchNavigator(
   {
     App: AppNavigator,
     Auth: AuthNavigator
-    // UserDetails: UserDetails
   },
   {
     initialRouteName: "Auth"
@@ -101,13 +92,4 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    groups: state.groupsReducer.groups
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  { fetchGroup, fetchGroups, sortGroups }
-)(App);
+export default connect()(App);

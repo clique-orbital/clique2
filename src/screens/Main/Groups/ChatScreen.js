@@ -367,6 +367,16 @@ class ChatScreen extends Component {
               }
             ]}
           >
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate("CreatePoll", {
+                  groupID: this.state.groupID
+                })
+              }
+              style={{ justifyContent: "center" }}
+            >
+              <MyIcon name="add" type="material" size={28} color={cliqueBlue} />
+            </TouchableOpacity>
             <TextInput
               style={styles.chatInput}
               value={this.state.textMessage}
@@ -415,7 +425,7 @@ const styles = StyleSheet.create({
     // alignItems: "center"
   },
   chatInput: {
-    width: "90%",
+    width: "80%",
     padding: 10,
     color: "black",
     bottom: 0,
