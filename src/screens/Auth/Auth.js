@@ -11,8 +11,8 @@ import firebase from "react-native-firebase";
 import cliqueBlue from "../../assets/constants";
 import theme from "../../assets/theme";
 import Spinner from "../../components/Spinner";
-
 import icon from "../../assets/icon.png";
+import AsyncStorage from "@react-native-community/async-storage";
 
 class Auth extends Component {
   constructor(props) {

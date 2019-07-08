@@ -11,6 +11,7 @@ import {
 } from "../store/actions/eventModal";
 import EventModal from "../screens/Main/EventModal";
 import _ from "lodash";
+import { cliqueBlue } from "../assets/constants";
 
 const date = new Date();
 const day = date.getDate();
@@ -166,6 +167,13 @@ class CalendarComponent extends React.Component {
             onDayPress={day => this.dayPress(day)}
             loadItemsForMonth={this.props.loadItems}
             renderEmptyData={this.renderEmptyData.bind(this)}
+            theme={{
+              // agendaDayTextColor: cliqueBlue,
+              // agendaDayNumColor: cliqueBlue,
+              agendaKnobColor: cliqueBlue,
+              // agendaTodayColor: cliqueBlue,
+              // selectedDayBackgroundColor: cliqueBlue,
+            }}
           />
           {this.renderButton()}
         </View>
@@ -197,7 +205,7 @@ const mapStateToProps = (state, ownProps) => {
 
   if (ownProps.personal) {
     //personal calendar
-    sortedEventsArr = state.calendar.personalEvents.sort((a, b) => {
+    sortedEventsArr = (state.calendar.personalEvents || []).sort((a, b) => {
       return new Date(a.from).getTime() - new Date(b.from).getTime();
     });
   } else {

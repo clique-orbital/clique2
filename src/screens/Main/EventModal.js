@@ -83,12 +83,12 @@ class EventModal extends Component {
       };
       db.ref(
         `users/${this.props.uid}/attending/${this.props.event.groupID}/${
-          event.eventID
+        event.eventID
         }`
       ).set(true);
       db.ref(
         `users/${this.props.uid}/notAttending/${this.props.event.groupID}/${
-          event.eventID
+        event.eventID
         }`
       ).remove();
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
@@ -102,12 +102,12 @@ class EventModal extends Component {
       };
       db.ref(
         `users/${this.props.uid}/notAttending/${this.props.event.groupID}/${
-          event.eventID
+        event.eventID
         }`
       ).set(true);
       db.ref(
         `users/${this.props.uid}/attending/${this.props.event.groupID}/${
-          event.eventID
+        event.eventID
         }`
       ).remove();
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
@@ -166,7 +166,7 @@ class EventModal extends Component {
     );
   };
 
-  renderSameDate = date => {};
+  renderSameDate = date => { };
 
   renderDate = date => {
     return (
