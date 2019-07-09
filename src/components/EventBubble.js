@@ -33,7 +33,7 @@ class EventBubble extends React.Component {
           <View style={{ justifyContent: "flex-end" }}>
             <Text
               style={{
-                color: "white",
+                color: "black",
                 paddingRight: 13,
                 paddingBottom: 7,
                 fontSize: 10
