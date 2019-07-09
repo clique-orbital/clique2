@@ -31,6 +31,7 @@ class EventModal extends Component {
     this.hideModal = this.hideModal.bind(this);
     this.respondToInvitation = this.respondToInvitation.bind(this);
     this.handleEditButtonPress = this.handleEditButtonPress.bind(this);
+    this.sendSystemMessage = this.sendSystemMessage.bind(this);
   }
 
   hideModal() {
@@ -46,6 +47,22 @@ class EventModal extends Component {
       </View>
     );
   };
+
+  sendSystemMessage = text => {
+    const groupID = this.props.groupID
+    const msgID = firebase.database().ref("messages").child(`${groupID}`).push().key;
+    const message = {
+      messageType: "system",
+      message: text,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      sender: ""
+    }
+    firebase.database()
+      .ref("messages")
+      .child(`${groupID}`)
+      .child(`${msgID}`)
+      .set(message);
+  }
 
   respondToInvitation = (eventID, response) => async () => {
     const groupID = this.props.event.groupID;
@@ -91,6 +108,7 @@ class EventModal extends Component {
         event.eventID
         }`
       ).remove();
+      this.sendSystemMessage(`${this.props.displayName} is attending ${event.title}!`);
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
       attendingNames = [...attendingNames, this.props.displayName];
     } else {
@@ -110,6 +128,7 @@ class EventModal extends Component {
         event.eventID
         }`
       ).remove();
+      this.sendSystemMessage(`${this.props.displayName} is not attending ${event.title}!`);
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
       notAttendingNames = [...notAttendingNames, this.props.displayName];
     }
@@ -168,8 +187,6 @@ class EventModal extends Component {
       </View>
     );
   };
-
-  renderSameDate = date => { };
 
   renderDate = date => {
     return (
@@ -373,6 +390,7 @@ const mapStateToProps = state => {
     uid: state.authReducer.user.uid,
     displayName: state.authReducer.user.displayName,
     groupName,
+    groupID,
   };
 };
 

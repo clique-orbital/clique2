@@ -53,6 +53,7 @@ class ChatScreen extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
     this.showPollModal = this.showPollModal.bind(this);
+    this.sendSystemMessage = this.sendSystemMessage.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -202,6 +203,21 @@ class ChatScreen extends Component {
     }
   };
 
+  sendSystemMessage = text => {
+    const groupID = this.state.groupID
+    const msgID = this.messagesRef.child(`${groupID}`).push().key;
+    const message = {
+      messageType: "system",
+      message: text,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      sender: ""
+    }
+    this.messagesRef
+      .child(`${groupID}`)
+      .child(`${msgID}`)
+      .set(message);
+  }
+
   respondToInvitation = (eventID, response) => async () => {
     const eventSnapshot = await firebase
       .database()
@@ -241,6 +257,7 @@ class ChatScreen extends Component {
           }`
         )
         .remove();
+      this.sendSystemMessage(`${this.props.username} is attending ${event.title}!`);
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     } else {
       updatedEvent = {
@@ -265,6 +282,7 @@ class ChatScreen extends Component {
           }`
         )
         .remove();
+      this.sendSystemMessage(`${this.props.username} is not attending ${event.title}!`);
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     }
     firebase
