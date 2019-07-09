@@ -144,7 +144,7 @@ class ChatScreen extends Component {
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
-    this.refs.messageList.scrollToEnd({ animated: false });
+    this.refs.messageList.scrollToEnd({ animated: true });
   };
 
   handleChange = key => val => {
@@ -369,9 +369,7 @@ class ChatScreen extends Component {
     let height = Dimensions.get("window").height;
 
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
+      <View
         style={{ flex: 1 }}
       >
         <StatusBar barStyle="light-content" />
@@ -405,7 +403,9 @@ class ChatScreen extends Component {
                 ListFooterComponent={this.renderFooter}
               />)}
           </TouchableWithoutFeedback>
-          <View
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : null}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
             style={
               {
                 flexDirection: "row",
@@ -445,11 +445,11 @@ class ChatScreen extends Component {
                 color={cliqueBlue}
               />
             </TouchableOpacity>
-          </View>
-          <EventModal groupID={this.state.groupID} />
+          </KeyboardAvoidingView>
+          <EventModal />
           <PollModal />
         </SafeAreaView>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }

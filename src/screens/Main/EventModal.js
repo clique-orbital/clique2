@@ -82,12 +82,12 @@ class EventModal extends Component {
         noResponse
       };
       db.ref(
-        `users/${this.props.uid}/attending/${this.props.event.groupID}/${
+        `users/${this.props.uid}/attending/${groupID}/${
         event.eventID
         }`
       ).set(true);
       db.ref(
-        `users/${this.props.uid}/notAttending/${this.props.event.groupID}/${
+        `users/${this.props.uid}/notAttending/${groupID}/${
         event.eventID
         }`
       ).remove();
@@ -101,12 +101,12 @@ class EventModal extends Component {
         notAttending: [...notAttending, this.props.uid]
       };
       db.ref(
-        `users/${this.props.uid}/notAttending/${this.props.event.groupID}/${
+        `users/${this.props.uid}/notAttending/${groupID}/${
         event.eventID
         }`
       ).set(true);
       db.ref(
-        `users/${this.props.uid}/attending/${this.props.event.groupID}/${
+        `users/${this.props.uid}/attending/${groupID}/${
         event.eventID
         }`
       ).remove();
@@ -145,6 +145,9 @@ class EventModal extends Component {
       >
         <Text h1 center black medium>
           {(this.props.event || {}).title}
+        </Text>
+        <Text h3 center black medium style={{ marginTop: 10 }}>
+          {this.props.groupName}
         </Text>
       </View>
     );
@@ -358,13 +361,18 @@ class EventModal extends Component {
 }
 
 const mapStateToProps = state => {
+  const event = state.eventModalReducer.event || {};
+  const groupID = event.groupID || "";
+  const groupName = (state.groupsReducer.groups[groupID] || {}).groupName || "";
+
   return {
     modalVisibility: state.eventModalReducer.modalVisibility,
-    event: state.eventModalReducer.event || {},
+    event,
     attending: state.eventModalReducer.attending || [],
     notAttending: state.eventModalReducer.notAttending || [],
     uid: state.authReducer.user.uid,
-    displayName: state.authReducer.user.displayName
+    displayName: state.authReducer.user.displayName,
+    groupName,
   };
 };
 
