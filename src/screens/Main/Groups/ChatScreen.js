@@ -164,6 +164,7 @@ class ChatScreen extends Component {
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
       const lastMessage = this.props.group.last_message;
+      console.log(lastMessage);
       const dateObj = (new Date(lastMessage.timestamp));
       const currentDate = new Date();
       const diffDate = dateObj.getDate() !== currentDate.getDate() || dateObj.getMonth() !== currentDate.getMonth();
@@ -187,7 +188,8 @@ class ChatScreen extends Component {
         message: this.state.textMessage,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         sender: this.state.uid,
-        username: this.props.username
+        username: this.props.username,
+        firstMsgBySender: lastMessage.sender !== this.props.uid
       };
       this.messagesRef
         .child(`${groupID}`)
@@ -489,7 +491,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     backgroundColor: theme.colors.light_chat_yours,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 2,
     paddingLeft: 5,
     maxWidth: "100%",
     marginRight: 80
@@ -500,7 +502,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     backgroundColor: theme.colors.light_chat_mine,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 2,
     paddingLeft: 5,
     marginLeft: 80,
     maxWidth: "100%"
