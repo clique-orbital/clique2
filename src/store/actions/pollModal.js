@@ -1,13 +1,11 @@
-import {
-  TOGGLE_POLL_MODAL,
-} from "../constants";
+import { TOGGLE_POLL_MODAL } from "../constants";
 
 const initialPollState = {
   groupID: "",
   msgID: "",
-  options: {},
-  questions: "",
-}
+  options: [],
+  questions: ""
+};
 
 export const togglePollModal = (mode, poll = initialPollState) => {
   return {

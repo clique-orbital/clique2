@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 import Modal from "react-native-modal";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  Image
-} from "react-native";
+import { SafeAreaView, View, TouchableOpacity, Image } from "react-native";
+import Text from "../components/Text";
 import { connect } from "react-redux";
 import { togglePollModal } from "../store/actions/pollModal";
 import { cliqueBlue } from "../assets/constants";
-import { FlatList } from "react-native-gesture-handler";
+import theme from "../assets/theme";
+import firebase from "react-native-firebase";
 
 class PollModal extends Component {
   constructor(props) {
@@ -24,21 +20,42 @@ class PollModal extends Component {
   }
 
   renderPolls() {
-    return (
-      <FlatList
-        data={this.props.options}
-        renderItem={item => this.renderPoll(item)}
-      />
+    return this.props.poll.options ? (
+      <View>
+        {this.props.poll.options.map((option, index) =>
+          this.renderPoll(option, index)
+        )}
+      </View>
+    ) : (
+      <View />
     );
   }
 
+  toggle = async index => {
+    const uid = firebase.auth().currentUser.uid;
+    const groupID = this.props.poll.groupID;
+    const msgID = this.props.poll.msgID;
+    const ref = firebase
+      .database()
+      .ref(`messages/${groupID}/${msgID}/pollObject/options/${index}/agree`);
+    ref.once("value", snapshot => {
+      if (snapshot.val() === null || !snapshot.val().hasOwnProperty(uid)) {
+        return ref.child(`${uid}`).set(true);
+      } else {
+        return ref.child(`${uid}`).remove();
+      }
+    });
+  };
+
   // map each result to this UI
-  renderPoll(item) {
+  renderPoll(item, index) {
     return (
-      <View>
-        <View style={{ height: 20, alignItems: "center" }}>
+      <View key={index}>
+        <View style={{ alignItems: "center" }}>
           <View style={{ width: "75%", marginLeft: 10 }}>
-            <Text style={{ color: cliqueBlue }}>{item.title}</Text>
+            <Text color={theme.colors.cliqueBlue} h3 left>
+              {item.title}
+            </Text>
           </View>
         </View>
         <View style={{ flexDirection: "row" }}>
@@ -58,6 +75,7 @@ class PollModal extends Component {
                 borderColor: "#1965BC",
                 padding: 1
               }}
+              onPress={() => this.toggle(index)}
             >
               <View
                 style={{
@@ -85,7 +103,7 @@ class PollModal extends Component {
                 backgroundColor: "#1965BC",
                 flex: 1,
                 borderRadius: 10,
-                width: "100%"
+                width: item.agree ? `${item.agree.length / 10}%` : 0 // to be adjusted
               }}
             />
           </View>
@@ -97,15 +115,8 @@ class PollModal extends Component {
               height: 20
             }}
           >
-            <Text
-              style={{
-                fontSize: 21,
-                color: "#1964BC",
-                fontWeight: "bold",
-                marginBottom: 0
-              }}
-            >
-              10
+            <Text h3 color="#1964BC">
+              {item.agree ? Object.keys(item.agree).length : 0}
             </Text>
           </View>
         </View>
@@ -162,10 +173,10 @@ class PollModal extends Component {
                 }}
               >
                 <Text style={{ fontSize: 30, color: cliqueBlue }}>
-                  {this.props.title}
+                  {this.props.poll.question}
                 </Text>
               </View>
-              <View style={{ flex: 5 }}>{this.renderPoll()}</View>
+              <View style={{ flex: 5 }}>{this.renderPolls()}</View>
             </View>
           </SafeAreaView>
         </Modal>

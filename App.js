@@ -155,7 +155,7 @@ class App extends React.Component {
     this.notificationOpenedListener();
   }
   render() {
-    if (Platform.OS === "android") StatusBar.setBackgroundColor(cliqueBlue);
+    if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
     return <AppContainer />;
   }
 }

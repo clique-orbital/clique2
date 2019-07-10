@@ -10,15 +10,23 @@ class PollMessageBubble extends Component {
   }
 
   showPollModal = () => {
-    console.log("inside showPollModal()")
     this.props.dispatch(togglePollModal(true, this.props.poll));
-  }
+  };
 
   render() {
     return (
-      <View style={{ marginHorizontal: 80, backgroundColor: "#fff", borderRadius: 15, marginVertical: 5 }}>
+      <View
+        style={{
+          marginHorizontal: 80,
+          backgroundColor: "#fff",
+          borderRadius: 15,
+          marginVertical: 5
+        }}
+      >
         <View style={{ padding: 10 }}>
-          <Text style={{ textAlign: "center", fontSize: 23 }}>{this.props.poll.question}</Text>
+          <Text style={{ textAlign: "center", fontSize: 23 }}>
+            {this.props.poll.question}
+          </Text>
         </View>
         <View style={{ padding: 10 }}>
           <TouchableOpacity onPress={this.showPollModal}>
@@ -26,8 +34,8 @@ class PollMessageBubble extends Component {
           </TouchableOpacity>
         </View>
       </View>
-    )
+    );
   }
 }
 
-export default connect()(PollMessageBubble)
+export default connect()(PollMessageBubble);
