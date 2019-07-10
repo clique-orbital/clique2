@@ -35,12 +35,13 @@ class CreatePoll extends React.Component {
 
   renderQuestion = width => {
     return (
-      <View style={styles.border}>
+      <View style={[styles.border, { paddingTop: 10, paddingHorizontal: 10 }]}>
         <Field
           name="question"
           left
-          placeholder="Question"
+          label="Question"
           component={this.renderInput}
+          placeholder="Enter question"
           style={[
             styles.input,
             {
@@ -96,7 +97,7 @@ class CreatePoll extends React.Component {
                 left
                 autoFocus
                 w="100%"
-                name={`Option ${index + 1}`}
+                name={`options.${index}`}
                 component={this.renderInput}
                 placeholder={`Option ${index + 1}`}
                 style={{ paddingLeft: 10, fontSize: 19 }}
@@ -116,7 +117,6 @@ class CreatePoll extends React.Component {
         <FieldArray
           name="options"
           component={this.renderOptions}
-          ref={this.fieldArray}
           style={{ flex: 1 }}
         />
         <Button
