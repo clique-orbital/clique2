@@ -419,7 +419,7 @@ class ChatScreen extends Component {
               }
             }
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={this.showPollModal}
               style={{ justifyContent: "center" }}
             >
@@ -429,7 +429,7 @@ class ChatScreen extends Component {
                 size={25}
                 color={cliqueBlue}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TextInput
               style={styles.chatInput}
               value={this.state.textMessage}
