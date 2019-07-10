@@ -1,35 +1,34 @@
 import React, { Component } from "react";
 import Modal from "react-native-modal";
-import { SafeAreaView, View, TouchableOpacity, Image } from "react-native";
+import { SafeAreaView, View, TouchableOpacity, FlatList } from "react-native";
+import FastImage from "react-native-fast-image";
 import Text from "../components/Text";
 import { connect } from "react-redux";
-import { togglePollModal } from "../store/actions/pollModal";
+import { togglePollModal, updatePoll } from "../store/actions/pollModal";
 import { cliqueBlue } from "../assets/constants";
 import theme from "../assets/theme";
+import _ from "lodash";
 import firebase from "react-native-firebase";
 
 class PollModal extends Component {
-  constructor(props) {
-    super(props);
-    this.hideModal = this.hideModal.bind(this);
-    this.renderPolls = this.renderPolls.bind(this);
+  componentDidMount() {
+    const groupID = this.props.poll.groupID;
+    const msgID = this.props.poll.msgID;
   }
 
-  hideModal() {
+  hideModal = () => {
     this.props.dispatch(togglePollModal(false));
-  }
+  };
 
-  renderPolls() {
-    return this.props.poll.options ? (
-      <View>
-        {this.props.poll.options.map((option, index) =>
-          this.renderPoll(option, index)
-        )}
-      </View>
-    ) : (
-      <View />
+  renderPolls = () => {
+    return (
+      <FlatList
+        data={this.props.poll.options}
+        renderItem={item => this.renderPoll(item)}
+        keyExtractor={item => item.index}
+      />
     );
-  }
+  };
 
   toggle = async index => {
     const uid = firebase.auth().currentUser.uid;
@@ -38,23 +37,30 @@ class PollModal extends Component {
     const ref = firebase
       .database()
       .ref(`messages/${groupID}/${msgID}/pollObject/options/${index}/agree`);
-    ref.once("value", snapshot => {
-      if (snapshot.val() === null || !snapshot.val().hasOwnProperty(uid)) {
-        return ref.child(`${uid}`).set(true);
-      } else {
-        return ref.child(`${uid}`).remove();
-      }
-    });
+    ref
+      .once("value", snapshot => {
+        if (snapshot.val() === null || !snapshot.val().hasOwnProperty(uid)) {
+          return ref.child(`${uid}`).set(true);
+        } else {
+          return ref.child(`${uid}`).remove();
+        }
+      })
+      .then(() => {
+        ref.parent.parent.parent.once("value", snapshot => {
+          this.props.dispatch(updatePoll(snapshot.val()));
+        });
+      });
   };
 
   // map each result to this UI
-  renderPoll(item, index) {
+  renderPoll(option) {
+    const length = _.keys(option.item.agree).length;
     return (
-      <View key={index}>
+      <View>
         <View style={{ alignItems: "center" }}>
           <View style={{ width: "75%", marginLeft: 10 }}>
             <Text color={theme.colors.cliqueBlue} h3 left>
-              {item.title}
+              {option.item.title}
             </Text>
           </View>
         </View>
@@ -75,7 +81,7 @@ class PollModal extends Component {
                 borderColor: "#1965BC",
                 padding: 1
               }}
-              onPress={() => this.toggle(index)}
+              onPress={() => this.toggle(option.index)}
             >
               <View
                 style={{
@@ -103,7 +109,7 @@ class PollModal extends Component {
                 backgroundColor: "#1965BC",
                 flex: 1,
                 borderRadius: 10,
-                width: item.agree ? `${item.agree.length / 10}%` : 0 // to be adjusted
+                width: `${length * 10}%` // to be adjusted
               }}
             />
           </View>
@@ -116,7 +122,7 @@ class PollModal extends Component {
             }}
           >
             <Text h3 color="#1964BC">
-              {item.agree ? Object.keys(item.agree).length : 0}
+              {length}
             </Text>
           </View>
         </View>
@@ -155,7 +161,7 @@ class PollModal extends Component {
               }}
               onPress={this.hideModal}
             >
-              <Image
+              <FastImage
                 source={require("../assets/x.png")}
                 style={{
                   height: 20,

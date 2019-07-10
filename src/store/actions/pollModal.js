@@ -1,4 +1,4 @@
-import { TOGGLE_POLL_MODAL } from "../constants";
+import { TOGGLE_POLL_MODAL, UPDATE_POLL } from "../constants";
 
 const initialPollState = {
   groupID: "",
@@ -14,5 +14,12 @@ export const togglePollModal = (mode, poll = initialPollState) => {
       mode,
       poll
     }
+  };
+};
+
+export const updatePoll = poll => {
+  return {
+    type: UPDATE_POLL,
+    payload: poll
   };
 };
