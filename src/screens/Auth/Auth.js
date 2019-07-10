@@ -19,7 +19,6 @@ import theme from "../../assets/theme";
 import Spinner from "../../components/Spinner";
 import NetInfo from "@react-native-community/netinfo";
 import LoadingView from "../../components/LoadingView";
-
 import icon from "../../assets/icon.png";
 
 class Auth extends Component {

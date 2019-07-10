@@ -62,7 +62,7 @@ Press Esc and save file using `:wq`
 
 Lastly, change back to root directory, install npm, change to ios directory and install pod, change back to root directory and link all dependencies
 
-`npm i && cd ios && pod install && cd .. && react-native link`
+`cd .. && npm i && cd ios && pod install && cd .. && react-native link`
 
 ### Getting Started
 

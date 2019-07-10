@@ -28,9 +28,14 @@ import GroupPicture from "../../../components/GroupPicture";
 import Text from "../../../components/Text";
 import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
+import PollModal from "../../../components/PollModal";
 import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import SystemMessageBubble from "../../../components/SystemMessageBubble";
+import { getDate } from "../../../assets/constants";
+import { FlatList } from "react-native-gesture-handler";
+import { togglePollModal } from "../../../store/actions/pollModal";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -40,12 +45,14 @@ class ChatScreen extends Component {
       groupID: this.props.navigation.getParam("group").groupID,
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
-      dateOfLastMsg: new Date().getDate()
+      dateOfLastMsg: new Date().getDate(),
+      pollModalVisibility: false
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
+    this.showPollModal = this.showPollModal.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -137,7 +144,7 @@ class ChatScreen extends Component {
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
-    this.refs.messageList.scrollToEnd({ animated: false });
+    this.refs.messageList.scrollToEnd({ animated: true });
   };
 
   handleChange = key => val => {
@@ -156,6 +163,26 @@ class ChatScreen extends Component {
   sendMessage = () => {
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
+      const lastMessage = this.props.group.last_message;
+      const dateObj = new Date(lastMessage.timestamp);
+      const currentDate = new Date();
+      const diffDate =
+        dateObj.getDate() !== currentDate.getDate() ||
+        dateObj.getMonth() !== currentDate.getMonth();
+
+      if (diffDate || lastMessage.sender === "") {
+        const dateMsgID = this.messagesRef.child(`${groupID}`).push().key;
+        const dateMessage = {
+          messageType: "system",
+          message: `${getDate(currentDate)}`,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          sender: ""
+        };
+        this.messagesRef
+          .child(`${groupID}`)
+          .child(`${dateMsgID}`)
+          .set(dateMessage);
+      }
       const msgID = this.messagesRef.child(`${groupID}`).push().key;
       let message = {
         messageType: "text",
@@ -322,6 +349,8 @@ class ChatScreen extends Component {
           convertDate={convertDate}
         />
       );
+    } else if (item.messageType === "system") {
+      return <SystemMessageBubble message={item.message} />;
     }
   };
 
@@ -329,43 +358,60 @@ class ChatScreen extends Component {
     return <View style={{ height: 10 }} />;
   };
 
+  showPollModal = () => {
+    console.log("inside showPollModal()");
+    this.props.dispatch(togglePollModal(true));
+  };
+
   render() {
     let height = Dimensions.get("window").height;
 
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
-        style={{ flex: 1 }}
-      >
+      <View style={{ flex: 1 }}>
         <StatusBar barStyle="light-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAwareFlatList
-              ref="messageList"
-              onContentSizeChange={this.scrollToBottom}
-              style={{
-                padding: 10,
-                height: height,
-                backgroundColor: theme.colors.light_chat_background
-              }}
-              data={this.props.conversation.slice()}
-              renderItem={this.renderRow}
-              keyExtractor={(item, index) => index.toString()}
-              ListFooterComponent={this.renderFooter}
-            />
+            {Platform.OS === "ios" ? (
+              <FlatList
+                ref="messageList"
+                onContentSizeChange={this.scrollToBottom}
+                style={{
+                  padding: 10,
+                  height: height,
+                  backgroundColor: theme.colors.light_chat_background
+                }}
+                data={this.props.conversation.slice()}
+                renderItem={this.renderRow}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={this.renderFooter}
+              />
+            ) : (
+              <KeyboardAwareFlatList
+                ref="messageList"
+                onContentSizeChange={this.scrollToBottom}
+                style={{
+                  padding: 10,
+                  height: height,
+                  backgroundColor: theme.colors.light_chat_background
+                }}
+                data={this.props.conversation.slice()}
+                renderItem={this.renderRow}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={this.renderFooter}
+              />
+            )}
           </TouchableWithoutFeedback>
-          <View
-            style={[
-              styles.chatBox,
-              {
-                zIndex: 1,
-                borderTopWidth: StyleSheet.hairlineWidth,
-                borderTopColor: "lightgrey",
-                bottom: 0,
-                backgroundColor: "white"
-              }
-            ]}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : null}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
+            style={{
+              flexDirection: "row",
+              zIndex: 1,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: "lightgrey",
+              bottom: 0,
+              backgroundColor: "white"
+            }}
           >
             <TouchableOpacity
               onPress={() =>
@@ -394,10 +440,11 @@ class ChatScreen extends Component {
                 color={cliqueBlue}
               />
             </TouchableOpacity>
-          </View>
-          <EventModal groupID={this.state.groupID} />
+          </KeyboardAvoidingView>
+          <EventModal />
+          <PollModal />
         </SafeAreaView>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }
@@ -405,9 +452,9 @@ class ChatScreen extends Component {
 const mapStateToProps = (state, ownProps) => {
   const { groupID } = ownProps.navigation.getParam("group");
   const stateOfGroup = state.messagesReducer[groupID] || {};
-  const username = state.authReducer.user.displayName;
+  const username = (state.authReducer.user || {}).displayName;
   return {
-    uid: state.authReducer.user.uid,
+    uid: (state.authReducer.user || {}).uid,
     conversation: stateOfGroup.messages || [],
     username,
     group: state.groupsReducer.groups[groupID]
@@ -421,7 +468,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end"
   },
   chatBox: {
-    flexDirection: "row"
     // alignItems: "center"
   },
   chatInput: {
