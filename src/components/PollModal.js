@@ -175,8 +175,10 @@ class PollModal extends Component {
 }
 
 const mapStateToProps = state => {
+  const { modalVisibility, poll } = state.pollModal;
   return {
-    visibility: state.pollModal.modalVisibility
+    visibility: modalVisibility,
+    poll
   };
 };
 export default connect(mapStateToProps)(PollModal);

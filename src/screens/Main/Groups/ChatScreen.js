@@ -36,6 +36,7 @@ import SystemMessageBubble from "../../../components/SystemMessageBubble";
 import { getDate } from "../../../assets/constants";
 import { FlatList } from "react-native-gesture-handler";
 import { togglePollModal } from "../../../store/actions/pollModal";
+import PollMessageBubble from "../../../components/PollMessageBubble";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -52,7 +53,8 @@ class ChatScreen extends Component {
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
-    this.showPollModal = this.showPollModal.bind(this);
+    // this.showPollModal = this.showPollModal.bind(this);
+    this.sendSystemMessage = this.sendSystemMessage.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -189,7 +191,8 @@ class ChatScreen extends Component {
         message: this.state.textMessage,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         sender: this.state.uid,
-        username: this.props.username
+        username: this.props.username,
+        firstMsgBySender: lastMessage.sender !== this.props.uid
       };
       this.messagesRef
         .child(`${groupID}`)
@@ -203,6 +206,21 @@ class ChatScreen extends Component {
       this.setState({ textMessage: "" });
     }
   };
+
+  sendSystemMessage = text => {
+    const groupID = this.state.groupID
+    const msgID = this.messagesRef.child(`${groupID}`).push().key;
+    const message = {
+      messageType: "system",
+      message: text,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      sender: ""
+    }
+    this.messagesRef
+      .child(`${groupID}`)
+      .child(`${msgID}`)
+      .set(message);
+  }
 
   respondToInvitation = (eventID, response) => async () => {
     const eventSnapshot = await firebase
@@ -243,6 +261,7 @@ class ChatScreen extends Component {
           }`
         )
         .remove();
+      this.sendSystemMessage(`${this.props.username} is attending ${event.title}!`);
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     } else {
       updatedEvent = {
@@ -267,6 +286,7 @@ class ChatScreen extends Component {
           }`
         )
         .remove();
+      this.sendSystemMessage(`${this.props.username} is not attending ${event.title}!`);
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     }
     firebase
@@ -350,17 +370,23 @@ class ChatScreen extends Component {
         />
       );
     } else if (item.messageType === "system") {
-      return <SystemMessageBubble message={item.message} />;
+
+      return (
+        <SystemMessageBubble
+          message={item.message}
+        />
+      )
+    } else if (item.messageType === "poll") {
+      return (
+        <PollMessageBubble
+          poll={item.pollObject}
+        />
+      )
     }
   };
 
   renderFooter = () => {
     return <View style={{ height: 10 }} />;
-  };
-
-  showPollModal = () => {
-    console.log("inside showPollModal()");
-    this.props.dispatch(togglePollModal(true));
   };
 
   render() {
@@ -486,7 +512,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     backgroundColor: theme.colors.light_chat_yours,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 2,
     paddingLeft: 5,
     maxWidth: "100%",
     marginRight: 80
@@ -497,7 +523,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     backgroundColor: theme.colors.light_chat_mine,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 2,
     paddingLeft: 5,
     marginLeft: 80,
     maxWidth: "100%"

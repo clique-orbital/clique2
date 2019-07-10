@@ -1,7 +1,8 @@
 import { TOGGLE_POLL_MODAL } from "../constants";
 
 const initialState = {
-  modalVisibility: false
+  modalVisibility: false,
+  poll: {}
 }
 
 export const pollModalReducer = (state = initialState, action) => {
@@ -10,6 +11,7 @@ export const pollModalReducer = (state = initialState, action) => {
       return {
         ...state,
         modalVisibility: action.payload.mode,
+        poll: action.payload.poll
       }
     default:
       return state;
