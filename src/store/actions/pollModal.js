@@ -2,11 +2,19 @@ import {
   TOGGLE_POLL_MODAL,
 } from "../constants";
 
-export const togglePollModal = mode => {
+const initialPollState = {
+  groupID: "",
+  msgID: "",
+  options: {},
+  questions: "",
+}
+
+export const togglePollModal = (mode, poll = initialPollState) => {
   return {
     type: TOGGLE_POLL_MODAL,
     payload: {
-      mode
+      mode,
+      poll
     }
   };
 };
