@@ -33,8 +33,8 @@ import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import SystemMessageBubble from "../../../components/SystemMessageBubble";
-import { getDate } from "../../../assets/constants"
-import { FlatList } from "react-native-gesture-handler"
+import { getDate } from "../../../assets/constants";
+import { FlatList } from "react-native-gesture-handler";
 import { togglePollModal } from "../../../store/actions/pollModal";
 import PollMessageBubble from "../../../components/PollMessageBubble";
 
@@ -166,10 +166,11 @@ class ChatScreen extends Component {
     const groupID = this.state.groupID;
     if (this.state.textMessage.length > 0) {
       const lastMessage = this.props.group.last_message;
-      console.log(lastMessage);
-      const dateObj = (new Date(lastMessage.timestamp));
+      const dateObj = new Date(lastMessage.timestamp);
       const currentDate = new Date();
-      const diffDate = dateObj.getDate() !== currentDate.getDate() || dateObj.getMonth() !== currentDate.getMonth();
+      const diffDate =
+        dateObj.getDate() !== currentDate.getDate() ||
+        dateObj.getMonth() !== currentDate.getMonth();
 
       if (diffDate || lastMessage.sender === "") {
         const dateMsgID = this.messagesRef.child(`${groupID}`).push().key;
@@ -177,8 +178,8 @@ class ChatScreen extends Component {
           messageType: "system",
           message: `${getDate(currentDate)}`,
           timestamp: firebase.database.ServerValue.TIMESTAMP,
-          sender: "",
-        }
+          sender: ""
+        };
         this.messagesRef
           .child(`${groupID}`)
           .child(`${dateMsgID}`)
@@ -248,7 +249,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -256,7 +257,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
@@ -273,7 +274,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -281,7 +282,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
@@ -367,8 +368,9 @@ class ChatScreen extends Component {
           item={item}
           convertDate={convertDate}
         />
-      )
+      );
     } else if (item.messageType === "system") {
+
       return (
         <SystemMessageBubble
           message={item.message}
@@ -391,14 +393,12 @@ class ChatScreen extends Component {
     let height = Dimensions.get("window").height;
 
     return (
-      <View
-        style={{ flex: 1 }}
-      >
+      <View style={{ flex: 1 }}>
         <StatusBar barStyle="light-content" />
         <SafeAreaView style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            {Platform.OS === "ios"
-              ? (<FlatList
+            {Platform.OS === "ios" ? (
+              <FlatList
                 ref="messageList"
                 onContentSizeChange={this.scrollToBottom}
                 style={{
@@ -410,8 +410,9 @@ class ChatScreen extends Component {
                 renderItem={this.renderRow}
                 keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={this.renderFooter}
-              />)
-              : (<KeyboardAwareFlatList
+              />
+            ) : (
+              <KeyboardAwareFlatList
                 ref="messageList"
                 onContentSizeChange={this.scrollToBottom}
                 style={{
@@ -423,33 +424,33 @@ class ChatScreen extends Component {
                 renderItem={this.renderRow}
                 keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={this.renderFooter}
-              />)}
+              />
+            )}
           </TouchableWithoutFeedback>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
             keyboardVerticalOffset={Platform.OS === "ios" ? 87 : -200}
-            style={
-              {
-                flexDirection: "row",
-                zIndex: 1,
-                borderTopWidth: StyleSheet.hairlineWidth,
-                borderTopColor: "lightgrey",
-                bottom: 0,
-                backgroundColor: "white"
-              }
-            }
+            style={{
+              flexDirection: "row",
+              zIndex: 1,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: "lightgrey",
+              bottom: 0,
+              backgroundColor: "white"
+            }}
           >
-            {/* <TouchableOpacity
-              onPress={this.showPollModal}
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate("CreatePoll", {
+                  groupID: this.state.groupID,
+                  uid: this.props.uid,
+                  username: this.props.username
+                })
+              }
               style={{ justifyContent: "center" }}
             >
-              <MyIcon
-                name="sort"
-                type="material"
-                size={25}
-                color={cliqueBlue}
-              />
-            </TouchableOpacity> */}
+              <MyIcon name="add" type="material" size={28} color={cliqueBlue} />
+            </TouchableOpacity>
             <TextInput
               style={styles.chatInput}
               value={this.state.textMessage}
@@ -484,7 +485,7 @@ const mapStateToProps = (state, ownProps) => {
     uid: (state.authReducer.user || {}).uid,
     conversation: stateOfGroup.messages || [],
     username,
-    group: state.groupsReducer.groups[groupID],
+    group: state.groupsReducer.groups[groupID]
   };
 };
 
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
     // alignItems: "center"
   },
   chatInput: {
-    width: "90%",
+    width: "80%",
     padding: 10,
     color: "black",
     bottom: 0,
