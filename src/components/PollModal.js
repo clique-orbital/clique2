@@ -69,7 +69,7 @@ class PollModal extends Component {
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
               <View style={{ alignItems: "center", justifyContent: "center", marginTop: 30, flex: 1 }}>
-                <Text style={{ fontSize: 30, color: cliqueBlue }}>(Title)</Text>
+                <Text style={{ fontSize: 30, color: cliqueBlue }}>{this.props.poll.question}</Text>
               </View>
               <View style={{ flex: 5 }}>
                 {this.renderPolls()}
@@ -83,8 +83,10 @@ class PollModal extends Component {
 }
 
 const mapStateToProps = (state) => {
+  const { modalVisibility, poll } = state.pollModal;
   return {
-    visibility: state.pollModal.modalVisibility
+    visibility: modalVisibility,
+    poll
   }
 }
 export default connect(mapStateToProps)(PollModal);

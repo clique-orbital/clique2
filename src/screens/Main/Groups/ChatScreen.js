@@ -36,6 +36,7 @@ import SystemMessageBubble from "../../../components/SystemMessageBubble";
 import { getDate } from "../../../assets/constants"
 import { FlatList } from "react-native-gesture-handler"
 import { togglePollModal } from "../../../store/actions/pollModal";
+import PollMessageBubble from "../../../components/PollMessageBubble";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -52,7 +53,7 @@ class ChatScreen extends Component {
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
-    this.showPollModal = this.showPollModal.bind(this);
+    // this.showPollModal = this.showPollModal.bind(this);
     this.sendSystemMessage = this.sendSystemMessage.bind(this);
   }
 
@@ -373,17 +374,18 @@ class ChatScreen extends Component {
           message={item.message}
         />
       )
+    } else if (item.messageType === "poll") {
+      return (
+        <PollMessageBubble
+          poll={item.pollObject}
+        />
+      )
     }
   };
 
   renderFooter = () => {
     return <View style={{ height: 10 }} />;
   };
-
-  showPollModal = () => {
-    console.log("inside showPollModal()")
-    this.props.dispatch(togglePollModal(true));
-  }
 
   render() {
     let height = Dimensions.get("window").height;
