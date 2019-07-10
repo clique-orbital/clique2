@@ -7,11 +7,12 @@ import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import theme from "../../../assets/theme";
 import MyIcon from "../../../components/MyIcon";
+import firebase from "react-native-firebase";
 
 // navigation props: groupID
 
 class CreatePoll extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
       headerTintColor: "#fff",
       headerTitle: (
@@ -30,7 +31,27 @@ class CreatePoll extends React.Component {
   };
 
   handleSubmit = formValues => {
-    console.log(formValues);
+    const nav = this.props.navigation;
+    const groupID = nav.getParam("groupID");
+    const uid = nav.getParam("uid");
+    const username = nav.getParam("username");
+    const db = firebase.database();
+
+    const msgID = db
+      .ref("messages")
+      .child(`${groupID}`)
+      .push().key;
+    let pollObject = { ...formValues, groupID, msgID };
+    const message = {
+      messageType: "poll",
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      sender: uid,
+      pollObject,
+      username: username
+    };
+    db.ref(`messages/${groupID}/${msgID}`)
+      .set(message)
+      .then(() => nav.goBack());
   };
 
   renderQuestion = width => {
@@ -97,7 +118,7 @@ class CreatePoll extends React.Component {
                 left
                 autoFocus
                 w="100%"
-                name={`options.${index}`}
+                name={`${option}.title`}
                 component={this.renderInput}
                 placeholder={`Option ${index + 1}`}
                 style={{ paddingLeft: 10, fontSize: 19 }}
@@ -153,4 +174,4 @@ const styles = StyleSheet.create({
 });
 
 let form = reduxForm({ form: "createPoll" })(CreatePoll);
-export default connect()(form);
+export default connect(null)(form);

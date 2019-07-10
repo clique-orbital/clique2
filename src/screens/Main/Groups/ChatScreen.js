@@ -416,7 +416,9 @@ class ChatScreen extends Component {
             <TouchableOpacity
               onPress={() =>
                 this.props.navigation.navigate("CreatePoll", {
-                  groupID: this.state.groupID
+                  groupID: this.state.groupID,
+                  uid: this.props.uid,
+                  username: this.props.username
                 })
               }
               style={{ justifyContent: "center" }}
