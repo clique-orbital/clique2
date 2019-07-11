@@ -50,6 +50,7 @@ class GroupDetails extends React.Component {
           values.grouppicture.uri,
           values.grouppicture.fileName.split(".")[1],
           this.props.user.uid,
+          this.props.user.displayName,
           "This is a new clique!",
           Object.values(this.props.navigation.getParam("users"))
         )

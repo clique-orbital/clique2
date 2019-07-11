@@ -249,7 +249,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .set(true);
@@ -257,7 +257,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .remove();
@@ -274,7 +274,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .set(true);
@@ -282,7 +282,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-            event.eventID
+          event.eventID
           }`
         )
         .remove();
@@ -412,20 +412,20 @@ class ChatScreen extends Component {
                 ListFooterComponent={this.renderFooter}
               />
             ) : (
-              <KeyboardAwareFlatList
-                ref="messageList"
-                onContentSizeChange={this.scrollToBottom}
-                style={{
-                  padding: 10,
-                  height: height,
-                  backgroundColor: theme.colors.light_chat_background
-                }}
-                data={this.props.conversation.slice()}
-                renderItem={this.renderRow}
-                keyExtractor={(item, index) => index.toString()}
-                ListFooterComponent={this.renderFooter}
-              />
-            )}
+                <KeyboardAwareFlatList
+                  ref="messageList"
+                  onContentSizeChange={this.scrollToBottom}
+                  style={{
+                    padding: 10,
+                    height: height,
+                    backgroundColor: theme.colors.light_chat_background
+                  }}
+                  data={this.props.conversation.slice()}
+                  renderItem={this.renderRow}
+                  keyExtractor={(item, index) => index.toString()}
+                  ListFooterComponent={this.renderFooter}
+                />
+              )}
           </TouchableWithoutFeedback>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
@@ -470,7 +470,7 @@ class ChatScreen extends Component {
             </TouchableOpacity>
           </KeyboardAvoidingView>
           <EventModal />
-          <PollModal />
+          <PollModal group={this.props.group} />
         </SafeAreaView>
       </View>
     );

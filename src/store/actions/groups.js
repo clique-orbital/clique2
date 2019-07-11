@@ -125,13 +125,14 @@ export const createGroup = (
   groupPicture,
   filetype,
   myuser,
+  myDisplayName,
   data,
   users = []
 ) => async dispatch => {
-  let users_info = { [myuser]: true };
+  let users_info = { [myuser]: myDisplayName };
   const groupID = uuidv4();
   for (let user of users) {
-    users_info = { ...users_info, [user.uid]: true };
+    users_info = { ...users_info, [user.uid]: user.displayName };
   }
 
   const url = await addGroupPicture(groupPicture, filetype); //filetype not used?

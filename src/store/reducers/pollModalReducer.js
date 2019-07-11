@@ -2,7 +2,9 @@ import { TOGGLE_POLL_MODAL, UPDATE_POLL } from "../constants";
 
 const initialState = {
   modalVisibility: false,
-  poll: {}
+  poll: {
+    options: []
+  }
 };
 
 export const pollModalReducer = (state = initialState, action) => {
