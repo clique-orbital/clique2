@@ -1,9 +1,11 @@
-import { TOGGLE_POLL_MODAL } from "../constants";
+import { TOGGLE_POLL_MODAL, UPDATE_POLL } from "../constants";
 
 const initialState = {
   modalVisibility: false,
-  poll: {}
-}
+  poll: {
+    options: []
+  }
+};
 
 export const pollModalReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -12,8 +14,13 @@ export const pollModalReducer = (state = initialState, action) => {
         ...state,
         modalVisibility: action.payload.mode,
         poll: action.payload.poll
-      }
+      };
+    case UPDATE_POLL:
+      return {
+        ...state,
+        poll: action.payload
+      };
     default:
       return state;
   }
-}
+};
