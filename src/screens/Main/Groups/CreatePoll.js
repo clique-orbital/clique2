@@ -15,7 +15,8 @@ class CreatePoll extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: ""
+      question: "",
+      options: {}
     }
     this.onChangeQuestion = this.onChangeQuestion.bind(this);
   }
@@ -64,6 +65,18 @@ class CreatePoll extends React.Component {
 
   onChangeQuestion = text => {
     this.setState({ question: text });
+  }
+
+  onChangeOptions = index => text => {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        options: {
+          ...prevState.options,
+          [index]: text
+        }
+      }
+    })
   }
 
   renderQuestion = width => {
@@ -138,6 +151,8 @@ class CreatePoll extends React.Component {
                 component={this.renderInput}
                 placeholder={`Option ${index + 1}`}
                 style={{ paddingLeft: 10, fontSize: 19 }}
+                onChange={this.onChangeOptions(index)}
+                value={this.state.options[index]}
               />
             </View>
           );
