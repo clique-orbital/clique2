@@ -82,10 +82,10 @@ export default class Input extends Component {
     const inputType = email
       ? "email-address"
       : number
-      ? "numeric"
-      : phone
-      ? "phone-pad"
-      : "default";
+        ? "numeric"
+        : phone
+          ? "phone-pad"
+          : "default";
 
     return (
       <View style={{ flex: 0 }}>
@@ -95,7 +95,7 @@ export default class Input extends Component {
           style={inputStyles}
           secureTextEntry={isSecure}
           autoComplete="off"
-          autoCapitalize="none"
+          autoCapitalize="sentences"
           autoCorrect={false}
           keyboardType={inputType}
           placeholder={placeholder}

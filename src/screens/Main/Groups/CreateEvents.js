@@ -149,6 +149,7 @@ class CreateEvents extends Component {
     return (
       <View style={styles.border}>
         <Input
+          autoCapitalize="sentences"
           left
           placeholder="Add title"
           style={[
@@ -271,6 +272,7 @@ class CreateEvents extends Component {
           {this.renderItem(
             width,
             <Input
+              autoCapitalize="sentences"
               left
               placeholder="Add location"
               style={({ ...styles.input }, { marginLeft: 10 })}
@@ -282,6 +284,7 @@ class CreateEvents extends Component {
           {this.renderItem(
             width,
             <Input
+              autoCapitalize="sentences"
               left
               placeholder="Add notes"
               style={({ ...styles.input }, { marginLeft: 10 })}

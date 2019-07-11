@@ -452,6 +452,7 @@ class ChatScreen extends Component {
               <MyIcon name="add" type="material" size={28} color={cliqueBlue} />
             </TouchableOpacity>
             <TextInput
+              autoCapitalize="sentences"
               style={styles.chatInput}
               value={this.state.textMessage}
               onChangeText={this.handleChange("textMessage")}

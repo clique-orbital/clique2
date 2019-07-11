@@ -111,11 +111,13 @@ class GroupDetails extends React.Component {
             Enter your group name and group picture!
           </Text>
           <Field
+            autoCapitalize="sentences"
             name="grouppicture"
             component={this.renderImagePicker}
             validate={required}
           />
           <Field
+            autoCapitalize="sentences"
             name="groupname"
             component={this.renderInput}
             label="Enter group name"

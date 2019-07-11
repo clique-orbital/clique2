@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { connect } from "react-redux";
 import { Field, FieldArray, reduxForm } from "redux-form";
 import Text from "../../../components/Text";
@@ -12,6 +12,14 @@ import firebase from "react-native-firebase";
 // navigation props: groupID
 
 class CreatePoll extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: ""
+    }
+    this.onChangeQuestion = this.onChangeQuestion.bind(this);
+  }
+
   static navigationOptions = () => {
     return {
       headerTintColor: "#fff",
@@ -54,10 +62,15 @@ class CreatePoll extends React.Component {
       .then(() => nav.goBack());
   };
 
+  onChangeQuestion = text => {
+    this.setState({ question: text });
+  }
+
   renderQuestion = width => {
     return (
       <View style={[styles.border, { paddingTop: 10, paddingHorizontal: 10 }]}>
         <Field
+          autoCapitalize="sentences"
           name="question"
           left
           label="Question"
@@ -73,6 +86,8 @@ class CreatePoll extends React.Component {
             }
           ]}
           w={width}
+          onChange={this.onChangeQuestion}
+          value={this.state.text}
         />
       </View>
     );
@@ -115,6 +130,7 @@ class CreatePoll extends React.Component {
                 color="black"
               />
               <Field
+                autoCapitalize="sentences"
                 left
                 autoFocus
                 w="100%"
@@ -133,23 +149,29 @@ class CreatePoll extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: "flex-start" }}>
-        {this.renderQuestion()}
-        <FieldArray
-          name="options"
-          component={this.renderOptions}
-          style={{ flex: 1 }}
-        />
-        <Button
-          shadow
-          style={[styles.publishButton, { marginTop: 20 }]}
-          onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
-        >
-          <Text semibold white center>
-            Publish
-          </Text>
-        </Button>
-      </View>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -200}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView style={{ flex: 1, alignItems: "flex-start" }}>
+          {this.renderQuestion()}
+          <FieldArray
+            name="options"
+            component={this.renderOptions}
+            style={{ flex: 1 }}
+          />
+          <Button
+            shadow
+            style={[styles.publishButton, { marginTop: 20 }]}
+            onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
+          >
+            <Text semibold white center>
+              Publish
+            </Text>
+          </Button>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 }
