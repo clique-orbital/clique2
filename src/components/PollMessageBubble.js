@@ -16,7 +16,7 @@ class PollMessageBubble extends Component {
 
   render() {
     return (
-      <View style={{ marginHorizontal: 80, backgroundColor: "#fff", borderRadius: 15, marginVertical: 5 }}>
+      <View style={{ marginHorizontal: 50, backgroundColor: "#fff", borderRadius: 15, marginVertical: 5, width: "auto" }}>
         <View style={{ padding: 10 }}>
           <Text style={{ textAlign: "center", fontSize: 23 }}>{this.props.poll.question}</Text>
         </View>
