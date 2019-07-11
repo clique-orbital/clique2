@@ -44,6 +44,7 @@ class UserDetails extends React.Component {
         </Text>
         <Field name="profilepicture" component={this.renderImagePicker} />
         <Field
+          autoCapitalize="sentences"
           name="username"
           component={this.renderInput}
           label="Enter username"

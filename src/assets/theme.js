@@ -14,7 +14,8 @@ const colors = {
   dark_chat_background: "#151e27",
   dark_chat_username: "#8fc5f1",
   green: "#65c681",
-  red: "#c13f3f"
+  red: "#c13f3f",
+  poll_blue: "#1965BC"
 };
 
 const sizes = {

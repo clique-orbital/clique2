@@ -168,7 +168,7 @@ class PollModal extends Component {
               height: 20
             }}
           >
-            <Text h3 color="#1964BC">
+            <Text h3 color="#1965BC">
               {length}
             </Text>
           </View>
