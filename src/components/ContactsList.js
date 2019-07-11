@@ -166,7 +166,6 @@ class ContactsList extends React.Component {
 
   renderFlatList = () => {
     let contacts = this.state.contacts;
-    console.log(contacts);
     if (this.props.removeDuplicates) {
       contacts = contacts.filter(
         user => !this.props.removeDuplicates[user.uid]
