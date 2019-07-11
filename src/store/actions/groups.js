@@ -98,7 +98,7 @@ const addGroupPicture = async (pictureUri, groupID) => {
     .then(({ uri }) => {
       return firebase
         .storage()
-        .ref(`images/group_pictures/${groupID}/${new Date().getTime()}.jpeg`)
+        .ref(`images/group_pictures/${groupID}.jpeg`)
         .put(uri)
         .then(snapshot => {
           if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
@@ -186,16 +186,19 @@ export const deleteGroupFromDb = (groupID, users) => async dispatch => {
   });
   Promise.all(_.flatten(users))
     .then(async () => {
-      console.log("inside promise.all.then()")
       await db.ref(`events/${groupID}`).remove();
       await db.ref(`messages/${groupID}`).remove();
       await db.ref(`groups/${groupID}`).remove();
     })
     .then(() => {
-      console.log("inside promise.all.then().then()")
       dispatch(removeGroupEvents(groupID));
       dispatch(removeGroupMessages(groupID));
-    });
+    })
+    .then(async () => {
+      const ref = await firebase.storage().ref(`images/group_pictures/${groupID}.jpeg`);
+      console.log(ref);
+      ref.delete();
+    })
 };
 
 const addMemberToGroup = (uid, groupID) => {
