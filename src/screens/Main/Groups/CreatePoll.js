@@ -59,6 +59,8 @@ class CreatePoll extends React.Component {
       username: username
     };
     db.ref(`messages/${groupID}/${msgID}`)
+      .set(message);
+    db.ref(`groups/${groupID}/last_message`)
       .set(message)
       .then(() => nav.goBack());
   };
