@@ -87,7 +87,7 @@ class GroupScreen extends Component {
   renderLastMessage = groupId => {
     const group = this.props.groups[groupId];
 
-    const isText = (group.last_message || {}).messageType === "text";
+    const messageType = (group.last_message || {}).messageType;
     let username;
     if (group.last_message.sender === firebase.auth().currentUser.uid) {
       username = "You";
@@ -95,7 +95,7 @@ class GroupScreen extends Component {
       username = (group.last_message || {}).username;
     }
 
-    if (isText) {
+    if (messageType === "text") {
       const message = (group.last_message || {}).message;
       return (
         <Text header style={{ top: 5 }} numberOfLines={1}>
@@ -106,7 +106,7 @@ class GroupScreen extends Component {
           {message}
         </Text>
       );
-    } else {
+    } else if (messageType === "event") {
       const eventTitle = (group.last_message || {}).event.title;
       return (
         <Text header style={{ top: 5 }} numberOfLines={1}>
@@ -114,6 +114,16 @@ class GroupScreen extends Component {
             {username + " "}
           </Text>
           created a new event: {eventTitle}
+        </Text>
+      );
+    } else if (messageType === "poll") {
+      const pollQuestion = group.last_message.pollObject.question;
+      return (
+        <Text header style={{ top: 5 }} numberOfLines={1}>
+          <Text medium header style={{ color: cliqueBlue, fontWeight: "400" }}>
+            {username + " "}
+          </Text>
+          created a new poll: {pollQuestion}
         </Text>
       );
     }
@@ -213,8 +223,8 @@ class GroupScreen extends Component {
                   }}
                 />
               ) : (
-                undefined
-              )}
+                  undefined
+                )}
             </View>
           </View>
         </TouchableOpacity>
