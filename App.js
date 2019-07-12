@@ -13,7 +13,6 @@ import CalendarStack from "./src/screens/Main/CalendarStack";
 import Auth from "./src/screens/Auth/Auth";
 import UserDetails from "./src/screens/Auth/UserDetails";
 import MyIcon from "./src/components/MyIcon";
-import { cliqueBlue } from "./src/assets/constants";
 import firebase from "react-native-firebase";
 
 const AppNavigator = createBottomTabNavigator(
@@ -86,25 +85,15 @@ const AppContainer = createAppContainer(InitialNavigator);
 
 class App extends React.Component {
   async componentDidMount() {
+    // when app is closed and notification is tapped
     const notificationOpen = await firebase
       .notifications()
       .getInitialNotification();
     if (notificationOpen) {
       const action = notificationOpen.action;
       const notification = notificationOpen.notification;
-      var seen = [];
-      alert(
-        JSON.stringify(notification.data, function(key, val) {
-          if (val != null && typeof val == "object") {
-            if (seen.indexOf(val) >= 0) {
-              return;
-            }
-            seen.push(val);
-          }
-          return val;
-        })
-      );
     }
+
     const channel = new firebase.notifications.Android.Channel(
       "test-channel",
       "Test Channel",
@@ -112,19 +101,37 @@ class App extends React.Component {
     ).setDescription("My apps test channel");
     // Create the channel
     firebase.notifications().android.createChannel(channel);
+
+    // when app is in the background (iOS, when content_available is true)
     this.notificationDisplayedListener = firebase
       .notifications()
       .onNotificationDisplayed(notification => {
         // Process your notification as required
         // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
       });
+
+    // app in the foreground
     this.notificationListener = firebase
       .notifications()
-      .onNotification(notification => {
-        // Process your notification as required
-        notification.android.setChannelId("test-channel");
-        firebase.notifications().displayNotification(notification);
+      .onNotification(async notification => {
+        const localNotification = new firebase.notifications.Notification({
+          show_in_foreground: true
+        })
+          .setNotificationId(notification.notificationId)
+          .setTitle(notification.title)
+          .setSubtitle(notification.subtitle || "")
+          .setBody(notification.body)
+          .setData(notification.data)
+          .setSound("default")
+          .android.setChannelId("test-channel") // e.g. the id you chose above
+          .android.setSmallIcon("") // create this icon in Android Studio
+          .android.setPriority(firebase.notifications.Android.Priority.High);
+
+        console.log(localNotification);
+        firebase.notifications().displayNotification(localNotification);
       });
+
+    // when app is in the background and then notification is tapped
     this.notificationOpenedListener = firebase
       .notifications()
       .onNotificationOpened(notificationOpen => {
@@ -132,28 +139,18 @@ class App extends React.Component {
         const action = notificationOpen.action;
         // Get information about the notification that was opened
         const notification = notificationOpen.notification;
-        var seen = [];
-        alert(
-          JSON.stringify(notification.data, function(key, val) {
-            if (val != null && typeof val == "object") {
-              if (seen.indexOf(val) >= 0) {
-                return;
-              }
-              seen.push(val);
-            }
-            return val;
-          })
-        );
         firebase
           .notifications()
           .removeDeliveredNotification(notification.notificationId);
       });
   }
+
   componentWillUnmount() {
     this.notificationDisplayedListener();
     this.notificationListener();
     this.notificationOpenedListener();
   }
+
   render() {
     if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
     return <AppContainer />;
