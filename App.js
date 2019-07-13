@@ -124,10 +124,7 @@ class App extends React.Component {
           .setData(notification.data)
           .setSound("default")
           .android.setChannelId("test-channel") // e.g. the id you chose above
-          .android.setSmallIcon("") // create this icon in Android Studio
           .android.setPriority(firebase.notifications.Android.Priority.High);
-
-        console.log(localNotification);
         firebase.notifications().displayNotification(localNotification);
       });
 
@@ -149,7 +146,9 @@ class App extends React.Component {
 
   componentWillUnmount() {
     this.notificationDisplayedListener();
+    this.notificationListener();
     this.notificationOpenedListener();
+    this.messageListener();
   }
 
   render() {
