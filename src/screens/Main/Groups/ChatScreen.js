@@ -18,12 +18,12 @@ import {
   populateNotAttending
 } from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
-import { fetchConversation } from "../../../store/actions/messages";
+import { fetchConversation, addNewMsgToConvo } from "../../../store/actions/messages";
 import { convertDate, cliqueBlue } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
-import { sortBy, values } from "lodash";
+import { values } from "lodash";
 import GroupPicture from "../../../components/GroupPicture";
 import Text from "../../../components/Text";
 import EventBubble from "../../../components/EventBubble";
@@ -35,8 +35,8 @@ import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import SystemMessageBubble from "../../../components/SystemMessageBubble";
 import { getDate } from "../../../assets/constants";
 import { FlatList } from "react-native-gesture-handler";
-import { togglePollModal } from "../../../store/actions/pollModal";
 import PollMessageBubble from "../../../components/PollMessageBubble";
+import { setToZero } from "../../../store/actions/messageCounter";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -47,14 +47,16 @@ class ChatScreen extends Component {
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
       dateOfLastMsg: new Date().getDate(),
-      pollModalVisibility: false
+      pollModalVisibility: false,
+      numOfVisibleMsg: 40,
+      isRefreshing: false,
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showEventModal = this.showEventModal.bind(this);
-    // this.showPollModal = this.showPollModal.bind(this);
     this.sendSystemMessage = this.sendSystemMessage.bind(this);
+    this.increaseNumOfVisibleMsg = this.increaseNumOfVisibleMsg.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -121,15 +123,21 @@ class ChatScreen extends Component {
     this.props.navigation.setParams({
       groupName: this.props.group.groupName
     });
+    this.props.dispatch(setToZero(this.state.groupID));
+    firebase.database().ref(`groups/${this.state.groupID}`).on("child_changed", snapshot => {
+      this.props.dispatch(setToZero(this.state.groupID));
+    })
   }
 
   componentWillMount() {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
+      console.log("inside componentWillMount")
       this.props.dispatch(
-        fetchConversation(groupID, sortBy(values(snapshot.val()), "timestamp"))
+        fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, 40))
       );
-    });
+    })
+
     this.keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       this.scrollToBottom
@@ -146,8 +154,14 @@ class ChatScreen extends Component {
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
-    this.refs.messageList.scrollToEnd({ animated: true });
+    this.refs.messageList.scrollToOffset({ offset: 0, animated: false });
   };
+
+  sort = messages => {
+    return messages.sort((message1, message2) => {
+      return message2.timestamp - message1.timestamp;
+    })
+  }
 
   handleChange = key => val => {
     this.setState({
@@ -203,6 +217,9 @@ class ChatScreen extends Component {
         .ref(`groups/${groupID}`)
         .child("last_message")
         .set(message);
+      // const newMsg = Object.assign({}, message);
+      // newMsg.timestamp = new Date();
+      // this.props.dispatch(addNewMsgToConvo(groupID, newMsg));
       this.setState({ textMessage: "" });
     }
   };
@@ -389,6 +406,19 @@ class ChatScreen extends Component {
     return <View style={{ height: 10 }} />;
   };
 
+  increaseNumOfVisibleMsg = () => {
+    console.log("refreshing");
+    const { groupID, numOfVisibleMsg } = this.state;
+    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 20 }
+      , () => {
+        this.messagesRef.child(`${groupID}`).once("value", snapshot => {
+          this.props.dispatch(
+            fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
+          );
+        });
+      })
+  }
+
   render() {
     let height = Dimensions.get("window").height;
 
@@ -399,17 +429,22 @@ class ChatScreen extends Component {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             {Platform.OS === "ios" ? (
               <FlatList
+                onEndReachedThreshold={0}
+                onEndReached={this.increaseNumOfVisibleMsg}
                 ref="messageList"
-                onContentSizeChange={this.scrollToBottom}
+                // onContentSizeChange={this.scrollToBottom}
                 style={{
                   padding: 10,
                   height: height,
                   backgroundColor: theme.colors.light_chat_background
                 }}
-                data={this.props.conversation.slice()}
+                data={this.props.conversation.slice(0, this.state.numOfVisibleMsg)}
                 renderItem={this.renderRow}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={item => item.timestamp.toString()}
                 ListFooterComponent={this.renderFooter}
+                initialNumToRender={50}
+                inverted
+                extraData={this.state.numOfVisibleMsg}
               />
             ) : (
                 <KeyboardAwareFlatList
@@ -420,10 +455,11 @@ class ChatScreen extends Component {
                     height: height,
                     backgroundColor: theme.colors.light_chat_background
                   }}
-                  data={this.props.conversation.slice()}
+                  data={this.props.conversation}
                   renderItem={this.renderRow}
                   keyExtractor={(item, index) => index.toString()}
                   ListFooterComponent={this.renderFooter}
+                  inverted
                 />
               )}
           </TouchableWithoutFeedback>
@@ -473,7 +509,7 @@ class ChatScreen extends Component {
           <EventModal />
           <PollModal group={this.props.group} />
         </SafeAreaView>
-      </View>
+      </View >
     );
   }
 }

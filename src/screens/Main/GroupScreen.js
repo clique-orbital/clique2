@@ -56,16 +56,12 @@ class GroupScreen extends Component {
 
     if (this.props.groups) {
       for (let groupId of _.keys(this.props.groups)) {
-        db.ref(`groups/${groupId}/last_message`).on(
+        db.ref(`groups/${groupId}`).on(
           "child_changed",
           snapshot => {
-            db.ref(`groups/${groupId}/last_message/username`)
-              .once("value")
-              .then(res => {
-                if (res.val() !== firebase.auth().currentUser.displayName) {
-                  this.props.incrementCount(groupId);
-                }
-              });
+            if (snapshot.val().username !== firebase.auth().currentUser.displayName) {
+              this.props.incrementCount(groupId);
+            }
             this.fetchGroup(groupId).then(() => {
               this.props.sortGroups();
             });
@@ -226,12 +222,16 @@ class GroupScreen extends Component {
                     borderRadius: 10,
                     position: "absolute",
                     right: 10,
-                    bottom: 1
+                    bottom: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
                   }}
-                />
+                >
+                  <Text white center size={10}>{this.props.groupsMessageCounter[item.groupID]}</Text>
+                </View>
               ) : (
-                undefined
-              )}
+                  undefined
+                )}
             </View>
           </View>
         </TouchableOpacity>

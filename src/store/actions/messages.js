@@ -1,7 +1,7 @@
 import {
   FETCH_CONVERSATION,
-  CHANGE_PREV_DATE,
-  REMOVE_GROUP_MESSAGES
+  REMOVE_GROUP_MESSAGES,
+  ADD_NEW_MSG
 } from "../constants";
 
 export const fetchConversation = (groupID, messages) => {
@@ -14,15 +14,15 @@ export const fetchConversation = (groupID, messages) => {
   };
 };
 
-export const changePrevDate = (groupID, prevDate) => {
+export const addNewMsgToConvo = (groupID, message) => {
   return {
-    type: CHANGE_PREV_DATE,
+    type: ADD_NEW_MSG,
     payload: {
       groupID,
-      prevDate
+      message
     }
-  };
-};
+  }
+}
 
 export const removeGroupMessages = groupID => {
   return {
