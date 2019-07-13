@@ -1,62 +1,46 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-
-// initializes your application
 admin.initializeApp(functions.config().firebase);
 
 exports.sendPushNotificationMessage = functions.database
-  .ref(`/messages/fed3efb0-f9d4-4248-ab51-8099f8d516d5`)
-  .onCreate(event => {
-    console.log(event);
-    const pushToken =
-      "dctuzVhN6Nw:APA91bHAI4_TGAG_ptwzswAGfe5zx_6w79mrYx_RUcMsLEGI8TNkSHqc0P5fLr89uB4brLlS7bAP2HiFxHm_Ss4SaYWEf8Cn5MNTQQh8XdPMv74fSEUv6G7cQlyDynjRGNw1_DGkULzm";
+  .ref("/messages/{groupID}/{msgID}")
+  .onCreate((snapshot, context) => {
+    const groupID = context.params.groupID;
+    const msg = snapshot.val();
+    const msgType = msg.type;
+    const senderUsername = msg.username;
+    let value = "";
+
+    if (msgType === "text" || msgType === "system") {
+      value = msg.message;
+    } else if (msgType === "poll") {
+      value = msg.pollObject.question;
+    } else if (msgType === "event") {
+      value = msg.event.title;
+    }
+
     let payload = {
       notification: {
-        title: "Testing Clique Message Notification",
-        body: "Hello World!"
+        title: senderUsername,
+        body: value
       }
     };
 
-    return admin.messaging().sendToDevice([pushToken], payload);
+    return admin
+      .database()
+      .ref(`groups/${groupID}/users`)
+      .once("value")
+      .then(ss => {
+        return Object.keys(ss.val()).map(async uid => {
+          const snapshot = await admin
+            .database()
+            .ref(`users/${uid}/notificationToken`)
+            .once("value");
+          return snapshot.val();
+        });
+      })
+      .then(async arr => {
+        const res = await Promise.all(arr);
+        return admin.messaging().sendToDevice(res, payload);
+      });
   });
-
-// exports.sendPushNotification = functions.database()
-//   .ref("messages")
-//   .on("child_added", event => {
-//     // gets standard JavaScript object from the new write
-//     const writeData = event.data.data();
-//     // access data necessary for push notification
-//     const sender = writeData.uid;
-//     const senderName = writeData.name;
-//     const recipient = writeData.recipient;
-//     // the payload is what will be delivered to the device(s)
-//     let payload = {
-//       notification: {
-//       title:
-//       body:
-//       sound:
-//       badge:
-//      }
-//     }
-//     // either store the recepient tokens in the document write
-//     const tokens = writeData.tokens;
-
-//     // or collect them by accessing your database
-//     var pushToken = "";
-//     return functions
-//       .firestore
-//       .collection("user_data_collection/recipient")
-//       .get()
-//       .then(doc => {
-//          pushToken = doc.data().token;
-//          // sendToDevice can also accept an array of push tokens
-//          return admin.messaging().sendToDevice(pushToken, payload);
-//       });
-// });
-
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });

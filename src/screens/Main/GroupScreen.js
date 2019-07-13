@@ -106,6 +106,13 @@ class GroupScreen extends Component {
           {message}
         </Text>
       );
+    } else if (messageType === "system") {
+      const message = (group.last_message || {}).message;
+      return (
+        <Text header style={{ top: 5 }} numberOfLines={1}>
+          {message}
+        </Text>
+      );
     } else if (messageType === "event") {
       const eventTitle = (group.last_message || {}).event.title;
       return (
@@ -223,8 +230,8 @@ class GroupScreen extends Component {
                   }}
                 />
               ) : (
-                  undefined
-                )}
+                undefined
+              )}
             </View>
           </View>
         </TouchableOpacity>

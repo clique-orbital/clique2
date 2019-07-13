@@ -37,7 +37,7 @@ class Auth extends Component {
       this.onTokenRefreshListener = firebase
         .messaging()
         .onTokenRefresh(fcmToken => {
-          this.getToken(firebase.auth().currentUser.uid);
+          this.getToken(firebase.auth().currentUser.uid, fcmToken);
         });
       if (user) {
         if (user.displayName && user.photoURL) {
@@ -49,7 +49,8 @@ class Auth extends Component {
                   .fetchGroups()
                   .then(() => this.props.fetchAllEvents(user.uid))
                   .then(() => this.props.fetchPersonalEvents(user.uid))
-                  .then(() => this.checkPermission(user.uid));
+                  .then(() => this.checkPermission(user.uid))
+                  .then(() => Promise.resolve());
               }
             })
             .then(() => {
@@ -92,12 +93,14 @@ class Auth extends Component {
       });
   }
 
-  async getToken(uid) {
-    fcmToken = await firebase.messaging().getToken();
+  async getToken(uid, token) {
+    if (!token) {
+      fcmToken = await firebase.messaging().getToken();
+    }
     return firebase
       .database()
       .ref(`users/${uid}/notificationToken`)
-      .set(fcmToken);
+      .set(token || fcmToken);
   }
 
   componentWillUnmount() {
@@ -135,18 +138,12 @@ class Auth extends Component {
           firebase
             .database()
             .ref("users")
-            .once(
-              "value",
-              snapshot => {
-                this.setState({ loading: false });
-                this.props.navigation.navigate(
-                  snapshot.val()[user._user.uid] ? "App" : "UserDetails"
-                );
-              },
-              err => {
-                console.log("the read failed " + err.code);
-              }
-            );
+            .once("value", snapshot => {
+              this.setState({ loading: false });
+              this.props.navigation.navigate(
+                snapshot.val()[user._user.uid] ? "App" : "UserDetails"
+              );
+            });
         })
         .catch(error => {
           this.setState({ message: `Code Confirm Error: ${error.message}` });

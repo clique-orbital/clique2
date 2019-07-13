@@ -143,11 +143,12 @@ class App extends React.Component {
           .notifications()
           .removeDeliveredNotification(notification.notificationId);
       });
+
+    this.messageListener = firebase.messaging().onMessage(message => {});
   }
 
   componentWillUnmount() {
     this.notificationDisplayedListener();
-    this.notificationListener();
     this.notificationOpenedListener();
   }
 
