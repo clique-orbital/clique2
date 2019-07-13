@@ -34,6 +34,11 @@ class Auth extends Component {
     };
 
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+      this.onTokenRefreshListener = firebase
+        .messaging()
+        .onTokenRefresh(fcmToken => {
+          this.getToken(firebase.auth().currentUser.uid);
+        });
       if (user) {
         if (user.displayName && user.photoURL) {
           NetInfo.fetch()
@@ -43,7 +48,8 @@ class Auth extends Component {
                 this.props
                   .fetchGroups()
                   .then(() => this.props.fetchAllEvents(user.uid))
-                  .then(() => this.props.fetchPersonalEvents(user.uid));
+                  .then(() => this.props.fetchPersonalEvents(user.uid))
+                  .then(() => this.checkPermission(user.uid));
               }
             })
             .then(() => {
@@ -59,8 +65,44 @@ class Auth extends Component {
     });
   }
 
+  checkPermission(uid) {
+    return firebase
+      .messaging()
+      .hasPermission()
+      .then(enabled => {
+        if (enabled) {
+          console.log("Permission granted");
+          this.getToken(uid);
+        } else {
+          console.log("Request Permission");
+          this.requestPermission(uid);
+        }
+      });
+  }
+
+  requestPermission() {
+    firebase
+      .messaging()
+      .requestPermission()
+      .then(() => {
+        this.getToken(uid);
+      })
+      .catch(error => {
+        console.log("permission rejected");
+      });
+  }
+
+  async getToken(uid) {
+    fcmToken = await firebase.messaging().getToken();
+    return firebase
+      .database()
+      .ref(`users/${uid}/notificationToken`)
+      .set(fcmToken);
+  }
+
   componentWillUnmount() {
     this.unsubscribe();
+    this.onTokenRefreshListener();
   }
 
   signIn = () => {

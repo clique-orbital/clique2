@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "clique2-777a0"
+    "default": "clique2-777a0",
+    "clique": "clique-c1fd6"
   }
 }
