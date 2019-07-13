@@ -7,16 +7,19 @@ exports.sendPushNotificationMessage = functions.database
   .onCreate((snapshot, context) => {
     const groupID = context.params.groupID;
     const msg = snapshot.val();
-    const msgType = msg.type;
+    const msgType = msg.messageType;
+    const senderuid = msg.sender;
     const senderUsername = msg.username;
     let value = "";
 
-    if (msgType === "text" || msgType === "system") {
+    if (msgType === "text") {
       value = msg.message;
     } else if (msgType === "poll") {
       value = msg.pollObject.question;
     } else if (msgType === "event") {
       value = msg.event.title;
+    } else if (msgType === "system") {
+      return Promise.resolve();
     }
 
     let payload = {
@@ -31,13 +34,15 @@ exports.sendPushNotificationMessage = functions.database
       .ref(`groups/${groupID}/users`)
       .once("value")
       .then(ss => {
-        return Object.keys(ss.val()).map(async uid => {
-          const snapshot = await admin
-            .database()
-            .ref(`users/${uid}/notificationToken`)
-            .once("value");
-          return snapshot.val();
-        });
+        return Object.keys(ss.val())
+          .filter(uid => uid !== senderuid)
+          .map(async uid => {
+            const snapshot = await admin
+              .database()
+              .ref(`users/${uid}/notificationToken`)
+              .once("value");
+            return snapshot.val();
+          });
       })
       .then(async arr => {
         const res = await Promise.all(arr);
