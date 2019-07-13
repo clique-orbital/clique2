@@ -117,6 +117,7 @@ class App extends React.Component {
         const localNotification = new firebase.notifications.Notification({
           show_in_foreground: true
         })
+
           .setNotificationId(notification.notificationId)
           .setTitle(notification.title)
           .setSubtitle(notification.subtitle || "")
