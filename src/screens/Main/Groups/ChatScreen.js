@@ -18,8 +18,8 @@ import {
   populateNotAttending
 } from "../../../store/actions/eventModal";
 import { connect } from "react-redux";
-import { fetchConversation, addNewMsgToConvo } from "../../../store/actions/messages";
-import { convertDate, cliqueBlue } from "../../../assets/constants";
+import { fetchConversation } from "../../../store/actions/messages";
+import { convertDate } from "../../../assets/constants";
 import firebase from "react-native-firebase";
 import MyIcon from "../../../components/MyIcon";
 import EventModal from "../EventModal";
@@ -29,7 +29,6 @@ import Text from "../../../components/Text";
 import EventBubble from "../../../components/EventBubble";
 import MessageBubble from "../../../components/MessageBubble";
 import PollModal from "../../../components/PollModal";
-import theme from "../../../assets/theme";
 import { fetchPersonalEvents } from "../../../store/actions/calendar";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import SystemMessageBubble from "../../../components/SystemMessageBubble";
@@ -57,6 +56,7 @@ class ChatScreen extends Component {
     this.showEventModal = this.showEventModal.bind(this);
     this.sendSystemMessage = this.sendSystemMessage.bind(this);
     this.increaseNumOfVisibleMsg = this.increaseNumOfVisibleMsg.bind(this);
+    // this.scrollToBottom = this.scrollToBottom.bind(this);
   }
 
   messagesRef = firebase.database().ref("messages");
@@ -76,7 +76,8 @@ class ChatScreen extends Component {
           }}
           onPress={() =>
             navigation.navigate("GroupInformation", {
-              group
+              group,
+              headerColor: navigation.getParam("headerColor")
             })
           }
         >
@@ -103,7 +104,8 @@ class ChatScreen extends Component {
           onPress={() =>
             navigation.navigate("GroupCalendar", {
               groupID: group.groupID,
-              title: "Group Calendar"
+              title: "Group Calendar",
+              headerColor: navigation.getParam("headerColor")
             })
           }
         >
@@ -115,7 +117,11 @@ class ChatScreen extends Component {
             style={{ marginRight: 20 }}
           />
         </TouchableOpacity>
-      )
+      ),
+      headerStyle: {
+        backgroundColor: navigation.getParam("headerColor"),
+        borderBottomColor: "transparent",
+      }
     };
   };
 
@@ -134,7 +140,7 @@ class ChatScreen extends Component {
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
       console.log("inside componentWillMount")
       this.props.dispatch(
-        fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, 40))
+        fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
       );
     })
 
@@ -358,14 +364,16 @@ class ChatScreen extends Component {
           style={[
             { flexDirection: "column" },
             item.sender === this.props.uid
-              ? styles.myMessageBubble
-              : styles.yourMessageBubble
+              ? [styles.myMessageBubble, { backgroundColor: this.props.colors.myMsgBubble }]
+              : [styles.yourMessageBubble, { backgroundColor: this.props.colors.yourMsgBubble }]
           ]}
           uid={this.props.uid}
           convertTime={this.convertTime}
           item={item}
           maxWidth={Dimensions.get("window").width}
           mine={item.sender === this.props.uid}
+          textColor={this.props.colors.textColor}
+          usernameColor={this.props.colors.chatUsername}
         />
       );
     } else if (item.messageType === "event") {
@@ -374,8 +382,8 @@ class ChatScreen extends Component {
         <EventBubble
           style={
             item.sender === this.props.uid
-              ? styles.myEventBubble
-              : styles.yourEventBubble
+              ? { ...styles.myEventBubble, backgroundColor: this.props.colors.myMsgBubble }
+              : { ...styles.yourEventBubble, backgroundColor: this.props.colors.yourMsgBubble }
           }
           showEventModal={this.showEventModal}
           uid={this.props.uid}
@@ -384,13 +392,14 @@ class ChatScreen extends Component {
           eventID={eventID}
           item={item}
           convertDate={convertDate}
+          textColor={this.props.colors.textColor}
         />
       );
     } else if (item.messageType === "system") {
-
       return (
         <SystemMessageBubble
           message={item.message}
+          color={this.props.colors.systemMsgBubble}
         />
       )
     } else if (item.messageType === "poll") {
@@ -425,20 +434,19 @@ class ChatScreen extends Component {
     return (
       <View style={{ flex: 1 }}>
         <StatusBar barStyle="light-content" />
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             {Platform.OS === "ios" ? (
               <FlatList
                 onEndReachedThreshold={0}
                 onEndReached={this.increaseNumOfVisibleMsg}
                 ref="messageList"
-                // onContentSizeChange={this.scrollToBottom}
                 style={{
                   padding: 10,
                   height: height,
-                  backgroundColor: theme.colors.light_chat_background
+                  backgroundColor: this.props.colors.chatBackground,
                 }}
-                data={this.props.conversation.slice(0, this.state.numOfVisibleMsg)}
+                data={this.props.conversation}
                 renderItem={this.renderRow}
                 keyExtractor={item => item.timestamp.toString()}
                 ListFooterComponent={this.renderFooter}
@@ -448,18 +456,20 @@ class ChatScreen extends Component {
               />
             ) : (
                 <KeyboardAwareFlatList
+                  onEndReachedThreshold={0}
+                  onEndReached={this.increaseNumOfVisibleMsg}
                   ref="messageList"
-                  onContentSizeChange={this.scrollToBottom}
                   style={{
                     padding: 10,
                     height: height,
-                    backgroundColor: theme.colors.light_chat_background
+                    backgroundColor: this.props.colors.chatBackground
                   }}
                   data={this.props.conversation}
                   renderItem={this.renderRow}
-                  keyExtractor={(item, index) => index.toString()}
                   ListFooterComponent={this.renderFooter}
                   inverted
+                  keyExtractor={item => item.timestamp.toString()}
+                  initialNumToRender={50}
                 />
               )}
           </TouchableWithoutFeedback>
@@ -472,7 +482,8 @@ class ChatScreen extends Component {
               borderTopWidth: StyleSheet.hairlineWidth,
               borderTopColor: "lightgrey",
               bottom: 0,
-              backgroundColor: "white"
+              backgroundColor: this.props.colors.lightMain,
+              borderTopColor: "transparent",
             }}
           >
             <TouchableOpacity
@@ -485,26 +496,31 @@ class ChatScreen extends Component {
               }
               style={{ justifyContent: "center" }}
             >
-              <MyIcon name="add" type="material" size={28} color={cliqueBlue} />
+              <MyIcon name="add" type="material" size={28} color={this.props.colors.chatButtons} />
             </TouchableOpacity>
-            <TextInput
-              autoCapitalize="sentences"
-              style={styles.chatInput}
-              value={this.state.textMessage}
-              onChangeText={this.handleChange("textMessage")}
-              placeholder="Message"
-            />
-            <TouchableOpacity
-              onPress={this.sendMessage}
-              style={{ justifyContent: "center" }}
-            >
-              <MyIcon
-                name="send"
-                type="material"
-                size={28}
-                color={cliqueBlue}
+            <View style={{ flexDirection: "row", flex: 1 }}>
+              <TextInput
+                autoCapitalize="sentences"
+                style={styles.chatInput}
+                value={this.state.textMessage}
+                onChangeText={this.handleChange("textMessage")}
+                placeholder="Message"
+                placeholderTextColor={this.props.colors.placeholderColor}
+                keyboardAppearance={this.props.colors.keyboard}
+                color={this.props.colors.textColor}
               />
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={this.sendMessage}
+                style={{ justifyContent: "center", marginRight: 5 }}
+              >
+                <MyIcon
+                  name="send"
+                  type="material"
+                  size={28}
+                  color={this.props.colors.chatButtons}
+                />
+              </TouchableOpacity>
+            </View>
           </KeyboardAvoidingView>
           <EventModal />
           <PollModal group={this.props.group} />
@@ -522,7 +538,8 @@ const mapStateToProps = (state, ownProps) => {
     uid: (state.authReducer.user || {}).uid,
     conversation: stateOfGroup.messages || [],
     username,
-    group: state.groupsReducer.groups[groupID]
+    group: state.groupsReducer.groups[groupID],
+    colors: state.theme.colors
   };
 };
 
@@ -536,18 +553,18 @@ const styles = StyleSheet.create({
     // alignItems: "center"
   },
   chatInput: {
-    width: "80%",
+    flex: 1,
     padding: 10,
     color: "black",
     bottom: 0,
     fontSize: 16,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    borderTopColor: "transparent"
   },
   yourMessageBubble: {
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-start",
-    backgroundColor: theme.colors.light_chat_yours,
     borderRadius: 10,
     marginBottom: 2,
     paddingLeft: 5,
@@ -558,7 +575,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "auto",
     alignSelf: "flex-end",
-    backgroundColor: theme.colors.light_chat_mine,
     borderRadius: 10,
     marginBottom: 2,
     paddingLeft: 5,
@@ -569,7 +585,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     borderRadius: 20,
     marginBottom: 5,
-    backgroundColor: theme.colors.light_chat_yours,
     width: "auto",
     marginRight: 40
   },
@@ -577,7 +592,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     borderRadius: 20,
     marginBottom: 5,
-    backgroundColor: theme.colors.light_chat_mine,
     width: "auto",
     marginLeft: 50
   }

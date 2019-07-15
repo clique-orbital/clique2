@@ -16,15 +16,15 @@ class PollMessageBubble extends Component {
 
   render() {
     return (
-      <View style={{ marginHorizontal: 50, backgroundColor: "#fff", borderRadius: 15, marginVertical: 5}}>
-        <View style={{ padding: 10, backgroundColor: theme.colors.poll_blue, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
+      <View style={{ marginHorizontal: 50, backgroundColor: this.props.colors.pollMsgBottom, borderRadius: 15, marginVertical: 5 }}>
+        <View style={{ padding: 10, backgroundColor: this.props.colors.pollMsgTop, borderTopLeftRadius: 15, borderTopRightRadius: 15 }}>
           <Text style={{ textAlign: "center", fontSize: 23, color: "#fff" }}>
             {this.props.poll.question}
           </Text>
         </View>
-        <View style={{ padding: 10, }}>
+        <View style={{ padding: 10 }}>
           <TouchableOpacity onPress={this.showPollModal}>
-            <Text style={{ textAlign: "center", color: theme.colors.poll_blue }}>See Poll</Text>
+            <Text style={{ textAlign: "center", color: this.props.colors.textColor }}>See Poll</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -32,4 +32,10 @@ class PollMessageBubble extends Component {
   }
 }
 
-export default connect()(PollMessageBubble);
+const mapStateToProp = state => {
+  return {
+    colors: state.theme.colors
+  }
+}
+
+export default connect(mapStateToProp)(PollMessageBubble);

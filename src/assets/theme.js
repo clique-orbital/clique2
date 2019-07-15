@@ -15,8 +15,82 @@ const colors = {
   dark_chat_username: "#8fc5f1",
   green: "#65c681",
   red: "#c13f3f",
-  poll_blue: "#1965BC"
+  poll_blue: "#1965BC",
 };
+
+const cliqueBlue = "#0f3764";
+
+const lightColors = {
+  cliqueBlue,
+  main: cliqueBlue,
+  lightMain: "#fff",
+  chatList: "#fff",
+  textColor: "#000",
+  chatBackground: "#87b3e2",
+  shadow: "#323643",
+  whiteBlack: "#fff",
+  systemMsgBubble: "#2474f7",
+  myMsgBubble: "#effedd",
+  yourMsgBubble: "#fff",
+  chatUsername: "#3e5d76",
+  chatButtons: cliqueBlue,
+  keyboard: "light",
+  headerColor: cliqueBlue,
+  placeholderColor: "lightgrey",
+  lastMsgUsername: cliqueBlue,
+  pollMsgTop: "#1965BC",
+  pollMsgBottom: "#fff",
+  pollItemTitle: cliqueBlue,
+  pollBar: "#1965BC",
+  pollVoter: "#87A4C6",
+  pollTitle: cliqueBlue,
+  eventResponders: cliqueBlue,
+  hairlineColor: "#CCC",
+  touchOpacity: 0.2,
+  continueButton: "#134782",
+  dayTextColor: "#2d4150",
+  dotColor: "#00adf5",
+  agendaBackground: "#F2F2F2",
+  textSectionTitleColor: "#b6c1cd",
+  textDisabledColor: '#d9e1e8',
+  todayColor: "#00adf5"
+}
+
+const darkColors = {
+  cliqueBlue,
+  main: "#000",
+  lightMain: "#1F1F1F",
+  chatList: "#000",
+  textColor: "#fff",
+  chatBackground: "#000",
+  shadow: "#fff",
+  whiteBlack: "#000",
+  systemMsgBubble: "#2f3f4f",
+  myMsgBubble: "#2A2A2A",
+  yourMsgBubble: "#1F1F1F",
+  chatUsername: "#20E2CD",
+  chatButtons: "#9A9A9A",
+  keyboard: "dark",
+  headerColor: "#1F1F1F",
+  placeholderColor: "#989898",
+  lastMsgUsername: "#fff",
+  pollMsgTop: "#2EE09C",
+  pollMsgBottom: "#9A9A9A",
+  pollItemTitle: "#9A9A9A",
+  pollBar: "#2EE09C",
+  pollVoter: "#686868",
+  pollTitle: "#fff",
+  eventResponders: "#1965BC",
+  hairlineColor: "#1F1F1F",
+  touchOpacity: 0.8,
+  continueButton: "#1F1F1F",
+  dayTextColor: "#b6c1cd",
+  dotColor: "#3C7CC7",
+  agendaBackground: "#000",
+  textSectionTitleColor: "#fff",
+  textDisabledColor: '#434343',
+  todayColor: "#70CCCF"
+}
 
 const sizes = {
   // global sizes
@@ -60,4 +134,4 @@ const fonts = {
   }
 };
 
-export default { colors, sizes, fonts };
+export default { colors, sizes, fonts, lightColors, darkColors };

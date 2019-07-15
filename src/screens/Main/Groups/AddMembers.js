@@ -5,14 +5,18 @@ import { addMembers } from "../../../store/actions/groups";
 import { connect } from "react-redux";
 
 class AddMembers extends React.Component {
-  static navigationOptions = () => {
+  static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
       headerTitle: (
         <View style={{ bottom: 5, justifyContent: "center" }}>
           <Text style={{ fontSize: 20, color: "white" }}>New members</Text>
         </View>
-      )
+      ),
+      headerStyle: {
+        backgroundColor: navigation.getParam("headerColor"),
+        borderBottomColor: "transparent"
+      }
     };
   };
 

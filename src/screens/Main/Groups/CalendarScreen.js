@@ -5,7 +5,11 @@ class CalendarScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
-      headerTitle: navigation.getParam("title") || (this.props || {}).title
+      headerTitle: navigation.getParam("title") || (this.props || {}).title,
+      headerStyle: {
+        backgroundColor: navigation.getParam("headerColor"),
+        borderBottomColor: "transparent"
+      },
     };
   };
 
@@ -18,7 +22,8 @@ class CalendarScreen extends React.Component {
         nav={dateString =>
           this.props.navigation.navigate("CreateEvents", {
             groupID: this.props.navigation.getParam("groupID"),
-            date: dateString
+            date: dateString,
+            headerColor: this.props.navigation.getParam("headerColor")
           })
         }
       />

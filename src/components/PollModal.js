@@ -9,6 +9,7 @@ import { cliqueBlue } from "../assets/constants";
 import theme from "../assets/theme";
 import _ from "lodash";
 import firebase from "react-native-firebase";
+import MyIcon from "./MyIcon";
 
 class PollModal extends Component {
   constructor(props) {
@@ -104,8 +105,8 @@ class PollModal extends Component {
     return (
       <View style={{ marginBottom: 15 }}>
         <View style={{ alignItems: "center" }}>
-          <View style={{ width: "75%", marginLeft: 10 }}>
-            <Text color={theme.colors.cliqueBlue} h3 left>
+          <View style={{ width: "75%", marginLeft: 10, marginBottom: 3 }}>
+            <Text color={this.props.colors.pollItemTitle} h3 left>
               {item.title}
             </Text>
           </View>
@@ -125,13 +126,13 @@ class PollModal extends Component {
                 width: 20,
                 borderRadius: 10,
                 borderWidth: 2,
-                borderColor: "#1965BC",
-                padding: 1
+                borderColor: this.props.colors.pollBar,
+                padding: 1,
               }}
             >
               <View
                 style={{
-                  backgroundColor: userAgreed ? "#1965BC" : "#fff",
+                  backgroundColor: userAgreed ? this.props.colors.pollBar : this.props.colors.lightMain,
                   flex: 1,
                   borderRadius: 10
                 }}
@@ -145,7 +146,7 @@ class PollModal extends Component {
               borderRadius: 10,
               width: "75%",
               borderWidth: 2,
-              borderColor: "#1965BC",
+              borderColor: this.props.colors.pollBar,
               flexDirection: "column",
               justifyContent: "flex-start"
             }}
@@ -153,7 +154,7 @@ class PollModal extends Component {
           >
             <View
               style={{
-                backgroundColor: "#1965BC",
+                backgroundColor: this.props.colors.pollBar,
                 flex: 1,
                 borderRadius: 10,
                 width: (length !== 0 ? `${(length / highestVote) * 100}%` : 14)// to be adjusted
@@ -168,14 +169,14 @@ class PollModal extends Component {
               height: 20
             }}
           >
-            <Text h3 color="#1965BC">
+            <Text h3 color={this.props.colors.pollBar}>
               {length}
             </Text>
           </View>
         </View>
         {this.state.showIndex.includes(index) && (<View style={{ alignItems: "center" }}>
           <View style={{ width: "75%", marginLeft: 10, marginTop: 2 }}>
-            <Text color="#87A4C6" h5 left>
+            <Text color={this.props.colors.pollVoter} size={12} left>
               {this.state.voters[index]}
             </Text>
           </View>
@@ -211,15 +212,15 @@ class PollModal extends Component {
             style={{
               height: "70%",
               width: "100%",
-              backgroundColor: "#fff",
+              backgroundColor: this.props.colors.lightMain,
               borderTopLeftRadius: 40,
               borderTopRightRadius: 40
             }}
           >
             <TouchableOpacity
               style={{
-                height: 20,
-                width: 20,
+                height: 30,
+                width: 30,
                 position: "relative",
                 top: "5%",
                 left: "7%",
@@ -227,12 +228,10 @@ class PollModal extends Component {
               }}
               onPress={this.hideModal}
             >
-              <FastImage
-                source={require("../assets/x.png")}
-                style={{
-                  height: 20,
-                  width: 20
-                }}
+              <MyIcon
+                type="material"
+                name="clear" size={28}
+                color={this.props.colors.pollTitle}
               />
             </TouchableOpacity>
             <View style={{ flex: 1 }}>
@@ -244,7 +243,7 @@ class PollModal extends Component {
                   flex: 1
                 }}
               >
-                <Text style={{ fontSize: 30, color: cliqueBlue }}>
+                <Text style={{ fontSize: 30, color: this.props.colors.pollTitle }}>
                   {this.props.poll.question}
                 </Text>
               </View>
@@ -265,6 +264,7 @@ const mapStateToProps = state => {
     visibility: modalVisibility,
     poll,
     uid: state.authReducer.user.uid,
+    colors: state.theme.colors
   };
 };
 export default connect(mapStateToProps)(PollModal);

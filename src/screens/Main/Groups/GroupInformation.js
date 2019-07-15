@@ -31,24 +31,8 @@ class GroupInformation extends React.Component {
       headerTintColor: "#fff",
       headerStyle: {
         borderBottomColor: "transparent",
-        height: Dimensions.get("window").height * 0.17,
-        backgroundColor: theme.colors.cliqueBlue
+        backgroundColor: navigation.getParam("headerColor")
       },
-      headerTitle: (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "flex-start",
-            flexDirection: "row",
-            alignItems: "center"
-          }}
-        >
-          <GroupPicture value={0.2} source={{ uri: group.photoURL }} />
-          <Text white medium h2 style={{ paddingLeft: "5%" }}>
-            {group.groupName}
-          </Text>
-        </View>
-      ),
       headerLeft: (
         <TouchableOpacity
           onPress={() => {
@@ -67,7 +51,8 @@ class GroupInformation extends React.Component {
           onPress={() => navigation.navigate("GroupDetails", {
             title: "Edit Group",
             type: "edit",
-            groupID: group.groupID
+            groupID: group.groupID,
+            headerColor: navigation.getParam("headerColor")
           })}
           style={{ paddingTop: 12, paddingRight: 10, alignSelf: "flex-start" }}
         >
@@ -138,7 +123,7 @@ class GroupInformation extends React.Component {
         }
       ],
       rowId: item.id,
-      backgroundColor: "#fff"
+      backgroundColor: this.props.colors.whiteBlack
     };
     return (
       <SwipeOut {...swipeSettings}>
@@ -148,14 +133,14 @@ class GroupInformation extends React.Component {
             width: "100%",
             paddingVertical: 5,
             alignItems: "center",
-            borderBottomColor: "lightgrey",
+            borderBottomColor: this.props.colors.hairlineColor,
             borderBottomWidth: StyleSheet.hairlineWidth
           }}
         >
           <View style={{ paddingLeft: 10 }}>
             <GroupPicture source={{ uri: item.photoURL }} value={0.1} />
           </View>
-          <Text h4 style={{ paddingLeft: "5%" }}>
+          <Text h2 style={{ paddingLeft: "5%", color: this.props.colors.textColor }}>
             {item.displayName}
           </Text>
         </View>
@@ -194,28 +179,28 @@ class GroupInformation extends React.Component {
         onPress={() =>
           this.props.navigation.navigate("AddMembers", {
             group: this.props.navigation.getParam("group"),
-            populateState: this.populateState
+            populateState: this.populateState,
+            headerColor: this.props.navigation.getParam("headerColor")
           })
         }
         style={{
           flexDirection: "row",
           alignItems: "center",
-          borderBottomColor: "lightgrey",
+          borderBottomColor: this.props.colors.hairlineColor,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          paddingBottom: "5%",
-          paddingTop: "3%",
-          paddingHorizontal: "5%"
+          justifyContent: "center",
+          paddingVertical: 20
         }}
       >
         <MyIcon
           name="person-add"
           size={30}
-          color={theme.colors.light_chat_username}
+          color="#1965BC"
           type="material"
         />
         <Text
           h3
-          color={theme.colors.light_chat_username}
+          color="#1965BC"
           style={{ paddingLeft: "3%" }}
         >
           Add Member
@@ -238,9 +223,24 @@ class GroupInformation extends React.Component {
   };
 
   render() {
+    const group = this.props.navigation.getParam("group");
+
     return (
-      <View style={{ display: "flex", height: "100%" }}>
+      <View style={{ display: "flex", height: "100%", backgroundColor: this.props.colors.whiteBlack }}>
         <StatusBar barStyle="light-content" />
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            height: "auto",
+            backgroundColor: this.props.navigation.getParam("headerColor")
+          }}
+        >
+          <GroupPicture value={0.2} source={{ uri: group.photoURL }} />
+          <Text white medium h2 style={{ marginVertical: 20 }}>
+            {group.groupName}
+          </Text>
+        </View>
         {this.renderFlatList()}
       </View>
     );
@@ -251,6 +251,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     self: state.authReducer.user,
     group: state.groupsReducer.groups[ownProps.navigation.getParam("group").groupID],
+    colors: state.theme.colors
   };
 };
 

@@ -3,17 +3,21 @@ import { View, Text } from "react-native";
 import ContactsList from "../../../components/ContactsList";
 
 class GroupMembersSelect extends React.Component {
-  static navigationOptions = () => {
+  static navigationOptions = ({ navigation }) => {
     return {
       headerTintColor: "#fff",
       headerTitle: (
         <View style={{ bottom: 5, justifyContent: "center" }}>
-          <Text style={{ fontSize: 20, color: "white" }}>New Group</Text>
-          <Text style={{ color: "white", fontSize: 12 }}>
-            Pick your clique members
+          <Text style={{ fontSize: 20, color: "white", textAlign: "center" }}>New Group</Text>
+          <Text style={{ color: "white", fontSize: 12, textAlign: "center" }}>
+            Pick your clique
           </Text>
         </View>
-      )
+      ),
+      headerStyle: {
+        backgroundColor: navigation.getParam("headerColor"),
+        borderBottomColor: "transparent",
+      }
     };
   };
 
@@ -27,6 +31,7 @@ class GroupMembersSelect extends React.Component {
             users: formValues,
             title: "Create Groups",
             type: "create",
+            headerColor: this.props.navigation.getParam("headerColor")
           })
         }}
       />

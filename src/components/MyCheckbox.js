@@ -21,7 +21,7 @@ export default class MyCheckBox extends React.Component {
       if (checked) {
         this.props.onChange(this.state.value);
         name = "ios-checkmark-circle";
-        color = "green";
+        color = "#65c681";
         this.props.callback(true);
       } else {
         this.props.onChange("");
@@ -36,7 +36,7 @@ export default class MyCheckBox extends React.Component {
   render() {
     return (
       <TouchableOpacity onPress={this.check} style={styles.row}>
-        <Text black style={styles.text}>
+        <Text black style={[styles.text, { color: this.props.textColor }]}>
           {this.props.title}
         </Text>
         <MyIcon

@@ -41,7 +41,7 @@ class EventModal extends Component {
   renderRow = ({ item }) => {
     return (
       <View style={{ flex: 1, height: 30, justifyContent: "center" }}>
-        <Text style={{ textAlign: "center", fontSize: 18, color: cliqueBlue }}>
+        <Text style={{ textAlign: "center", fontSize: 18, color: this.props.colors.eventResponders }}>
           @{item}
         </Text>
       </View>
@@ -162,10 +162,10 @@ class EventModal extends Component {
           marginBottom: 20
         }}
       >
-        <Text h1 center black medium>
+        <Text h1 center color={this.props.colors.textColor} medium>
           {(this.props.event || {}).title}
         </Text>
-        <Text h3 center black medium style={{ marginTop: 10 }}>
+        <Text h3 center color={this.props.colors.textColor} medium style={{ marginTop: 10 }}>
           {this.props.groupName}
         </Text>
       </View>
@@ -224,7 +224,7 @@ class EventModal extends Component {
           onSwipeComplete={this.hideModal}
           style={{ margin: 0 }}
         >
-          <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}>
             <View
               style={{
                 height: "5%",
@@ -233,17 +233,19 @@ class EventModal extends Component {
               }}
             >
               <TouchableOpacity
-                style={{ height: 50, width: 50, marginLeft: 8, flex: 1 }}
+                style={{
+                  height: 30,
+                  width: 30,
+                  position: "relative",
+                  marginLeft: 15,
+                  marginTop: 3,
+                }}
                 onPress={this.hideModal}
               >
-                <Image
-                  source={require("../../assets/x.png")}
-                  style={{
-                    marginLeft: 13,
-                    marginTop: 10,
-                    height: 20,
-                    width: 20
-                  }}
+                <MyIcon
+                  type="material"
+                  name="clear" size={28}
+                  color={this.props.colors.pollTitle}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -391,6 +393,7 @@ const mapStateToProps = state => {
     displayName: state.authReducer.user.displayName,
     groupName,
     groupID,
+    colors: state.theme.colors
   };
 };
 

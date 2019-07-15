@@ -10,11 +10,11 @@ class EventBubble extends React.Component {
           style={styles.eventBubbleContent}
           onPress={this.props.showEventModal(this.props.item.event)}
         >
-          <View>
-            <Text medium h2 style={{ ...styles.eventDetails }}>
+          <View style={{}}>
+            <Text medium h2 style={[styles.eventDetails, { color: this.props.textColor }]}>
               {this.props.item.event.title}
             </Text>
-            <Text light body style={styles.eventDetails}>
+            <Text light body style={[styles.eventDetails, { color: this.props.textColor }]}>
               {this.props.convertDate(this.props.item.event.from) +
                 " to\n" +
                 this.props.convertDate(this.props.item.event.to)}
@@ -24,7 +24,8 @@ class EventBubble extends React.Component {
               body
               style={{
                 ...styles.eventDetails,
-                display: this.props.item.event.location ? "flex" : "none"
+                display: this.props.item.event.location ? "flex" : "none",
+                color: this.props.textColor
               }}
             >
               Location: {this.props.item.event.location}
@@ -33,7 +34,7 @@ class EventBubble extends React.Component {
           <View style={{ justifyContent: "flex-end" }}>
             <Text
               style={{
-                color: "black",
+                color: this.props.textColor,
                 paddingRight: 13,
                 paddingBottom: 7,
                 fontSize: 10
@@ -95,7 +96,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   eventDetails: {
-    color: "black",
     padding: 7,
     flex: 1
   },

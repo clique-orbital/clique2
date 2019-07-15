@@ -14,6 +14,7 @@ import Auth from "./src/screens/Auth/Auth";
 import UserDetails from "./src/screens/Auth/UserDetails";
 import MyIcon from "./src/components/MyIcon";
 import firebase from "react-native-firebase";
+import storage from "redux-persist/lib/storage";
 
 const AppNavigator = createBottomTabNavigator(
   {
@@ -35,7 +36,7 @@ const AppNavigator = createBottomTabNavigator(
           iconType = "material-community";
           iconName = `calendar${
             focused || Platform.OS === "ios" ? "" : "-blank-outline"
-          }`;
+            }`;
         } else if (routeName === "Notifications") {
           iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {
@@ -56,7 +57,10 @@ const AppNavigator = createBottomTabNavigator(
     tabBarOptions: {
       showLabel: false,
       activeTintColor: "black",
-      inactiveTintColor: "gray"
+      inactiveTintColor: "gray",
+      style: {
+        // backgroundColor: "black"
+      }
     }
   }
 );
@@ -84,8 +88,10 @@ const InitialNavigator = createSwitchNavigator(
 const AppContainer = createAppContainer(InitialNavigator);
 
 class App extends React.Component {
+
   async componentDidMount() {
     // when app is closed and notification is tapped
+    storage.getAllKeys(keys => console.log(keys))
     const notificationOpen = await firebase
       .notifications()
       .getInitialNotification();
@@ -142,7 +148,7 @@ class App extends React.Component {
           .removeDeliveredNotification(notification.notificationId);
       });
 
-    this.messageListener = firebase.messaging().onMessage(message => {});
+    this.messageListener = firebase.messaging().onMessage(message => { });
   }
 
   componentWillUnmount() {
@@ -154,7 +160,7 @@ class App extends React.Component {
 
   render() {
     if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
-    return <AppContainer />;
+    return <AppContainer color={"black"} />;
   }
 }
 
