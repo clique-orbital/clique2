@@ -57,7 +57,7 @@ const lightColors = {
 };
 
 const darkColors = {
-  cliqueBlue,
+  cliqueBlue: "#061729",
   main: "#000",
   lightMain: "#1F1F1F",
   chatList: "#000",
@@ -81,7 +81,7 @@ const darkColors = {
   pollVoter: "#686868",
   pollTitle: "#fff",
   eventResponders: "#1965BC",
-  hairlineColor: "grey",
+  hairlineColor: "#1f1f1f",
   touchOpacity: 0.8,
   continueButton: "#1F1F1F",
   dayTextColor: "#b6c1cd",

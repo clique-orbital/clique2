@@ -26,7 +26,7 @@ class GroupPicture extends React.Component {
     const style = {
       height: Dimensions.get("window").width * value,
       width: Dimensions.get("window").width * value,
-      borderRadius: (Dimensions.get("window").width * value) / 2,
+      borderRadius: (Dimensions.get("window").width * value) / 2
     };
     if (!this.props.source.uri) {
       src = {
@@ -38,8 +38,8 @@ class GroupPicture extends React.Component {
         {cached ? (
           this.cacheImage(src, style)
         ) : (
-            <FastImage source={src} style={style} />
-          )}
+          <FastImage source={src} style={style} />
+        )}
       </View>
     );
   }

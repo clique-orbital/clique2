@@ -7,7 +7,7 @@ import {
 } from "react-navigation";
 import { connect } from "react-redux";
 import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
-import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
+// import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
 import CalendarStack from "./src/screens/Main/CalendarStack";
 import Auth from "./src/screens/Auth/Auth";
@@ -24,7 +24,7 @@ const AppNavigator = createBottomTabNavigator(
   {
     Groups: GroupScreenStack,
     Calendar: CalendarStack,
-    Notifications: NotificationsScreen,
+    // Notifications: NotificationsScreen,
     Profile: SettingsScreen
   },
   {
@@ -41,8 +41,8 @@ const AppNavigator = createBottomTabNavigator(
           iconName = `calendar${
             focused || Platform.OS === "ios" ? "" : "-blank-outline"
           }`;
-        } else if (routeName === "Notifications") {
-          iconName = `notifications${focused ? "-active" : "-none"}`;
+          // } else if (routeName === "Notifications") {
+          // iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {
           iconName = `person${focused ? "" : "-outline"}`;
         }
@@ -160,9 +160,10 @@ class App extends React.Component {
   }
 
   render() {
-    if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
+    if (Platform.OS === "android")
+      StatusBar.setBackgroundColor(this.props.colors.cliqueBlue);
     return <AppContainer color={"black"} />;
   }
 }
 
-export default connect()(App);
+export default connect(state => ({ colors: state.theme.colors }))(App);
