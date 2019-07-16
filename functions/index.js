@@ -4,21 +4,21 @@
 // // initializes your application
 // admin.initializeApp(functions.config().firebase);
 
-// exports.sendPushNotificationMessage = functions.database
-//   .ref(`/messages/f4bdd0c1-cd29-431a-b7e9-1d4e0fe4baee`)
-//   .onWrite(event => {
-//     const messages = event.val();
-//     console.log(messages);
-//     const pushToken = "dctuzVhN6Nw:APA91bHAI4_TGAG_ptwzswAGfe5zx_6w79mrYx_RUcMsLEGI8TNkSHqc0P5fLr89uB4brLlS7bAP2HiFxHm_Ss4SaYWEf8Cn5MNTQQh8XdPMv74fSEUv6G7cQlyDynjRGNw1_DGkULzm";
-//     let payload = {
-//       notification: {
-//         title: "Testing Clique Message Notification",
-//         body: "Hello World!"
-//       }
-//     }
+exports.sendPushNotificationMessage = functions.database
+  .ref(`/messages/f4bdd0c1-cd29-431a-b7e9-1d4e0fe4baee`)
+  .onWrite(event => {
+    const messages = event.val();
+    console.log(messages);
+    const pushToken = "dctuzVhN6Nw:APA91bHAI4_TGAG_ptwzswAGfe5zx_6w79mrYx_RUcMsLEGI8TNkSHqc0P5fLr89uB4brLlS7bAP2HiFxHm_Ss4SaYWEf8Cn5MNTQQh8XdPMv74fSEUv6G7cQlyDynjRGNw1_DGkULzm";
+    let payload = {
+      notification: {
+        title: "Testing Clique Message Notification",
+        body: "Hello World!"
+      }
+    }
 
-//     return admin.messaging().sendToDevice([pushToken], payload);
-//   });
+    return admin.messaging().sendToDevice([pushToken], payload);
+  });
 
 // exports.sendPushNotification = functions.database()
 //   .ref("messages")

@@ -15,11 +15,15 @@ class LoadingView extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: cliqueBlue,
-    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
     alignItems: "center",
-    width: "100%"
+    justifyContent: "center",
+    backgroundColor: cliqueBlue,
+    elevation: 3
   },
   iconStyle: {
     width: "50%",

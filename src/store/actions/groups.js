@@ -12,6 +12,7 @@ import {
 import _ from "lodash";
 import { removeGroupEvents } from "./calendar";
 import { removeGroupMessages } from "./messages";
+import ImageResizer from 'react-native-image-resizer';
 
 const db = firebase.database();
 
@@ -92,23 +93,26 @@ const newGroupCreator = async (groupName, groupID, photoURL, users, data) => {
     .catch(err => console.log(err));
 };
 
-const addGroupPicture = async pictureUri => {
-  return firebase
-    .storage()
-    .ref(`images/group_pictures/${new Date().getTime()}.jpeg`)
-    .put(pictureUri)
-    .then(snapshot => {
-      if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-        return snapshot.downloadURL;
-      }
+const addGroupPicture = async (pictureUri, groupID) => {
+  return ImageResizer.createResizedImage(pictureUri, 400, 300, 'JPEG', 80)
+    .then(({ uri }) => {
+      return firebase
+        .storage()
+        .ref(`images/group_pictures/${groupID}.jpeg`)
+        .put(uri)
+        .then(snapshot => {
+          if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+            return snapshot.downloadURL;
+          }
+        })
+        .catch(err => {
+          console.log("Add group picture error:", err.message);
+        });
     })
-    .catch(err => {
-      console.log("Add group picture error:", err.message);
-    });
 };
 
 export const editGroup = (groupID, groupName, groupPicture) => async dispatch => {
-  const url = await addGroupPicture(groupPicture);
+  const url = await addGroupPicture(groupPicture, groupID);
   await db.ref(`groups/${groupID}/groupName`).set(groupName);
   await db.ref(`groups/${groupID}/photoURL`).set(url);
   const groupSnapshot = await db.ref(`groups/${groupID}`).once("value");
@@ -125,16 +129,17 @@ export const createGroup = (
   groupPicture,
   filetype,
   myuser,
+  myDisplayName,
   data,
   users = []
 ) => async dispatch => {
-  let users_info = { [myuser]: true };
+  let users_info = { [myuser]: myDisplayName };
   const groupID = uuidv4();
   for (let user of users) {
-    users_info = { ...users_info, [user.uid]: true };
+    users_info = { ...users_info, [user.uid]: user.displayName };
   }
 
-  const url = await addGroupPicture(groupPicture, filetype); //filetype not used?
+  const url = await addGroupPicture(groupPicture, groupID);
   newGroupCreator(groupName, groupID, url, users_info, data).then(() => {
     return db
       .ref("groups")
@@ -173,7 +178,6 @@ export const removeUser = (uid, groupID, leave) => async dispatch => {
 };
 
 export const deleteGroupFromDb = (groupID, users) => async dispatch => {
-  console.log("Inside deleteGroupFromDb");
   users = _.keys(users).map(uid => {
     const userAttendingPromise = db.ref(`users/${uid}/attending/${groupID}`).remove();
     const userNotAttendingPromise = db.ref(`users/${uid}/notAttending/${groupID}`).remove();
@@ -182,16 +186,19 @@ export const deleteGroupFromDb = (groupID, users) => async dispatch => {
   });
   Promise.all(_.flatten(users))
     .then(async () => {
-      console.log("inside promise.all.then()")
       await db.ref(`events/${groupID}`).remove();
       await db.ref(`messages/${groupID}`).remove();
       await db.ref(`groups/${groupID}`).remove();
     })
     .then(() => {
-      console.log("inside promise.all.then().then()")
       dispatch(removeGroupEvents(groupID));
       dispatch(removeGroupMessages(groupID));
-    });
+    })
+    .then(async () => {
+      const ref = await firebase.storage().ref(`images/group_pictures/${groupID}.jpeg`);
+      console.log(ref);
+      ref.delete();
+    })
 };
 
 const addMemberToGroup = (uid, groupID) => {
