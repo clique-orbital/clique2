@@ -48,7 +48,7 @@ class ChatScreen extends Component {
       dateOfLastMsg: new Date().getDate(),
       pollModalVisibility: false,
       numOfVisibleMsg: 40,
-      isRefreshing: false,
+      isRefreshing: false
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -76,7 +76,7 @@ class ChatScreen extends Component {
           }}
           onPress={() =>
             navigation.navigate("GroupInformation", {
-              group,
+              group
             })
           }
         >
@@ -103,7 +103,7 @@ class ChatScreen extends Component {
           onPress={() =>
             navigation.navigate("GroupCalendar", {
               groupID: group.groupID,
-              title: "Group Calendar",
+              title: "Group Calendar"
             })
           }
         >
@@ -117,7 +117,7 @@ class ChatScreen extends Component {
         </TouchableOpacity>
       ),
       headerStyle: {
-        borderBottomColor: "transparent",
+        borderBottomColor: "transparent"
       }
     };
   };
@@ -127,18 +127,24 @@ class ChatScreen extends Component {
       groupName: this.props.group.groupName
     });
     this.props.dispatch(setToZero(this.state.groupID));
-    firebase.database().ref(`groups/${this.state.groupID}`).on("child_changed", snapshot => {
-      this.props.dispatch(setToZero(this.state.groupID));
-    })
+    firebase
+      .database()
+      .ref(`groups/${this.state.groupID}`)
+      .on("child_changed", snapshot => {
+        this.props.dispatch(setToZero(this.state.groupID));
+      });
   }
 
   componentWillMount() {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
       this.props.dispatch(
-        fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
+        fetchConversation(
+          groupID,
+          this.sort(values(snapshot.val())).slice(0, this.state.numOfVisibleMsg)
+        )
       );
-    })
+    });
 
     this.keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -162,8 +168,8 @@ class ChatScreen extends Component {
   sort = messages => {
     return messages.sort((message1, message2) => {
       return message2.timestamp - message1.timestamp;
-    })
-  }
+    });
+  };
 
   handleChange = key => val => {
     this.setState({
@@ -227,19 +233,19 @@ class ChatScreen extends Component {
   };
 
   sendSystemMessage = text => {
-    const groupID = this.state.groupID
+    const groupID = this.state.groupID;
     const msgID = this.messagesRef.child(`${groupID}`).push().key;
     const message = {
       messageType: "system",
       message: text,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       sender: ""
-    }
+    };
     this.messagesRef
       .child(`${groupID}`)
       .child(`${msgID}`)
       .set(message);
-  }
+  };
 
   respondToInvitation = (eventID, response) => async () => {
     const eventSnapshot = await firebase
@@ -268,7 +274,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -276,11 +282,13 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
-      this.sendSystemMessage(`${this.props.username} is attending ${event.title}!`);
+      this.sendSystemMessage(
+        `${this.props.username} is attending ${event.title}!`
+      );
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     } else {
       updatedEvent = {
@@ -293,7 +301,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -301,11 +309,13 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
-      this.sendSystemMessage(`${this.props.username} is not attending ${event.title}!`);
+      this.sendSystemMessage(
+        `${this.props.username} is not attending ${event.title}!`
+      );
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     }
     firebase
@@ -360,8 +370,14 @@ class ChatScreen extends Component {
           style={[
             { flexDirection: "column" },
             item.sender === this.props.uid
-              ? [styles.myMessageBubble, { backgroundColor: this.props.colors.myMsgBubble }]
-              : [styles.yourMessageBubble, { backgroundColor: this.props.colors.yourMsgBubble }]
+              ? [
+                  styles.myMessageBubble,
+                  { backgroundColor: this.props.colors.myMsgBubble }
+                ]
+              : [
+                  styles.yourMessageBubble,
+                  { backgroundColor: this.props.colors.yourMsgBubble }
+                ]
           ]}
           uid={this.props.uid}
           convertTime={this.convertTime}
@@ -378,8 +394,14 @@ class ChatScreen extends Component {
         <EventBubble
           style={
             item.sender === this.props.uid
-              ? { ...styles.myEventBubble, backgroundColor: this.props.colors.myMsgBubble }
-              : { ...styles.yourEventBubble, backgroundColor: this.props.colors.yourMsgBubble }
+              ? {
+                  ...styles.myEventBubble,
+                  backgroundColor: this.props.colors.myMsgBubble
+                }
+              : {
+                  ...styles.yourEventBubble,
+                  backgroundColor: this.props.colors.yourMsgBubble
+                }
           }
           showEventModal={this.showEventModal}
           uid={this.props.uid}
@@ -397,13 +419,9 @@ class ChatScreen extends Component {
           message={item.message}
           color={this.props.colors.systemMsgBubble}
         />
-      )
+      );
     } else if (item.messageType === "poll") {
-      return (
-        <PollMessageBubble
-          poll={item.pollObject}
-        />
-      )
+      return <PollMessageBubble poll={item.pollObject} />;
     }
   };
 
@@ -414,15 +432,20 @@ class ChatScreen extends Component {
   increaseNumOfVisibleMsg = () => {
     console.log("refreshing");
     const { groupID, numOfVisibleMsg } = this.state;
-    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 20 }
-      , () => {
-        this.messagesRef.child(`${groupID}`).once("value", snapshot => {
-          this.props.dispatch(
-            fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
-          );
-        });
-      })
-  }
+    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 20 }, () => {
+      this.messagesRef.child(`${groupID}`).once("value", snapshot => {
+        this.props.dispatch(
+          fetchConversation(
+            groupID,
+            this.sort(values(snapshot.val())).slice(
+              0,
+              this.state.numOfVisibleMsg
+            )
+          )
+        );
+      });
+    });
+  };
 
   render() {
     let height = Dimensions.get("window").height;
@@ -430,7 +453,9 @@ class ChatScreen extends Component {
     return (
       <View style={{ flex: 1 }}>
         <StatusBar barStyle="light-content" />
-        <SafeAreaView style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}>
+        <SafeAreaView
+          style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}
+        >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             {Platform.OS === "ios" ? (
               <FlatList
@@ -440,7 +465,7 @@ class ChatScreen extends Component {
                 style={{
                   padding: 10,
                   height: height,
-                  backgroundColor: this.props.colors.chatBackground,
+                  backgroundColor: this.props.colors.chatBackground
                 }}
                 data={this.props.conversation}
                 renderItem={this.renderRow}
@@ -451,23 +476,23 @@ class ChatScreen extends Component {
                 extraData={this.state.numOfVisibleMsg}
               />
             ) : (
-                <KeyboardAwareFlatList
-                  onEndReachedThreshold={0}
-                  onEndReached={this.increaseNumOfVisibleMsg}
-                  ref="messageList"
-                  style={{
-                    padding: 10,
-                    height: height,
-                    backgroundColor: this.props.colors.chatBackground
-                  }}
-                  data={this.props.conversation}
-                  renderItem={this.renderRow}
-                  ListFooterComponent={this.renderFooter}
-                  inverted
-                  keyExtractor={item => item.timestamp.toString()}
-                  initialNumToRender={50}
-                />
-              )}
+              <KeyboardAwareFlatList
+                onEndReachedThreshold={0}
+                onEndReached={this.increaseNumOfVisibleMsg}
+                ref="messageList"
+                style={{
+                  padding: 10,
+                  height: height,
+                  backgroundColor: this.props.colors.chatBackground
+                }}
+                data={this.props.conversation}
+                renderItem={this.renderRow}
+                ListFooterComponent={this.renderFooter}
+                inverted
+                keyExtractor={item => item.timestamp.toString()}
+                initialNumToRender={50}
+              />
+            )}
           </TouchableWithoutFeedback>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
@@ -479,7 +504,7 @@ class ChatScreen extends Component {
               borderTopColor: "lightgrey",
               bottom: 0,
               backgroundColor: this.props.colors.lightMain,
-              borderTopColor: "transparent",
+              borderTopColor: "transparent"
             }}
           >
             <TouchableOpacity
@@ -492,7 +517,12 @@ class ChatScreen extends Component {
               }
               style={{ justifyContent: "center" }}
             >
-              <MyIcon name="add" type="material" size={28} color={this.props.colors.chatButtons} />
+              <MyIcon
+                name="add"
+                type="material"
+                size={28}
+                color={this.props.colors.chatButtons}
+              />
             </TouchableOpacity>
             <View style={{ flexDirection: "row", flex: 1 }}>
               <TextInput
@@ -503,7 +533,6 @@ class ChatScreen extends Component {
                 placeholder="Message"
                 placeholderTextColor={this.props.colors.placeholderColor}
                 keyboardAppearance={this.props.colors.keyboard}
-                color={this.props.colors.textColor}
               />
               <TouchableOpacity
                 onPress={this.sendMessage}
@@ -521,7 +550,7 @@ class ChatScreen extends Component {
           <EventModal />
           <PollModal group={this.props.group} />
         </SafeAreaView>
-      </View >
+      </View>
     );
   }
 }
