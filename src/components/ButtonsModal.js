@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 
 import MyIcon from "./MyIcon";
@@ -9,20 +9,21 @@ class ButtonsModal extends React.Component {
   state = { visible: this.props.visible };
 
   renderIcon = name => {
-    const { groupID, uid, username } = this.props;
+    const { groupID, uid, username, navigation } = this.props;
 
     return (
       <TouchableOpacity
         style={styles.icon}
-        onPress={() =>
+        onPress={() => {
+          this.props.setFalse();
           name === "poll"
-            ? this.props.navigation.navigate("CreatePoll", {
+            ? navigation.navigate("CreatePoll", {
                 groupID,
                 uid,
                 username
               })
-            : this.props.navigation.navigate("CreateEvents", { groupID })
-        }
+            : navigation.navigate("CreateEvents", { groupID });
+        }}
       >
         <MyIcon name={name} type="material" size={28} color="white" />
       </TouchableOpacity>
@@ -35,14 +36,30 @@ class ButtonsModal extends React.Component {
         <Modal
           isVisible={this.props.visible}
           swipeDirection="down"
-          swipeThreshold={200}
           onSwipeComplete={this.props.setFalse}
-          style={{ width: "100%", margin: 0, justifyContent: "flex-end" }}
+          onBackdropPress={this.props.setFalse}
+          onBackButtonPress={this.props.setFalse}
+          backdropOpacity={0}
+          avoidKeyboard={true}
+          style={{
+            width: "100%",
+            margin: 0,
+            justifyContent: "flex-end"
+          }}
         >
-          <View style={StyleSheet.modal}>
+          <SafeAreaView
+            style={{
+              flexDirection: "row",
+              height: 50,
+              width: 100,
+              backgroundColor: "#fff",
+              borderRadius: 10,
+              bottom: 50 // probably not good
+            }}
+          >
             {this.renderIcon("poll")}
             {this.renderIcon("event-note")}
-          </View>
+          </SafeAreaView>
         </Modal>
       </View>
     );
@@ -50,15 +67,14 @@ class ButtonsModal extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  modal: { flexDirection: "row", flex: 1 },
   icon: {
     backgroundColor: cliqueBlue,
     height: 40,
     width: 40,
     borderRadius: 20,
-    flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    margin: 5
   }
 });
 

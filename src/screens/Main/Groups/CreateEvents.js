@@ -329,8 +329,14 @@ const mapStateToProps = (state, ownProps) => {
     title: createEventsReducerState.title,
     fromDateVisibility: createEventsReducerState.fromDateVisibility,
     toDateVisibility: createEventsReducerState.toDateVisibility,
-    fromDate: ownProps.navigation.getParam("date"),
-    toDate: ownProps.navigation.getParam("date"),
+    fromDate:
+      createEventsReducerState.fromDate ||
+      ownProps.navigation.getParam("date") ||
+      new Date(),
+    toDate:
+      createEventsReducerState.toDate ||
+      ownProps.navigation.getParam("date") ||
+      new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid,

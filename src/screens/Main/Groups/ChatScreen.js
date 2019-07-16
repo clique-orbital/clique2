@@ -48,7 +48,6 @@ class ChatScreen extends Component {
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
       dateOfLastMsg: new Date().getDate(),
-      pollModalVisibility: false,
       numOfVisibleMsg: 40,
       isRefreshing: false,
       visible: false
@@ -145,6 +144,10 @@ class ChatScreen extends Component {
         )
       );
     });
+  }
+
+  componentWillUnmount() {
+    this.setState({ visible: false });
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
@@ -510,15 +513,16 @@ class ChatScreen extends Component {
                 color={cliqueBlue}
               />
             </TouchableOpacity>
-            <ButtonsModal
-              visible={this.state.visible}
-              setFalse={() => this.setState({ visible: false })}
-              groupID={this.state.groupID}
-              uid={this.props.uid}
-              username={this.props.username}
-            />
           </KeyboardAvoidingView>
           <EventModal />
+          <ButtonsModal
+            visible={this.state.visible}
+            setFalse={() => this.setState({ visible: false })}
+            groupID={this.state.groupID}
+            uid={this.props.uid}
+            username={this.props.username}
+            navigation={this.props.navigation}
+          />
           <PollModal group={this.props.group} />
         </SafeAreaView>
       </View>
