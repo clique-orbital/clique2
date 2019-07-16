@@ -414,7 +414,7 @@ class ChatScreen extends Component {
   increaseNumOfVisibleMsg = () => {
     console.log("refreshing");
     const { groupID, numOfVisibleMsg } = this.state;
-    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 20 }
+    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 40 }
       , () => {
         this.messagesRef.child(`${groupID}`).once("value", snapshot => {
           this.props.dispatch(
@@ -444,7 +444,7 @@ class ChatScreen extends Component {
                 }}
                 data={this.props.conversation}
                 renderItem={this.renderRow}
-                keyExtractor={item => item.timestamp.toString()}
+                keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={this.renderFooter}
                 initialNumToRender={50}
                 inverted
@@ -464,7 +464,7 @@ class ChatScreen extends Component {
                   renderItem={this.renderRow}
                   ListFooterComponent={this.renderFooter}
                   inverted
-                  keyExtractor={item => item.timestamp.toString()}
+                  keyExtractor={(item, index) => index.toString()}
                   initialNumToRender={50}
                 />
               )}

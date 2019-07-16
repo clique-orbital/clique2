@@ -11,8 +11,6 @@ const CalendarStack = createStackNavigator(
     initialRouteName: "Main",
     defaultNavigationOptions: {
       header: props => <MyHeader {...props} />,
-      headerStyle: {
-      }
     }
   }
 );

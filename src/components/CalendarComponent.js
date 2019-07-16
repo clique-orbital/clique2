@@ -37,14 +37,14 @@ class CalendarComponent extends React.Component {
     this.loadItems = this.loadItems.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (this.props.colors.whiteBlack !== nextProps.colors.whiteBlack) {
-      console.log("Inside shouldComponentUpdate");
-      this.forceUpdate(() => console.log("updated"));
-      return true;
-    }
-    return false;
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   if (this.props.colors.whiteBlack !== nextProps.colors.whiteBlack) {
+  //     console.log("Inside shouldComponentUpdate");
+  //     this.forceUpdate(() => console.log("updated"));
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   renderButton = () => {
     if (!this.props.hasButton) {
@@ -174,10 +174,12 @@ class CalendarComponent extends React.Component {
 
   render() {
     const colors = this.props.colors;
+    console.log(this.props.agendaKey);
     return (
       <View>
         <View style={{ display: "flex", height: "100%" }}>
           <Agenda
+            key={this.props.agendaKey}
             items={this.props.events}
             renderItem={this.renderItem.bind(this)}
             renderEmptyDate={this.renderEmptyDate.bind(this)}

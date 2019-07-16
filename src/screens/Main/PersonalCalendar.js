@@ -13,8 +13,24 @@ class PersonalCalendar extends React.Component {
     }
   };
 
+  state = { key: "1" }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.colors.whiteBlack !== this.props.colors.whiteBlack) {
+      console.log("Inside shouldComponentUpdate")
+      console.log(this.state.key)
+      this.setState({ key: (this.state.key + 1).toString() })
+      console.log(this.state.key)
+      return true;
+    } else if (nextState.key !== this.state.key) {
+      return true;
+    }
+
+    return false;
+  }
+
   render() {
-    return <CalendarComponent hasButton={false} personal={true} />;
+    return <CalendarComponent agendaKey={this.state.key} hasButton={false} personal={true} />;
   }
 }
 
