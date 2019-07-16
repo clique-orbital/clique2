@@ -1,5 +1,7 @@
 import React from "react";
 import CalendarComponent from "../../../components/CalendarComponent";
+import { connect } from "react-redux";
+import { resetEventState } from "../../../store/actions/createEvents";
 
 class CalendarScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -7,11 +9,23 @@ class CalendarScreen extends React.Component {
       headerTintColor: "#fff",
       headerTitle: navigation.getParam("title") || (this.props || {}).title,
       headerStyle: {
-        backgroundColor: navigation.getParam("headerColor"),
         borderBottomColor: "transparent"
       },
     };
   };
+
+  componentWillMount() {
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        this.props.dispatch(resetEventState());
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription.remove();
+  }
 
   render() {
     return (
@@ -23,7 +37,6 @@ class CalendarScreen extends React.Component {
           this.props.navigation.navigate("CreateEvents", {
             groupID: this.props.navigation.getParam("groupID"),
             date: dateString,
-            headerColor: this.props.navigation.getParam("headerColor")
           })
         }
       />
@@ -31,4 +44,4 @@ class CalendarScreen extends React.Component {
   }
 }
 
-export default CalendarScreen;
+export default connect()(CalendarScreen);

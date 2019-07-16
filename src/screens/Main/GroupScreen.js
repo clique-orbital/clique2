@@ -34,9 +34,7 @@ class GroupScreen extends Component {
     return {
       headerTitle: <HeaderTitle title="Groups" />,
       headerRight: (
-        <TouchableOpacity onPress={() => navigation.navigate("CreateGroups", {
-          headerColor: (navigation.state.params || {}).backgroundColor || cliqueBlue,
-        })}>
+        <TouchableOpacity onPress={() => navigation.navigate("CreateGroups")}>
           <MyIcon
             name="ios-add"
             size={32}
@@ -46,16 +44,12 @@ class GroupScreen extends Component {
         </TouchableOpacity>
       ),
       headerStyle: {
-        backgroundColor: (navigation.state.params || {}).backgroundColor || cliqueBlue,
         borderBottomColor: "transparent",
       },
     };
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({
-      backgroundColor: this.props.colors.headerColor,
-    })
     this.scrollToTop();
     const db = firebase.database();
     const uid = firebase.auth().currentUser.uid;
@@ -198,7 +192,6 @@ class GroupScreen extends Component {
               group: item,
               image: { uri: item.photoURL },
               groupID: item.groupID,
-              headerColor: this.props.colors.headerColor
             })
           }
         >

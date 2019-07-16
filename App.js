@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StatusBar, Platform } from "react-native";
+import { View, StatusBar, Platform, YellowBox } from "react-native";
 import {
   createBottomTabNavigator,
   createAppContainer,
@@ -15,6 +15,12 @@ import UserDetails from "./src/screens/Auth/UserDetails";
 import MyIcon from "./src/components/MyIcon";
 import firebase from "react-native-firebase";
 import storage from "redux-persist/lib/storage";
+import TabBarComponent from "./src/components/TabBarComponent";
+
+YellowBox.ignoreWarnings([
+  "Possible Unhandled Promise Rejection",
+
+]);
 
 const AppNavigator = createBottomTabNavigator(
   {
@@ -24,43 +30,42 @@ const AppNavigator = createBottomTabNavigator(
     Profile: SettingsScreen
   },
   {
-    defaultNavigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        const { routeName } = navigation.state;
-        let IconComponent = MyIcon;
-        let iconName;
-        let iconType = "material";
-        if (routeName === "Groups") {
-          iconName = `chat${focused ? "" : "-bubble-outline"}`;
-        } else if (routeName === "Calendar") {
-          iconType = "material-community";
-          iconName = `calendar${
-            focused || Platform.OS === "ios" ? "" : "-blank-outline"
-            }`;
-        } else if (routeName === "Notifications") {
-          iconName = `notifications${focused ? "-active" : "-none"}`;
-        } else if (routeName === "Profile") {
-          iconName = `person${focused ? "" : "-outline"}`;
+    defaultNavigationOptions: ({ navigation }) =>
+      ({
+        tabBarIcon: ({ focused, horizontal, tintColor }) => {
+          const { routeName } = navigation.state;
+          let IconComponent = MyIcon;
+          let iconName;
+          let iconType = "material";
+          if (routeName === "Groups") {
+            iconName = `chat${focused ? "" : "-bubble-outline"}`;
+          } else if (routeName === "Calendar") {
+            iconType = "material-community";
+            iconName = `calendar${
+              focused || Platform.OS === "ios" ? "" : "-blank-outline"
+              }`;
+          } else if (routeName === "Notifications") {
+            iconName = `notifications${focused ? "-active" : "-none"}`;
+          } else if (routeName === "Profile") {
+            iconName = `person${focused ? "" : "-outline"}`;
+          }
+          return (
+            <View style={{ paddingTop: 5 }}>
+              <IconComponent
+                name={iconName}
+                size={28}
+                color={tintColor}
+                type={iconType}
+              />
+            </View>
+          );
         }
-        return (
-          <View style={{ paddingTop: 5 }}>
-            <IconComponent
-              name={iconName}
-              size={28}
-              color={tintColor}
-              type={iconType}
-            />
-          </View>
-        );
-      }
-    }),
+      }),
+    tabBarComponent: TabBarComponent,
     tabBarOptions: {
       showLabel: false,
       activeTintColor: "black",
       inactiveTintColor: "gray",
-      style: {
-        // backgroundColor: "black"
-      }
     }
   }
 );
@@ -160,7 +165,7 @@ class App extends React.Component {
 
   render() {
     if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
-    return <AppContainer color={"black"} />;
+    return <AppContainer />;
   }
 }
 

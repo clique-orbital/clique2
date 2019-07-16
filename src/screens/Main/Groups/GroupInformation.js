@@ -31,7 +31,6 @@ class GroupInformation extends React.Component {
       headerTintColor: "#fff",
       headerStyle: {
         borderBottomColor: "transparent",
-        backgroundColor: navigation.getParam("headerColor")
       },
       headerLeft: (
         <TouchableOpacity
@@ -52,7 +51,6 @@ class GroupInformation extends React.Component {
             title: "Edit Group",
             type: "edit",
             groupID: group.groupID,
-            headerColor: navigation.getParam("headerColor")
           })}
           style={{ paddingTop: 12, paddingRight: 10, alignSelf: "flex-start" }}
         >
@@ -180,7 +178,6 @@ class GroupInformation extends React.Component {
           this.props.navigation.navigate("AddMembers", {
             group: this.props.navigation.getParam("group"),
             populateState: this.populateState,
-            headerColor: this.props.navigation.getParam("headerColor")
           })
         }
         style={{
@@ -233,7 +230,7 @@ class GroupInformation extends React.Component {
             justifyContent: "center",
             alignItems: "center",
             height: "auto",
-            backgroundColor: this.props.navigation.getParam("headerColor")
+            backgroundColor: this.props.colors.headerColor
           }}
         >
           <GroupPicture value={0.2} source={{ uri: group.photoURL }} />

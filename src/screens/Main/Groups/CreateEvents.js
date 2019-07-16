@@ -27,7 +27,6 @@ import { fetchAllEvents } from "../../../store/actions/calendar";
 import Text from "../../../components/Text";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-import theme from "../../../assets/theme";
 import MyIcon from "../../../components/MyIcon";
 
 class CreateEvents extends Component {
@@ -279,7 +278,6 @@ class CreateEvents extends Component {
 
   render() {
     const width = Dimensions.get("window").width;
-    console.log(this.props.fromDate);
     return (
       <KeyboardAvoidingView
         behavior="padding"
@@ -359,9 +357,9 @@ const mapStateToProps = (state, ownProps) => {
     fromDateVisibility: createEventsReducerState.fromDateVisibility,
     toDateVisibility: createEventsReducerState.toDateVisibility,
     fromDate:
-      createEventsReducerState.fromDate || ownProps.navigation.getParam("date"),
+      createEventsReducerState.fromDate || new Date(),
     toDate:
-      createEventsReducerState.toDate || ownProps.navigation.getParam("date"),
+      createEventsReducerState.toDate || createEventsReducerState.fromDate || new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid,

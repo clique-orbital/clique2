@@ -49,7 +49,7 @@ const lightColors = {
   touchOpacity: 0.2,
   continueButton: "#134782",
   dayTextColor: "#2d4150",
-  dotColor: "#00adf5",
+  dotColor: "#134782",
   agendaBackground: "#F2F2F2",
   textSectionTitleColor: "#b6c1cd",
   textDisabledColor: '#d9e1e8',

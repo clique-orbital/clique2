@@ -10,7 +10,8 @@ import Spinner from "../../components/Spinner";
 import Text from "../../components/Text";
 import Button from "../../components/Button";
 import GroupPicture from "../../components/GroupPicture";
-import MyIcon from "../../components/MyIcon"
+import MyIcon from "../../components/MyIcon";
+import AsyncStorage from '@react-native-community/async-storage';
 
 class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -57,6 +58,12 @@ class SettingsScreen extends React.Component {
     );
   }
 
+  toggleDarkMode = () => {
+    this.setState({ darkMode: !this.state.darkMode }, async () => {
+      this.props.dispatch(toggleTheme(this.state.darkMode));
+    });
+  }
+
   render() {
     if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
     return (
@@ -92,11 +99,7 @@ class SettingsScreen extends React.Component {
           <Switch
             trackColor={{ true: "lightgrey" }}
             thumbColor="black"
-            onValueChange={() => {
-              this.setState({ darkMode: !this.state.darkMode }, () => {
-                this.props.dispatch(toggleTheme(this.state.darkMode));
-              });
-            }}
+            onValueChange={this.toggleDarkMode.bind(this)}
             value={this.state.darkMode}
           />
           <View style={{ margin: 10 }}>

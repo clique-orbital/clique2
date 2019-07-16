@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import Modal from "react-native-modal";
 import { SafeAreaView, View, TouchableOpacity, FlatList } from "react-native";
-import FastImage from "react-native-fast-image";
 import Text from "../components/Text";
 import { connect } from "react-redux";
 import { togglePollModal, updatePoll } from "../store/actions/pollModal";
-import { cliqueBlue } from "../assets/constants";
-import theme from "../assets/theme";
 import _ from "lodash";
 import firebase from "react-native-firebase";
 import MyIcon from "./MyIcon";

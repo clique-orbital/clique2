@@ -77,7 +77,6 @@ class ChatScreen extends Component {
           onPress={() =>
             navigation.navigate("GroupInformation", {
               group,
-              headerColor: navigation.getParam("headerColor")
             })
           }
         >
@@ -105,7 +104,6 @@ class ChatScreen extends Component {
             navigation.navigate("GroupCalendar", {
               groupID: group.groupID,
               title: "Group Calendar",
-              headerColor: navigation.getParam("headerColor")
             })
           }
         >
@@ -119,7 +117,6 @@ class ChatScreen extends Component {
         </TouchableOpacity>
       ),
       headerStyle: {
-        backgroundColor: navigation.getParam("headerColor"),
         borderBottomColor: "transparent",
       }
     };
@@ -138,7 +135,6 @@ class ChatScreen extends Component {
   componentWillMount() {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
-      console.log("inside componentWillMount")
       this.props.dispatch(
         fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
       );

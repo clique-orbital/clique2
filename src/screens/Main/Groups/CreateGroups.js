@@ -15,7 +15,6 @@ class GroupMembersSelect extends React.Component {
         </View>
       ),
       headerStyle: {
-        backgroundColor: navigation.getParam("headerColor"),
         borderBottomColor: "transparent",
       }
     };
@@ -31,7 +30,6 @@ class GroupMembersSelect extends React.Component {
             users: formValues,
             title: "Create Groups",
             type: "create",
-            headerColor: this.props.navigation.getParam("headerColor")
           })
         }}
       />
