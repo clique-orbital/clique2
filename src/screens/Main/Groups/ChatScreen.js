@@ -36,6 +36,7 @@ import { getDate } from "../../../assets/constants";
 import { FlatList } from "react-native-gesture-handler";
 import PollMessageBubble from "../../../components/PollMessageBubble";
 import { setToZero } from "../../../store/actions/messageCounter";
+import ButtonsModal from "../../../components/ButtonsModal";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -46,9 +47,9 @@ class ChatScreen extends Component {
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
       dateOfLastMsg: new Date().getDate(),
-      pollModalVisibility: false,
       numOfVisibleMsg: 40,
-      isRefreshing: false
+      isRefreshing: false,
+      visible: false
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -138,27 +139,18 @@ class ChatScreen extends Component {
   componentWillMount() {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
+      console.log("inside componentWillMount");
       this.props.dispatch(
         fetchConversation(
           groupID,
-          this.sort(values(snapshot.val())).slice(0, this.state.numOfVisibleMsg)
+          this.sort(values(snapshot.val())).slice(0, 40)
         )
       );
     });
-
-    this.keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      this.scrollToBottom
-    );
-    this.keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      this.scrollToBottom
-    );
   }
 
   componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
+    this.setState({ visible: false });
   }
 
   scrollToBottom = (contentHeight, contentWidth) => {
@@ -480,17 +472,22 @@ class ChatScreen extends Component {
                 onEndReachedThreshold={0}
                 onEndReached={this.increaseNumOfVisibleMsg}
                 ref="messageList"
+                // onContentSizeChange={this.scrollToBottom}
                 style={{
                   padding: 10,
                   height: height,
                   backgroundColor: this.props.colors.chatBackground
                 }}
-                data={this.props.conversation}
+                data={this.props.conversation.slice(
+                  0,
+                  this.state.numOfVisibleMsg
+                )}
                 renderItem={this.renderRow}
-                ListFooterComponent={this.renderFooter}
-                inverted
                 keyExtractor={item => item.timestamp.toString()}
+                ListFooterComponent={this.renderFooter}
                 initialNumToRender={50}
+                inverted
+                extraData={this.state.numOfVisibleMsg}
               />
             )}
           </TouchableWithoutFeedback>
@@ -508,12 +505,13 @@ class ChatScreen extends Component {
             }}
           >
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("CreatePoll", {
-                  groupID: this.state.groupID,
-                  uid: this.props.uid,
-                  username: this.props.username
-                })
+              onPress={
+                () => this.setState({ visible: true })
+                // this.props.navigation.navigate("CreatePoll", {
+                //   groupID: this.state.groupID,
+                //   uid: this.props.uid,
+                //   username: this.props.username
+                // })
               }
               style={{ justifyContent: "center" }}
             >
@@ -548,6 +546,15 @@ class ChatScreen extends Component {
             </View>
           </KeyboardAvoidingView>
           <EventModal />
+          <ButtonsModal
+            visible={this.state.visible}
+            setFalse={() => this.setState({ visible: false })}
+            groupID={this.state.groupID}
+            uid={this.props.uid}
+            username={this.props.username}
+            navigation={this.props.navigation}
+            theme={this.props.colors}
+          />
           <PollModal group={this.props.group} />
         </SafeAreaView>
       </View>

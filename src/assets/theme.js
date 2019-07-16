@@ -15,7 +15,7 @@ const colors = {
   dark_chat_username: "#8fc5f1",
   green: "#65c681",
   red: "#c13f3f",
-  poll_blue: "#1965BC",
+  poll_blue: "#1965BC"
 };
 
 const cliqueBlue = "#0f3764";
@@ -52,9 +52,9 @@ const lightColors = {
   dotColor: "#134782",
   agendaBackground: "#F2F2F2",
   textSectionTitleColor: "#b6c1cd",
-  textDisabledColor: '#d9e1e8',
+  textDisabledColor: "#d9e1e8",
   todayColor: "#00adf5"
-}
+};
 
 const darkColors = {
   cliqueBlue,
@@ -62,7 +62,7 @@ const darkColors = {
   lightMain: "#1F1F1F",
   chatList: "#000",
   textColor: "#fff",
-  chatBackground: "#000",
+  chatBackground: "#151e27",
   shadow: "#fff",
   whiteBlack: "#000",
   systemMsgBubble: "#2f3f4f",
@@ -81,16 +81,16 @@ const darkColors = {
   pollVoter: "#686868",
   pollTitle: "#fff",
   eventResponders: "#1965BC",
-  hairlineColor: "#1F1F1F",
+  hairlineColor: "grey",
   touchOpacity: 0.8,
   continueButton: "#1F1F1F",
   dayTextColor: "#b6c1cd",
   dotColor: "#3C7CC7",
   agendaBackground: "#000",
   textSectionTitleColor: "#fff",
-  textDisabledColor: '#434343',
+  textDisabledColor: "#434343",
   todayColor: "#70CCCF"
-}
+};
 
 const sizes = {
   // global sizes
