@@ -37,7 +37,11 @@ class GroupDetails extends React.Component {
           <HeaderTitle title={navigation.getParam("title")} />
         </View>
       ),
-      headerTintColor: "#fff"
+      headerTintColor: "#fff",
+      headerStyle: {
+        backgroundColor: navigation.getParam("headerColor"),
+        borderBottomColor: "transparent",
+      },
     };
   };
 
@@ -89,14 +93,14 @@ class GroupDetails extends React.Component {
   };
 
   renderInput = ({ input, label }) => {
-    // console.log(input)
     return (
       <TextInput
         {...input}
         value={this.state.groupName}
         onChangeText={text => this.setState({ groupName: text })}
-        style={[styles.textInput, { marginTop: 5 }]}
+        style={[styles.textInput, { marginTop: 5, color: this.props.colors.textColor }]}
         placeholder={label}
+        placeholderTextColor={this.props.colors.placeholderColor}
         defaultValue={this.props.navigation.getParam("type") === "create" ? "" : this.props.group.groupName}
       />
     );
@@ -104,7 +108,7 @@ class GroupDetails extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: this.props.colors.whiteBlack }]}>
         <StatusBar barStyle="light-content" />
         <View style={{ marginTop: "15%" }}>
           <Text body grey style={styles.text}>
@@ -129,7 +133,7 @@ class GroupDetails extends React.Component {
           onPress={this.props.handleSubmit(this.props.navigation.getParam("type") === "create" ? this.handleSubmitCreate : this.handleSubmitEdit)}
           style={{ position: "absolute", top: "90%", left: "80%" }}
         >
-          <ContinueButton name="arrow-forward" />
+          <ContinueButton name="arrow-forward" btnColor={this.props.colors.continueButton} />
         </TouchableOpacity>
         {this.state.loading && <Spinner />}
       </View>
@@ -161,7 +165,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state, ownProps) => {
   return {
     user: state.authReducer.user,
-    group: state.groupsReducer.groups[ownProps.navigation.getParam("groupID")] || {}
+    group: state.groupsReducer.groups[ownProps.navigation.getParam("groupID")] || {},
+    colors: state.theme.colors
   };
 };
 

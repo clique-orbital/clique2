@@ -5,7 +5,8 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
+  SafeAreaView
 } from "react-native";
 import { cliqueBlue } from "../../../assets/constants";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -41,10 +42,14 @@ class CreateEvents extends Component {
     this.props.dispatch(setGroupID(this.props.navigation.getParam("groupID")));
   }
 
-  static navigationOptions = () => {
+  static navigationOptions = ({ navigation }) => {
     return {
       title: "New Event",
-      headerTintColor: "#fff"
+      headerTintColor: "#fff",
+      headerStyle: {
+        backgroundColor: navigation.getParam("headerColor"),
+        borderBottomColor: "transparent"
+      }
     };
   };
 
@@ -147,23 +152,36 @@ class CreateEvents extends Component {
 
   renderTitle = width => {
     return (
-      <View style={styles.border}>
+      <View style={[styles.border, {
+        borderBottomColor: this.props.colors.hairlineColor,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10
+      }]}>
+        <View style={{ marginHorizontal: 20 }}>
+          <MyIcon
+            name="title"
+            type="material"
+            color="darkgrey"
+            size={30}
+          />
+        </View>
         <Input
           autoCapitalize="sentences"
           left
           placeholder="Add title"
+          placeholderTextColor={this.props.colors.placeholderColor}
           style={[
             styles.input,
             {
-              fontSize: 22,
-              paddingLeft: 30,
-              paddingVertical: 5,
-              fontWeight: "400"
+              color: this.props.colors.textColor,
+              fontWeight: "400",
             }
           ]}
           w={width}
           value={this.props.title}
           onChangeText={this.handleTextChange("title")}
+          keyboardAppearance={this.props.colors.keyboard}
         />
       </View>
     );
@@ -176,7 +194,8 @@ class CreateEvents extends Component {
           {
             flexDirection: "row",
             width: width,
-            paddingVertical: 10
+            paddingTop: 10,
+            borderBottomColor: this.props.colors.hairlineColor,
           },
           styles.border
         ]}
@@ -184,14 +203,14 @@ class CreateEvents extends Component {
         <View style={{ marginHorizontal: 20, marginTop: 10 }}>
           <MyIcon name="ios-time" size={30} color="darkgrey" />
         </View>
-        <View style={{ margin: 10 }}>
+        <View style={{ margin: 10, marginBottom: 0 }}>
           <Text
             medium
             h3
-            gray
             style={{
               paddingBottom: 10,
-              height: 40
+              height: 40,
+              color: this.props.colors.textColor
             }}
           >
             From:
@@ -199,16 +218,16 @@ class CreateEvents extends Component {
           <Text
             medium
             h3
-            gray
             style={{
               paddingBottom: 10,
-              height: 40
+              height: 40,
+              color: this.props.colors.textColor
             }}
           >
             To:
           </Text>
         </View>
-        <View style={{ margin: 10 }}>
+        <View style={{ margin: 10, marginBottom: 0 }}>
           <TouchableOpacity
             style={{
               height: 40,
@@ -216,7 +235,7 @@ class CreateEvents extends Component {
             }}
             onPress={this.showFromDatePicker}
           >
-            <Text medium h3 gray>
+            <Text medium h3 style={{ color: this.props.colors.textColor }}>
               {convertDate(this.props.fromDate)}
             </Text>
           </TouchableOpacity>
@@ -227,7 +246,7 @@ class CreateEvents extends Component {
             }}
             onPress={this.showToDatePicker}
           >
-            <Text medium h3 gray>
+            <Text medium h3 style={{ color: this.props.colors.textColor }}>
               {convertDate(this.props.toDate)}
             </Text>
           </TouchableOpacity>
@@ -244,7 +263,8 @@ class CreateEvents extends Component {
             width: width,
             flexDirection: "row",
             paddingVertical: 10,
-            alignItems: "center"
+            alignItems: "center",
+            borderBottomColor: this.props.colors.hairlineColor,
           },
           styles.border
         ]}
@@ -263,46 +283,55 @@ class CreateEvents extends Component {
     return (
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : -200}
-        style={{ flex: 1, top: 20 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -200}
+        style={{ flex: 1, backgroundColor: this.props.colors.whiteBlack }}
       >
-        <View style={{ flex: 1, alignItems: "center" }}>
-          {this.renderTitle(width)}
-          {this.renderDates(width)}
-          {this.renderItem(
-            width,
-            <Input
-              autoCapitalize="sentences"
-              left
-              placeholder="Add location"
-              style={({ ...styles.input }, { marginLeft: 10 })}
-              value={this.props.location}
-              onChangeText={this.handleTextChange("location")}
-            />,
-            "md-map"
-          )}
-          {this.renderItem(
-            width,
-            <Input
-              autoCapitalize="sentences"
-              left
-              placeholder="Add notes"
-              style={({ ...styles.input }, { marginLeft: 10 })}
-              value={this.props.notes}
-              onChangeText={this.handleTextChange("notes")}
-            />,
-            "md-book"
-          )}
-          <Button
-            shadow
-            style={styles.publishButton}
-            onPress={() => this.publishEvent()}
-          >
-            <Text semibold white center>
-              Publish
+        <SafeAreaView style={{ flex: 1, justifyContent: "space-between" }}>
+          <View>
+            {this.renderTitle(width)}
+            {this.renderDates(width)}
+            {this.renderItem(
+              width,
+              <Input
+                autoCapitalize="sentences"
+                left
+                placeholderTextColor={this.props.colors.placeholderColor}
+                placeholder="Add location"
+                style={({ ...styles.input }, { marginLeft: 10, color: this.props.colors.textColor, })}
+                value={this.props.location}
+                onChangeText={this.handleTextChange("location")}
+                keyboardAppearance={this.props.colors.keyboard}
+              />,
+              "md-map"
+            )}
+            {this.renderItem(
+              width,
+              <Input
+                autoCapitalize="sentences"
+                left
+                placeholder="Add notes"
+                placeholderTextColor={this.props.colors.placeholderColor}
+                style={({ ...styles.input }, { marginLeft: 10, color: this.props.colors.textColor, })}
+                value={this.props.notes}
+                onChangeText={this.handleTextChange("notes")}
+                keyboardAppearance={this.props.colors.keyboard}
+              />,
+              "md-book"
+            )}
+          </View>
+          <View style={{ alignItems: "center" }}>
+            <Button
+              shadow
+              style={[styles.publishButton, { backgroundColor: this.props.colors.headerColor }]}
+              onPress={() => this.publishEvent()}
+            >
+              <Text semibold white center>
+                Publish
             </Text>
-          </Button>
-        </View>
+            </Button>
+          </View>
+
+        </SafeAreaView>
 
         <DateTimePicker
           isVisible={this.props.fromDateVisibility}
@@ -336,7 +365,8 @@ const mapStateToProps = (state, ownProps) => {
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid,
-    username: state.authReducer.user.displayName
+    username: state.authReducer.user.displayName,
+    colors: state.theme.colors
   };
 };
 
@@ -353,7 +383,6 @@ const styles = StyleSheet.create({
     height: 40
   },
   publishButton: {
-    backgroundColor: cliqueBlue,
     width: "70%",
     borderRadius: 10,
     marginTop: 10
@@ -368,7 +397,6 @@ const styles = StyleSheet.create({
     borderWidth: 0
   },
   border: {
-    borderBottomColor: "lightgrey",
     borderBottomWidth: StyleSheet.hairlineWidth,
     width: "100%"
   }

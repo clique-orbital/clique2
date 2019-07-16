@@ -8,6 +8,7 @@ import { eventModalReducer } from "./eventModalReducer";
 import { messageCounterReducer } from "./messageCounterReducer";
 import { calendarReducer } from "./calendarReducer";
 import { pollModalReducer } from "./pollModalReducer";
+import { themeReducer } from "./themeReducer";
 
 export default combineReducers({
   authReducer,
@@ -18,5 +19,6 @@ export default combineReducers({
   form: formReducer,
   calendar: calendarReducer,
   pollModal: pollModalReducer,
-  messageCounterReducer
+  messageCounterReducer,
+  theme: themeReducer
 });

@@ -18,7 +18,7 @@ class MessageBubble extends React.Component {
                 justifyContent: "space-between"
               }}
             >
-              <Text header semibold color={theme.colors.light_chat_username}>
+              <Text header semibold color={this.props.usernameColor}>
                 {this.props.item.username}
               </Text>
             </View>
@@ -26,7 +26,7 @@ class MessageBubble extends React.Component {
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
             <Text
               header
-              black
+              color={this.props.textColor}
               style={{
                 padding: 5,
                 width: "auto",
@@ -39,7 +39,7 @@ class MessageBubble extends React.Component {
         </View>
         <View style={{ alignItems: "flex-end", justifyContent: "flex-end" }}>
           <Text
-            black
+            color={this.props.textColor}
             style={{
               paddingBottom: 5,
               paddingRight: 10,

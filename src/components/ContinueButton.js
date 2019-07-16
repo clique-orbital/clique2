@@ -6,7 +6,7 @@ const ContinueButton = props => {
   return (
     <View
       style={{
-        backgroundColor: "#134782",
+        backgroundColor: props.btnColor,
         height: 46,
         width: 46,
         borderRadius: 23,

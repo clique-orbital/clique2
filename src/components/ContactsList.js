@@ -18,6 +18,7 @@ import Spinner from "./Spinner";
 import GroupPicture from "./GroupPicture";
 
 class ContactsList extends React.Component {
+
   state = { contacts: [], count: 0, loading: true };
 
   askPermissionAndGetContacts() {
@@ -108,6 +109,7 @@ class ContactsList extends React.Component {
         title={props.label}
         value={props.user}
         callback={this.count}
+        textColor={this.props.colors.textColor}
       />
     );
   };
@@ -120,7 +122,7 @@ class ContactsList extends React.Component {
           width: "100%",
           paddingVertical: 5,
           alignItems: "center",
-          borderBottomColor: "lightgrey",
+          borderBottomColor: this.props.colors.hairlineColor,
           borderBottomWidth: StyleSheet.hairlineWidth
         }}
       >
@@ -159,7 +161,7 @@ class ContactsList extends React.Component {
         onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
         style={{ position: "absolute", top: "90%", left: "80%" }}
       >
-        <ContinueButton name="arrow-forward" />
+        <ContinueButton name="arrow-forward" btnColor={this.props.colors.continueButton} />
       </TouchableOpacity>
     );
   };
@@ -186,7 +188,7 @@ class ContactsList extends React.Component {
 
   render() {
     return (
-      <View style={{ display: "flex", height: "100%" }}>
+      <View style={{ display: "flex", height: "100%", backgroundColor: this.props.colors.whiteBlack }}>
         {this.renderFlatList()}
         {this.state.loading && <Spinner />}
       </View>
@@ -194,8 +196,14 @@ class ContactsList extends React.Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    colors: state.theme.colors
+  }
+}
+
 let form = reduxForm({ form: "contactList" })(ContactsList);
 export default connect(
-  null,
+  mapStateToProps,
   { createGroup }
 )(form);

@@ -50,7 +50,7 @@ class CalendarComponent extends React.Component {
         }
         style={{ position: "absolute", top: "90%", left: "80%" }}
       >
-        <ContinueButton name="add" />
+        <ContinueButton name="add" btnColor={this.props.colors.continueButton} />
       </TouchableOpacity>
     );
   };
@@ -93,12 +93,12 @@ class CalendarComponent extends React.Component {
     const fromTime = new Date(item.event.from).toTimeString().slice(0, 5);
     const toTime = new Date(item.event.to).toTimeString().slice(0, 5);
     return (
-      <View style={[styles.item, { height: item.height }]}>
+      <View style={[styles.item, { height: item.height, backgroundColor: this.props.colors.lightMain }]}>
         <TouchableOpacity onPress={this.showEventModal(item.event)}>
-          <Text style={{ fontWeight: "500", fontSize: 16, marginBottom: 10 }}>
+          <Text style={{ fontWeight: "500", fontSize: 16, marginBottom: 10, color: this.props.colors.textColor }}>
             {item.event.title}
           </Text>
-          <Text>
+          <Text style={{ color: this.props.colors.textColor }}>
             {fromTime} - {toTime}
           </Text>
         </TouchableOpacity>
@@ -156,6 +156,7 @@ class CalendarComponent extends React.Component {
   };
 
   render() {
+    const colors = this.props.colors;
     return (
       <View>
         <View style={{ display: "flex", height: "100%" }}>
@@ -168,11 +169,16 @@ class CalendarComponent extends React.Component {
             loadItemsForMonth={this.props.loadItems}
             renderEmptyData={this.renderEmptyData.bind(this)}
             theme={{
-              // agendaDayTextColor: cliqueBlue,
-              // agendaDayNumColor: cliqueBlue,
-              agendaKnobColor: cliqueBlue,
-              // agendaTodayColor: cliqueBlue,
-              // selectedDayBackgroundColor: cliqueBlue,
+              agendaTodayColor: colors.dotColor,
+              todayTextColor: colors.dotColor,
+              selectedDayBackgroundColor: colors.dotColor,
+              backgroundColor: colors.agendaBackground,
+              calendarBackground: colors.lightMain,
+              textSectionTitleColor: colors.textSectionTitleColor,
+              dayTextColor: colors.dayTextColor,
+              textDisabledColor: colors.textDisabledColor,
+              dotColor: colors.dotColor,
+              monthTextColor: colors.dayTextColor,
             }}
           />
           {this.renderButton()}
@@ -230,7 +236,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     events,
     loadItems: () => this.events,
-    modalVisibility: state.eventModalReducer.modalVisibility
+    modalVisibility: state.eventModalReducer.modalVisibility,
+    colors: state.theme.colors
   };
 
   // let events = {};

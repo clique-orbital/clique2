@@ -11,9 +11,8 @@ export default class SystemMessageBubble extends Component {
         ? theme.colors.red
         : theme.colors.green;
     } else {
-      backgroundColor = "rgba(36, 116, 247, 0.5)";
+      backgroundColor = this.props.color;
     }
-
     return (
       <View
         style={{

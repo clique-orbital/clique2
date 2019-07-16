@@ -9,6 +9,7 @@ import CalendarScreen from "./Groups/CalendarScreen";
 import GroupInformation from "./Groups/GroupInformation";
 import AddMembers from "./Groups/AddMembers";
 import CreatePoll from "./Groups/CreatePoll";
+import { connect } from "react-redux";
 
 const GroupScreenStack = createStackNavigator(
   {
@@ -31,7 +32,6 @@ const GroupScreenStack = createStackNavigator(
     }
   }
 );
-
 GroupScreenStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
@@ -43,4 +43,11 @@ GroupScreenStack.navigationOptions = ({ navigation }) => {
   };
 };
 
+const mapStateToProps = state => {
+  return {
+    backgroundColor: state.theme.main || "#000"
+  }
+}
+
+// export default connect(mapStateToProps)(GroupScreenStack);
 export default GroupScreenStack;
