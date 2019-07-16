@@ -30,6 +30,7 @@ class GroupMembersSelect extends React.Component {
             users: formValues,
             title: "Create Groups",
             type: "create",
+            headerColor: this.props.navigation.getParam("headerColor")
           })
         }}
       />

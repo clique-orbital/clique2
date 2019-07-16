@@ -44,4 +44,11 @@ GroupScreenStack.navigationOptions = ({ navigation }) => {
   };
 };
 
+const mapStateToProps = state => {
+  return {
+    backgroundColor: state.theme.main || "#000"
+  }
+}
+
+// export default connect(mapStateToProps)(GroupScreenStack);
 export default GroupScreenStack;

@@ -13,6 +13,12 @@ class PersonalCalendar extends React.Component {
     }
   };
 
+  componentDidMount() {
+    this.props.navigation.setParams({
+      backgroundColor: this.props.colors.headerColor,
+    })
+  }
+
   render() {
     return <CalendarComponent hasButton={false} personal={true} />;
   }

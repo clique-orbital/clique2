@@ -11,7 +11,6 @@ import Text from "../../components/Text";
 import Button from "../../components/Button";
 import GroupPicture from "../../components/GroupPicture";
 import MyIcon from "../../components/MyIcon";
-import AsyncStorage from '@react-native-community/async-storage';
 
 class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
