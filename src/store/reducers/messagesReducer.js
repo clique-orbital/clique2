@@ -1,13 +1,14 @@
 import {
   FETCH_CONVERSATION,
-  CHANGE_PREV_DATE,
   REMOVE_GROUP_MESSAGES,
-  SIGN_OUT
+  SIGN_OUT,
+  ADD_NEW_MSG
 } from "../constants";
 import _ from "lodash";
 
 export const messagesReducer = (state = {}, action) => {
   if (action.type === FETCH_CONVERSATION) {
+    console.log("fetching conversation");
     const groupID = action.payload.groupID;
     return {
       ...state,
@@ -16,13 +17,14 @@ export const messagesReducer = (state = {}, action) => {
         messages: [...action.payload.messages]
       }
     };
-  } else if (action.type === CHANGE_PREV_DATE) {
+  } else if (action.type === ADD_NEW_MSG) {
+    console.log("add new msg");
     const groupID = action.payload.groupID;
     return {
       ...state,
       [groupID]: {
         ...state[groupID],
-        prevDate: action.payload.prevDate
+        messages: [action.payload.message].concat(state[groupID].messages)
       }
     };
   } else if (action.type === REMOVE_GROUP_MESSAGES) {

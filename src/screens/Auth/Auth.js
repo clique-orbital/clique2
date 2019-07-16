@@ -34,6 +34,11 @@ class Auth extends Component {
     };
 
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+      this.onTokenRefreshListener = firebase
+        .messaging()
+        .onTokenRefresh(fcmToken => {
+          this.getToken(firebase.auth().currentUser.uid, fcmToken);
+        });
       if (user) {
         if (user.displayName && user.photoURL) {
           NetInfo.fetch()
@@ -43,7 +48,9 @@ class Auth extends Component {
                 this.props
                   .fetchGroups()
                   .then(() => this.props.fetchAllEvents(user.uid))
-                  .then(() => this.props.fetchPersonalEvents(user.uid));
+                  .then(() => this.props.fetchPersonalEvents(user.uid))
+                  .then(() => this.checkPermission(user.uid))
+                  .then(() => Promise.resolve());
               }
             })
             .then(() => {
@@ -59,8 +66,46 @@ class Auth extends Component {
     });
   }
 
+  checkPermission(uid) {
+    return firebase
+      .messaging()
+      .hasPermission()
+      .then(enabled => {
+        if (enabled) {
+          console.log("Permission granted");
+          this.getToken(uid);
+        } else {
+          console.log("Request Permission");
+          this.requestPermission(uid);
+        }
+      });
+  }
+
+  requestPermission() {
+    firebase
+      .messaging()
+      .requestPermission()
+      .then(() => {
+        this.getToken(uid);
+      })
+      .catch(error => {
+        console.log("permission rejected");
+      });
+  }
+
+  async getToken(uid, token) {
+    if (!token) {
+      fcmToken = await firebase.messaging().getToken();
+    }
+    return firebase
+      .database()
+      .ref(`users/${uid}/notificationToken`)
+      .set(token || fcmToken);
+  }
+
   componentWillUnmount() {
     this.unsubscribe();
+    this.onTokenRefreshListener();
   }
 
   signIn = () => {
@@ -93,18 +138,12 @@ class Auth extends Component {
           firebase
             .database()
             .ref("users")
-            .once(
-              "value",
-              snapshot => {
-                this.setState({ loading: false });
-                this.props.navigation.navigate(
-                  snapshot.val()[user._user.uid] ? "App" : "UserDetails"
-                );
-              },
-              err => {
-                console.log("the read failed " + err.code);
-              }
-            );
+            .once("value", snapshot => {
+              this.setState({ loading: false });
+              this.props.navigation.navigate(
+                snapshot.val()[user._user.uid] ? "App" : "UserDetails"
+              );
+            });
         })
         .catch(error => {
           this.setState({ message: `Code Confirm Error: ${error.message}` });
