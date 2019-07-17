@@ -7,7 +7,7 @@ import {
 } from "react-navigation";
 import { connect } from "react-redux";
 import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
-import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
+// import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
 import CalendarStack from "./src/screens/Main/CalendarStack";
 import Auth from "./src/screens/Auth/Auth";
@@ -15,58 +15,55 @@ import UserDetails from "./src/screens/Auth/UserDetails";
 import MyIcon from "./src/components/MyIcon";
 import firebase from "react-native-firebase";
 import storage from "redux-persist/lib/storage";
+
 import TabBarComponent from "./src/components/TabBarComponent";
 
-YellowBox.ignoreWarnings([
-  "Possible Unhandled Promise Rejection",
-
-]);
+YellowBox.ignoreWarnings(["Possible Unhandled Promise Rejection"]);
 
 const AppNavigator = createBottomTabNavigator(
   {
     Groups: GroupScreenStack,
     Calendar: CalendarStack,
-    Notifications: NotificationsScreen,
+    // Notifications: NotificationsScreen,
     Profile: SettingsScreen
   },
   {
-    defaultNavigationOptions: ({ navigation }) =>
-      ({
-        tabBarIcon: ({ focused, horizontal, tintColor }) => {
-          const { routeName } = navigation.state;
-          let IconComponent = MyIcon;
-          let iconName;
-          let iconType = "material";
-          if (routeName === "Groups") {
-            iconName = `chat${focused ? "" : "-bubble-outline"}`;
-          } else if (routeName === "Calendar") {
-            iconType = "material-community";
-            iconName = `calendar${
-              focused || Platform.OS === "ios" ? "" : "-blank-outline"
-              }`;
-          } else if (routeName === "Notifications") {
-            iconName = `notifications${focused ? "-active" : "-none"}`;
-          } else if (routeName === "Profile") {
-            iconName = `person${focused ? "" : "-outline"}`;
-          }
-          return (
-            <View style={{ paddingTop: 5 }}>
-              <IconComponent
-                name={iconName}
-                size={28}
-                color={tintColor}
-                type={iconType}
-              />
-            </View>
-          );
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let IconComponent = MyIcon;
+        let iconName;
+        let iconType = "material";
+        if (routeName === "Groups") {
+          iconName = `chat${focused ? "" : "-bubble-outline"}`;
+        } else if (routeName === "Calendar") {
+          iconType = "material-community";
+          iconName = `calendar${
+            focused || Platform.OS === "ios" ? "" : "-blank-outline"
+          }`;
+          // } else if (routeName === "Notifications") {
+          // iconName = `notifications${focused ? "-active" : "-none"}`;
+        } else if (routeName === "Profile") {
+          iconName = `person${focused ? "" : "-outline"}`;
         }
-      }),
-    tabBarComponent: TabBarComponent,
-    tabBarOptions: {
-      showLabel: false,
-      activeTintColor: "black",
-      inactiveTintColor: "gray",
-    }
+        return (
+          <View style={{ paddingTop: 5 }}>
+            <IconComponent
+              name={iconName}
+              size={28}
+              color={tintColor}
+              type={iconType}
+            />
+          </View>
+        );
+      },
+      tabBarComponent: TabBarComponent,
+      tabBarOptions: {
+        showLabel: false,
+        activeTintColor: "black",
+        inactiveTintColor: "gray"
+      }
+    })
   }
 );
 
@@ -93,10 +90,9 @@ const InitialNavigator = createSwitchNavigator(
 const AppContainer = createAppContainer(InitialNavigator);
 
 class App extends React.Component {
-
   async componentDidMount() {
     // when app is closed and notification is tapped
-    storage.getAllKeys(keys => console.log(keys))
+    storage.getAllKeys(keys => console.log(keys));
     const notificationOpen = await firebase
       .notifications()
       .getInitialNotification();
@@ -153,7 +149,7 @@ class App extends React.Component {
           .removeDeliveredNotification(notification.notificationId);
       });
 
-    this.messageListener = firebase.messaging().onMessage(message => { });
+    this.messageListener = firebase.messaging().onMessage(message => {});
   }
 
   componentWillUnmount() {
@@ -164,9 +160,10 @@ class App extends React.Component {
   }
 
   render() {
-    if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
-    return <AppContainer />;
+    if (Platform.OS === "android")
+      StatusBar.setBackgroundColor(this.props.colors.cliqueBlue);
+    return <AppContainer color={"black"} />;
   }
 }
 
-export default connect()(App);
+export default connect(state => ({ colors: state.theme.colors }))(App);

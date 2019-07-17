@@ -36,6 +36,7 @@ import { getDate } from "../../../assets/constants";
 import { FlatList } from "react-native-gesture-handler";
 import PollMessageBubble from "../../../components/PollMessageBubble";
 import { setToZero } from "../../../store/actions/messageCounter";
+import ButtonsModal from "../../../components/ButtonsModal";
 
 class ChatScreen extends Component {
   constructor(props) {
@@ -46,9 +47,10 @@ class ChatScreen extends Component {
       textMessage: "",
       dayOfLastMsg: new Date().getDay(),
       dateOfLastMsg: new Date().getDate(),
-      pollModalVisibility: false,
       numOfVisibleMsg: 40,
       isRefreshing: false,
+      visible: false,
+      heightOfInput: 0,
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -76,7 +78,7 @@ class ChatScreen extends Component {
           }}
           onPress={() =>
             navigation.navigate("GroupInformation", {
-              group,
+              group
             })
           }
         >
@@ -103,7 +105,7 @@ class ChatScreen extends Component {
           onPress={() =>
             navigation.navigate("GroupCalendar", {
               groupID: group.groupID,
-              title: "Group Calendar",
+              title: "Group Calendar"
             })
           }
         >
@@ -117,7 +119,7 @@ class ChatScreen extends Component {
         </TouchableOpacity>
       ),
       headerStyle: {
-        borderBottomColor: "transparent",
+        borderBottomColor: "transparent"
       }
     };
   };
@@ -127,33 +129,29 @@ class ChatScreen extends Component {
       groupName: this.props.group.groupName
     });
     this.props.dispatch(setToZero(this.state.groupID));
-    firebase.database().ref(`groups/${this.state.groupID}`).on("child_changed", snapshot => {
-      this.props.dispatch(setToZero(this.state.groupID));
-    })
+    firebase
+      .database()
+      .ref(`groups/${this.state.groupID}`)
+      .on("child_changed", snapshot => {
+        this.props.dispatch(setToZero(this.state.groupID));
+      });
   }
 
   componentWillMount() {
     const groupID = this.state.groupID;
     this.messagesRef.child(`${groupID}`).on("value", snapshot => {
       this.props.dispatch(
-        fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
+        fetchConversation(
+          groupID,
+          this.sort(values(snapshot.val())).slice(0, 40)
+        )
       );
-    })
-
-    // this.keyboardDidShowListener = Keyboard.addListener(
-    //   "keyboardDidShow",
-    //   this.scrollToBottom
-    // );
-    // this.keyboardDidHideListener = Keyboard.addListener(
-    //   "keyboardDidHide",
-    //   this.scrollToBottom
-    // );
+    });
   }
 
-  // componentWillUnmount() {
-  //   this.keyboardDidShowListener.remove();
-  //   this.keyboardDidHideListener.remove();
-  // }
+  componentWillUnmount() {
+    this.setState({ visible: false });
+  }
 
   // scrollToBottom = (contentHeight, contentWidth) => {
   //   this.refs.messageList.scrollToOffset({ offset: 0, animated: false });
@@ -162,8 +160,8 @@ class ChatScreen extends Component {
   sort = messages => {
     return messages.sort((message1, message2) => {
       return message2.timestamp - message1.timestamp;
-    })
-  }
+    });
+  };
 
   handleChange = key => val => {
     this.setState({
@@ -227,19 +225,19 @@ class ChatScreen extends Component {
   };
 
   sendSystemMessage = text => {
-    const groupID = this.state.groupID
+    const groupID = this.state.groupID;
     const msgID = this.messagesRef.child(`${groupID}`).push().key;
     const message = {
       messageType: "system",
       message: text,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       sender: ""
-    }
+    };
     this.messagesRef
       .child(`${groupID}`)
       .child(`${msgID}`)
       .set(message);
-  }
+  };
 
   respondToInvitation = (eventID, response) => async () => {
     const eventSnapshot = await firebase
@@ -280,7 +278,9 @@ class ChatScreen extends Component {
           }`
         )
         .remove();
-      this.sendSystemMessage(`${this.props.username} is attending ${event.title}!`);
+      this.sendSystemMessage(
+        `${this.props.username} is attending ${event.title}!`
+      );
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     } else {
       updatedEvent = {
@@ -305,7 +305,9 @@ class ChatScreen extends Component {
           }`
         )
         .remove();
-      this.sendSystemMessage(`${this.props.username} is not attending ${event.title}!`);
+      this.sendSystemMessage(
+        `${this.props.username} is not attending ${event.title}!`
+      );
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
     }
     firebase
@@ -360,8 +362,14 @@ class ChatScreen extends Component {
           style={[
             { flexDirection: "column" },
             item.sender === this.props.uid
-              ? [styles.myMessageBubble, { backgroundColor: this.props.colors.myMsgBubble }]
-              : [styles.yourMessageBubble, { backgroundColor: this.props.colors.yourMsgBubble }]
+              ? [
+                styles.myMessageBubble,
+                { backgroundColor: this.props.colors.myMsgBubble }
+              ]
+              : [
+                styles.yourMessageBubble,
+                { backgroundColor: this.props.colors.yourMsgBubble }
+              ]
           ]}
           uid={this.props.uid}
           convertTime={this.convertTime}
@@ -378,8 +386,14 @@ class ChatScreen extends Component {
         <EventBubble
           style={
             item.sender === this.props.uid
-              ? { ...styles.myEventBubble, backgroundColor: this.props.colors.myMsgBubble }
-              : { ...styles.yourEventBubble, backgroundColor: this.props.colors.yourMsgBubble }
+              ? {
+                ...styles.myEventBubble,
+                backgroundColor: this.props.colors.myMsgBubble
+              }
+              : {
+                ...styles.yourEventBubble,
+                backgroundColor: this.props.colors.yourMsgBubble
+              }
           }
           showEventModal={this.showEventModal}
           uid={this.props.uid}
@@ -397,13 +411,9 @@ class ChatScreen extends Component {
           message={item.message}
           color={this.props.colors.systemMsgBubble}
         />
-      )
+      );
     } else if (item.messageType === "poll") {
-      return (
-        <PollMessageBubble
-          poll={item.pollObject}
-        />
-      )
+      return <PollMessageBubble poll={item.pollObject} />;
     }
   };
 
@@ -430,7 +440,9 @@ class ChatScreen extends Component {
     return (
       <View style={{ flex: 1 }}>
         <StatusBar barStyle="light-content" />
-        <SafeAreaView style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}>
+        <SafeAreaView
+          style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}
+        >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             {Platform.OS === "ios" ? (
               <FlatList
@@ -440,7 +452,7 @@ class ChatScreen extends Component {
                 style={{
                   padding: 10,
                   height: height,
-                  backgroundColor: this.props.colors.chatBackground,
+                  backgroundColor: this.props.colors.chatBackground
                 }}
                 data={this.props.conversation}
                 renderItem={this.renderRow}
@@ -466,6 +478,7 @@ class ChatScreen extends Component {
                   inverted
                   keyExtractor={(item, index) => index.toString()}
                   initialNumToRender={50}
+                  extraData={this.state.numOfVisibleMsg}
                 />
               )}
           </TouchableWithoutFeedback>
@@ -480,21 +493,34 @@ class ChatScreen extends Component {
               bottom: 0,
               backgroundColor: this.props.colors.lightMain,
               borderTopColor: "transparent",
+              paddingHorizontal: 5
             }}
           >
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("CreatePoll", {
-                  groupID: this.state.groupID,
-                  uid: this.props.uid,
-                  username: this.props.username
-                })
+              onPress={
+                () => this.setState({ visible: true })
+                // this.props.navigation.navigate("CreatePoll", {
+                //   groupID: this.state.groupID,
+                //   uid: this.props.uid,
+                //   username: this.props.username
+                // })
               }
               style={{ justifyContent: "center" }}
             >
-              <MyIcon name="add" type="material" size={28} color={this.props.colors.chatButtons} />
+              <MyIcon
+                name="add"
+                type="material"
+                size={28}
+                color={this.props.colors.chatButtons}
+              />
             </TouchableOpacity>
-            <View style={{ flexDirection: "row", flex: 1 }}>
+            <View
+              style={{ flexDirection: "row", flex: 1, }}
+              onLayout={event => {
+                const { height } = event.nativeEvent.layout;
+                this.setState({ heightOfInput: height });
+              }}
+            >
               <TextInput
                 autoCapitalize="sentences"
                 style={[styles.chatInput, { color: this.props.colors.textColor }]}
@@ -503,7 +529,6 @@ class ChatScreen extends Component {
                 placeholder="Message"
                 placeholderTextColor={this.props.colors.placeholderColor}
                 keyboardAppearance={this.props.colors.keyboard}
-              // color={this.props.colors.textColor}
               />
               <TouchableOpacity
                 onPress={this.sendMessage}
@@ -519,9 +544,19 @@ class ChatScreen extends Component {
             </View>
           </KeyboardAvoidingView>
           <EventModal />
+          <ButtonsModal
+            visible={this.state.visible}
+            setFalse={() => this.setState({ visible: false })}
+            groupID={this.state.groupID}
+            uid={this.props.uid}
+            username={this.props.username}
+            navigation={this.props.navigation}
+            theme={this.props.colors}
+            heightOfInput={this.state.heightOfInput}
+          />
           <PollModal group={this.props.group} />
         </SafeAreaView>
-      </View >
+      </View>
     );
   }
 }

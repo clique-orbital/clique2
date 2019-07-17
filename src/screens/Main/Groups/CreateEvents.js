@@ -151,19 +151,19 @@ class CreateEvents extends Component {
 
   renderTitle = width => {
     return (
-      <View style={[styles.border, {
-        borderBottomColor: this.props.colors.hairlineColor,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 10
-      }]}>
+      <View
+        style={[
+          styles.border,
+          {
+            borderBottomColor: this.props.colors.hairlineColor,
+            flexDirection: "row",
+            alignItems: "center",
+            paddingVertical: 10
+          }
+        ]}
+      >
         <View style={{ marginHorizontal: 20 }}>
-          <MyIcon
-            name="title"
-            type="material"
-            color="darkgrey"
-            size={30}
-          />
+          <MyIcon name="title" type="material" color="darkgrey" size={30} />
         </View>
         <Input
           autoCapitalize="sentences"
@@ -174,7 +174,7 @@ class CreateEvents extends Component {
             styles.input,
             {
               color: this.props.colors.textColor,
-              fontWeight: "400",
+              fontWeight: "400"
             }
           ]}
           w={width}
@@ -194,7 +194,7 @@ class CreateEvents extends Component {
             flexDirection: "row",
             width: width,
             paddingTop: 10,
-            borderBottomColor: this.props.colors.hairlineColor,
+            borderBottomColor: this.props.colors.hairlineColor
           },
           styles.border
         ]}
@@ -263,7 +263,7 @@ class CreateEvents extends Component {
             flexDirection: "row",
             paddingVertical: 10,
             alignItems: "center",
-            borderBottomColor: this.props.colors.hairlineColor,
+            borderBottomColor: this.props.colors.hairlineColor
           },
           styles.border
         ]}
@@ -295,7 +295,10 @@ class CreateEvents extends Component {
                 left
                 placeholderTextColor={this.props.colors.placeholderColor}
                 placeholder="Add location"
-                style={({ ...styles.input }, { marginLeft: 10, color: this.props.colors.textColor, })}
+                style={
+                  ({ ...styles.input },
+                  { marginLeft: 10, color: this.props.colors.textColor })
+                }
                 value={this.props.location}
                 onChangeText={this.handleTextChange("location")}
                 keyboardAppearance={this.props.colors.keyboard}
@@ -309,7 +312,10 @@ class CreateEvents extends Component {
                 left
                 placeholder="Add notes"
                 placeholderTextColor={this.props.colors.placeholderColor}
-                style={({ ...styles.input }, { marginLeft: 10, color: this.props.colors.textColor, })}
+                style={
+                  ({ ...styles.input },
+                  { marginLeft: 10, color: this.props.colors.textColor })
+                }
                 value={this.props.notes}
                 onChangeText={this.handleTextChange("notes")}
                 keyboardAppearance={this.props.colors.keyboard}
@@ -320,15 +326,17 @@ class CreateEvents extends Component {
           <View style={{ alignItems: "center" }}>
             <Button
               shadow
-              style={[styles.publishButton, { backgroundColor: this.props.colors.headerColor }]}
+              style={[
+                styles.publishButton,
+                { backgroundColor: this.props.colors.headerColor }
+              ]}
               onPress={() => this.publishEvent()}
             >
               <Text semibold white center>
                 Publish
-            </Text>
+              </Text>
             </Button>
           </View>
-
         </SafeAreaView>
 
         <DateTimePicker
@@ -357,9 +365,13 @@ const mapStateToProps = (state, ownProps) => {
     fromDateVisibility: createEventsReducerState.fromDateVisibility,
     toDateVisibility: createEventsReducerState.toDateVisibility,
     fromDate:
-      createEventsReducerState.fromDate || new Date(),
+      createEventsReducerState.fromDate ||
+      ownProps.navigation.getParam("date") ||
+      new Date(),
     toDate:
-      createEventsReducerState.toDate || createEventsReducerState.fromDate || new Date(),
+      createEventsReducerState.toDate ||
+      ownProps.navigation.getParam("date") ||
+      new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
     uid: state.authReducer.user.uid,
