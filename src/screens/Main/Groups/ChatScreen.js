@@ -140,24 +140,24 @@ class ChatScreen extends Component {
       );
     })
 
-    this.keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      this.scrollToBottom
-    );
-    this.keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      this.scrollToBottom
-    );
+    // this.keyboardDidShowListener = Keyboard.addListener(
+    //   "keyboardDidShow",
+    //   this.scrollToBottom
+    // );
+    // this.keyboardDidHideListener = Keyboard.addListener(
+    //   "keyboardDidHide",
+    //   this.scrollToBottom
+    // );
   }
 
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
-  }
+  // componentWillUnmount() {
+  //   this.keyboardDidShowListener.remove();
+  //   this.keyboardDidHideListener.remove();
+  // }
 
-  scrollToBottom = (contentHeight, contentWidth) => {
-    this.refs.messageList.scrollToOffset({ offset: 0, animated: false });
-  };
+  // scrollToBottom = (contentHeight, contentWidth) => {
+  //   this.refs.messageList.scrollToOffset({ offset: 0, animated: false });
+  // };
 
   sort = messages => {
     return messages.sort((message1, message2) => {
@@ -497,13 +497,13 @@ class ChatScreen extends Component {
             <View style={{ flexDirection: "row", flex: 1 }}>
               <TextInput
                 autoCapitalize="sentences"
-                style={styles.chatInput}
+                style={[styles.chatInput, { color: this.props.colors.textColor }]}
                 value={this.state.textMessage}
                 onChangeText={this.handleChange("textMessage")}
                 placeholder="Message"
                 placeholderTextColor={this.props.colors.placeholderColor}
                 keyboardAppearance={this.props.colors.keyboard}
-                color={this.props.colors.textColor}
+              // color={this.props.colors.textColor}
               />
               <TouchableOpacity
                 onPress={this.sendMessage}

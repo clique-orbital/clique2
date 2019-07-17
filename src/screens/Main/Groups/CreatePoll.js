@@ -31,12 +31,21 @@ class CreatePoll extends React.Component {
             Poll
           </Text>
         </View>
-      )
+      ),
+      headerStyle: {
+        borderBottomColor: "transparent"
+      }
     };
   };
 
   renderInput = props => {
-    return <Input {...props.input} style={props.style} {...props} />;
+    return <Input
+      {...props.input}
+      style={[props.style, { borderBottomColor: this.props.colors.hairlineColor }]}
+      {...props}
+      keyboardAppearance={this.props.colors.keyboard}
+      placeholderTextColor={this.props.colors.placeholderColor}
+    />;
   };
 
   handleSubmit = formValues => {
@@ -97,7 +106,8 @@ class CreatePoll extends React.Component {
               fontSize: 22,
               paddingLeft: 30,
               paddingTop: 10,
-              fontWeight: "400"
+              fontWeight: "400",
+              color: this.props.colors.textColor
             }
           ]}
           w={width}
@@ -142,7 +152,7 @@ class CreatePoll extends React.Component {
                 name="radio-button-unchecked"
                 type="material"
                 size={15}
-                color="black"
+                color={this.props.colors.textColor}
               />
               <Field
                 autoCapitalize="sentences"
@@ -152,7 +162,7 @@ class CreatePoll extends React.Component {
                 name={`${option}.title`}
                 component={this.renderInput}
                 placeholder={`Option ${index + 1}`}
-                style={{ paddingLeft: 10, fontSize: 19 }}
+                style={{ paddingLeft: 10, fontSize: 19, color: this.props.colors.textColor }}
                 onChange={this.onChangeOptions(index)}
                 value={this.state.options[index]}
               />
@@ -169,7 +179,7 @@ class CreatePoll extends React.Component {
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={Platform.OS === "ios" ? 85 : -200}
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor: this.props.colors.whiteBlack }}
       >
         <SafeAreaView style={{ flex: 1, alignItems: "flex-start" }}>
           {this.renderQuestion()}
@@ -180,7 +190,7 @@ class CreatePoll extends React.Component {
           />
           <Button
             shadow
-            style={[styles.publishButton, { marginTop: 20 }]}
+            style={[styles.publishButton, { marginTop: 20, backgroundColor: this.props.colors.headerColor }]}
             onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
           >
             <Text semibold white center>
@@ -195,7 +205,6 @@ class CreatePoll extends React.Component {
 
 const styles = StyleSheet.create({
   publishButton: {
-    backgroundColor: theme.colors.cliqueBlue,
     width: "70%",
     borderRadius: 10,
     marginTop: 10,
@@ -206,11 +215,15 @@ const styles = StyleSheet.create({
     borderWidth: 0
   },
   border: {
-    borderBottomColor: "lightgrey",
     borderBottomWidth: StyleSheet.hairlineWidth,
     width: "100%"
   }
 });
 
+const mapStateToProps = state => {
+  return {
+    colors: state.theme.colors,
+  }
+}
 let form = reduxForm({ form: "createPoll" })(CreatePoll);
-export default connect(null)(form);
+export default connect(mapStateToProps)(form);
