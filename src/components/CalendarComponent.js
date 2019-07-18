@@ -11,7 +11,6 @@ import {
 } from "../store/actions/eventModal";
 import EventModal from "../screens/Main/EventModal";
 import _ from "lodash";
-import { cliqueBlue } from "../assets/constants";
 
 const date = new Date();
 const day = date.getDate();
@@ -37,6 +36,15 @@ class CalendarComponent extends React.Component {
     this.showEventModal = this.showEventModal.bind(this);
     this.loadItems = this.loadItems.bind(this);
   }
+
+  // shouldComponentUpdate(nextProps) {
+  //   if (this.props.colors.whiteBlack !== nextProps.colors.whiteBlack) {
+  //     console.log("Inside shouldComponentUpdate");
+  //     this.forceUpdate(() => console.log("updated"));
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   renderButton = () => {
     if (!this.props.hasButton) {
@@ -98,9 +106,18 @@ class CalendarComponent extends React.Component {
           <Text style={{ fontWeight: "500", fontSize: 16, marginBottom: 10, color: this.props.colors.textColor }}>
             {item.event.title}
           </Text>
-          <Text style={{ color: this.props.colors.textColor }}>
-            {fromTime} - {toTime}
-          </Text>
+          <View style={{ flexDirection: "row", width: "100%" }}>
+            <View>
+              <Text style={{ color: this.props.colors.textColor, flex: 1 }}>
+                🕘 : {fromTime} - {toTime}
+              </Text>
+            </View>
+            <View>
+              <Text style={{ color: this.props.colors.textColor, flex: 1, marginLeft: 20 }}>
+                {item.event.location ? `📍: ${item.event.location}` : ""}
+              </Text>
+            </View>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -157,10 +174,12 @@ class CalendarComponent extends React.Component {
 
   render() {
     const colors = this.props.colors;
+    console.log(this.props.agendaKey);
     return (
       <View>
         <View style={{ display: "flex", height: "100%" }}>
           <Agenda
+            key={this.props.agendaKey}
             items={this.props.events}
             renderItem={this.renderItem.bind(this)}
             renderEmptyDate={this.renderEmptyDate.bind(this)}

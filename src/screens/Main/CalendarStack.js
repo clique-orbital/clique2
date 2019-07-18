@@ -1,6 +1,7 @@
 import { createStackNavigator } from "react-navigation";
-import { cliqueBlue } from "../../assets/constants";
 import PersonalCalendar from "./PersonalCalendar";
+import React from "react";
+import MyHeader from "../../components/MyHeader";
 
 const CalendarStack = createStackNavigator(
   {
@@ -9,9 +10,7 @@ const CalendarStack = createStackNavigator(
   {
     initialRouteName: "Main",
     defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: cliqueBlue
-      }
+      header: props => <MyHeader {...props} />,
     }
   }
 );

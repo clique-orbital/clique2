@@ -41,7 +41,13 @@ class EventModal extends Component {
   renderRow = ({ item }) => {
     return (
       <View style={{ flex: 1, height: 30, justifyContent: "center" }}>
-        <Text style={{ textAlign: "center", fontSize: 18, color: this.props.colors.eventResponders }}>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            color: this.props.colors.eventResponders
+          }}
+        >
           @{item}
         </Text>
       </View>
@@ -49,20 +55,25 @@ class EventModal extends Component {
   };
 
   sendSystemMessage = text => {
-    const groupID = this.props.groupID
-    const msgID = firebase.database().ref("messages").child(`${groupID}`).push().key;
+    const groupID = this.props.groupID;
+    const msgID = firebase
+      .database()
+      .ref("messages")
+      .child(`${groupID}`)
+      .push().key;
     const message = {
       messageType: "system",
       message: text,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       sender: ""
-    }
-    firebase.database()
+    };
+    firebase
+      .database()
       .ref("messages")
       .child(`${groupID}`)
       .child(`${msgID}`)
       .set(message);
-  }
+  };
 
   respondToInvitation = (eventID, response) => async () => {
     const groupID = this.props.event.groupID;
@@ -99,16 +110,14 @@ class EventModal extends Component {
         noResponse
       };
       db.ref(
-        `users/${this.props.uid}/attending/${groupID}/${
-        event.eventID
-        }`
+        `users/${this.props.uid}/attending/${groupID}/${event.eventID}`
       ).set(true);
       db.ref(
-        `users/${this.props.uid}/notAttending/${groupID}/${
-        event.eventID
-        }`
+        `users/${this.props.uid}/notAttending/${groupID}/${event.eventID}`
       ).remove();
-      this.sendSystemMessage(`${this.props.displayName} is attending ${event.title}!`);
+      this.sendSystemMessage(
+        `${this.props.displayName} is attending ${event.title}!`
+      );
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
       attendingNames = [...attendingNames, this.props.displayName];
     } else {
@@ -119,16 +128,14 @@ class EventModal extends Component {
         notAttending: [...notAttending, this.props.uid]
       };
       db.ref(
-        `users/${this.props.uid}/notAttending/${groupID}/${
-        event.eventID
-        }`
+        `users/${this.props.uid}/notAttending/${groupID}/${event.eventID}`
       ).set(true);
       db.ref(
-        `users/${this.props.uid}/attending/${groupID}/${
-        event.eventID
-        }`
+        `users/${this.props.uid}/attending/${groupID}/${event.eventID}`
       ).remove();
-      this.sendSystemMessage(`${this.props.displayName} is not attending ${event.title}!`);
+      this.sendSystemMessage(
+        `${this.props.displayName} is not attending ${event.title}!`
+      );
       this.props.dispatch(fetchPersonalEvents(this.props.uid));
       notAttendingNames = [...notAttendingNames, this.props.displayName];
     }
@@ -165,7 +172,13 @@ class EventModal extends Component {
         <Text h1 center color={this.props.colors.textColor} medium>
           {(this.props.event || {}).title}
         </Text>
-        <Text h3 center color={this.props.colors.textColor} medium style={{ marginTop: 10 }}>
+        <Text
+          h3
+          center
+          color={this.props.colors.textColor}
+          medium
+          style={{ marginTop: 10 }}
+        >
           {this.props.groupName}
         </Text>
       </View>
@@ -212,8 +225,9 @@ class EventModal extends Component {
 
   render() {
     if (Platform.OS === "android") {
-      if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
-      else StatusBar.setBackgroundColor(cliqueBlue);
+      if (this.props.modalVisibility)
+        StatusBar.setBackgroundColor(this.props.colors.lightMain);
+      else StatusBar.setBackgroundColor(this.props.colors.cliqueBlue);
     }
     return (
       <View style={{ flex: 1 }}>
@@ -224,7 +238,9 @@ class EventModal extends Component {
           onSwipeComplete={this.hideModal}
           style={{ margin: 0 }}
         >
-          <SafeAreaView style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}>
+          <SafeAreaView
+            style={{ flex: 1, backgroundColor: this.props.colors.lightMain }}
+          >
             <View
               style={{
                 height: "5%",
@@ -238,13 +254,14 @@ class EventModal extends Component {
                   width: 30,
                   position: "relative",
                   marginLeft: 15,
-                  marginTop: 3,
+                  marginTop: 3
                 }}
                 onPress={this.hideModal}
               >
                 <MyIcon
                   type="material"
-                  name="clear" size={28}
+                  name="clear"
+                  size={28}
                   color={this.props.colors.pollTitle}
                 />
               </TouchableOpacity>

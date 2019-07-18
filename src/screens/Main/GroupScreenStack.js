@@ -1,5 +1,4 @@
 import { createStackNavigator } from "react-navigation";
-import { cliqueBlue } from "../../assets/constants";
 import CreateGroups from "./Groups/CreateGroups";
 import ChatScreen from "./Groups/ChatScreen";
 import GroupDetails from "./Groups/GroupDetails";
@@ -9,7 +8,8 @@ import CalendarScreen from "./Groups/CalendarScreen";
 import GroupInformation from "./Groups/GroupInformation";
 import AddMembers from "./Groups/AddMembers";
 import CreatePoll from "./Groups/CreatePoll";
-import { connect } from "react-redux";
+import MyHeader from "../../components/MyHeader"
+import React from "react";
 
 const GroupScreenStack = createStackNavigator(
   {
@@ -26,8 +26,9 @@ const GroupScreenStack = createStackNavigator(
   {
     initialRouteName: "Main",
     defaultNavigationOptions: {
+      header: props => <MyHeader {...props} />,
       headerStyle: {
-        backgroundColor: cliqueBlue
+        // backgroundColor: cliqueBlue
       }
     }
   }

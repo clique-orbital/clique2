@@ -46,7 +46,6 @@ class GroupScreen extends Component {
         </TouchableOpacity>
       ),
       headerStyle: {
-        backgroundColor: (navigation.state.params || {}).backgroundColor || cliqueBlue,
         borderBottomColor: "transparent",
       },
     };
@@ -198,7 +197,6 @@ class GroupScreen extends Component {
               group: item,
               image: { uri: item.photoURL },
               groupID: item.groupID,
-              headerColor: this.props.colors.headerColor
             })
           }
         >

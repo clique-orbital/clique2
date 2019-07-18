@@ -10,7 +10,7 @@ import Spinner from "../../components/Spinner";
 import Text from "../../components/Text";
 import Button from "../../components/Button";
 import GroupPicture from "../../components/GroupPicture";
-import MyIcon from "../../components/MyIcon"
+import MyIcon from "../../components/MyIcon";
 
 class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -20,9 +20,10 @@ class SettingsScreen extends React.Component {
         backgroundColor: cliqueBlue
       },
       headerStyle: {
-        backgroundColor: (navigation.state.params || {}).backgroundColor || cliqueBlue
+        backgroundColor:
+          (navigation.state.params || {}).backgroundColor || cliqueBlue
       }
-    }
+    };
   };
 
   state = {
@@ -32,8 +33,8 @@ class SettingsScreen extends React.Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      backgroundColor: this.props.colors.main,
-    })
+      backgroundColor: this.props.colors.main
+    });
   }
 
   signOut = () => {
@@ -57,12 +58,28 @@ class SettingsScreen extends React.Component {
     );
   }
 
+  toggleDarkMode = () => {
+    this.setState({ darkMode: !this.state.darkMode }, async () => {
+      this.props.dispatch(toggleTheme(this.state.darkMode));
+    });
+  };
+
   render() {
     if (this.props.modalVisibility) StatusBar.setBackgroundColor("white");
     return (
-      <View style={[styles.container, { backgroundColor: this.props.colors.whiteBlack }]}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: this.props.colors.whiteBlack }
+        ]}
+      >
         {this.renderProfilePic()}
-        <Text center h3 light style={{ marginTop: 50, color: this.props.colors.textColor }}>
+        <Text
+          center
+          h3
+          light
+          style={{ marginTop: 50, color: this.props.colors.textColor }}
+        >
           @{this.props.username}
         </Text>
         <Text center h3 light color={this.props.colors.textColor}>
@@ -79,9 +96,20 @@ class SettingsScreen extends React.Component {
           </Text>
         </Button>
         <View
-          style={{ marginTop: 40, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
+          style={{
+            marginTop: 40,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
         >
-          <View style={{ justifyContent: "center", alignItems: "center", margin: 10 }}>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              margin: 10
+            }}
+          >
             <MyIcon
               type="material-community"
               size={30}
@@ -91,12 +119,8 @@ class SettingsScreen extends React.Component {
           </View>
           <Switch
             trackColor={{ true: "lightgrey" }}
-            thumbColor="black"
-            onValueChange={() => {
-              this.setState({ darkMode: !this.state.darkMode }, () => {
-                this.props.dispatch(toggleTheme(this.state.darkMode));
-              });
-            }}
+            thumbColor={this.props.colors.textColor}
+            onValueChange={this.toggleDarkMode.bind(this)}
             value={this.state.darkMode}
           />
           <View style={{ margin: 10 }}>
@@ -109,7 +133,7 @@ class SettingsScreen extends React.Component {
           </View>
         </View>
         {this.state.loading && <Spinner />}
-      </View >
+      </View>
     );
   }
 }

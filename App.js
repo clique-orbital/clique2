@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StatusBar, Platform } from "react-native";
+import { View, StatusBar, Platform, YellowBox } from "react-native";
 import {
   createBottomTabNavigator,
   createAppContainer,
@@ -7,7 +7,7 @@ import {
 } from "react-navigation";
 import { connect } from "react-redux";
 import GroupScreenStack from "./src/screens/Main/GroupScreenStack";
-import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
+// import NotificationsScreen from "./src/screens/Main/NotificationsScreen";
 import SettingsScreen from "./src/screens/Main/SettingsScreen";
 import CalendarStack from "./src/screens/Main/CalendarStack";
 import Auth from "./src/screens/Auth/Auth";
@@ -16,11 +16,15 @@ import MyIcon from "./src/components/MyIcon";
 import firebase from "react-native-firebase";
 import storage from "redux-persist/lib/storage";
 
+import TabBarComponent from "./src/components/TabBarComponent";
+
+YellowBox.ignoreWarnings(["Possible Unhandled Promise Rejection"]);
+
 const AppNavigator = createBottomTabNavigator(
   {
     Groups: GroupScreenStack,
     Calendar: CalendarStack,
-    Notifications: NotificationsScreen,
+    // Notifications: NotificationsScreen,
     Profile: SettingsScreen
   },
   {
@@ -36,9 +40,9 @@ const AppNavigator = createBottomTabNavigator(
           iconType = "material-community";
           iconName = `calendar${
             focused || Platform.OS === "ios" ? "" : "-blank-outline"
-            }`;
-        } else if (routeName === "Notifications") {
-          iconName = `notifications${focused ? "-active" : "-none"}`;
+          }`;
+          // } else if (routeName === "Notifications") {
+          // iconName = `notifications${focused ? "-active" : "-none"}`;
         } else if (routeName === "Profile") {
           iconName = `person${focused ? "" : "-outline"}`;
         }
@@ -52,16 +56,14 @@ const AppNavigator = createBottomTabNavigator(
             />
           </View>
         );
+      },
+      tabBarComponent: TabBarComponent,
+      tabBarOptions: {
+        showLabel: false,
+        activeTintColor: "black",
+        inactiveTintColor: "gray"
       }
-    }),
-    tabBarOptions: {
-      showLabel: false,
-      activeTintColor: "black",
-      inactiveTintColor: "gray",
-      style: {
-        // backgroundColor: "black"
-      }
-    }
+    })
   }
 );
 
@@ -88,10 +90,9 @@ const InitialNavigator = createSwitchNavigator(
 const AppContainer = createAppContainer(InitialNavigator);
 
 class App extends React.Component {
-
   async componentDidMount() {
     // when app is closed and notification is tapped
-    storage.getAllKeys(keys => console.log(keys))
+    storage.getAllKeys(keys => console.log(keys));
     const notificationOpen = await firebase
       .notifications()
       .getInitialNotification();
@@ -148,7 +149,7 @@ class App extends React.Component {
           .removeDeliveredNotification(notification.notificationId);
       });
 
-    this.messageListener = firebase.messaging().onMessage(message => { });
+    this.messageListener = firebase.messaging().onMessage(message => {});
   }
 
   componentWillUnmount() {
@@ -159,9 +160,10 @@ class App extends React.Component {
   }
 
   render() {
-    if (Platform.OS === "android") StatusBar.setBackgroundColor("#0d2f55");
+    if (Platform.OS === "android")
+      StatusBar.setBackgroundColor(this.props.colors.cliqueBlue);
     return <AppContainer color={"black"} />;
   }
 }
 
-export default connect()(App);
+export default connect(state => ({ colors: state.theme.colors }))(App);

@@ -15,7 +15,6 @@ class GroupMembersSelect extends React.Component {
         </View>
       ),
       headerStyle: {
-        backgroundColor: navigation.getParam("headerColor"),
         borderBottomColor: "transparent",
       }
     };

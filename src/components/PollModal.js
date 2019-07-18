@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import Modal from "react-native-modal";
 import { SafeAreaView, View, TouchableOpacity, FlatList } from "react-native";
-import FastImage from "react-native-fast-image";
 import Text from "../components/Text";
 import { connect } from "react-redux";
 import { togglePollModal, updatePoll } from "../store/actions/pollModal";
-import { cliqueBlue } from "../assets/constants";
-import theme from "../assets/theme";
 import _ from "lodash";
 import firebase from "react-native-firebase";
 import MyIcon from "./MyIcon";
@@ -17,7 +14,7 @@ class PollModal extends Component {
     this.state = {
       showIndex: [],
       voters: {}
-    }
+    };
     this.popularVote = this.popularVote.bind(this);
     this.renderPoll = this.renderPoll.bind(this);
     this.renderVoters = this.renderVoters.bind(this);
@@ -28,7 +25,7 @@ class PollModal extends Component {
     this.setState({
       showIndex: [],
       voters: {}
-    })
+    });
     this.props.dispatch(togglePollModal(false));
   };
 
@@ -61,40 +58,38 @@ class PollModal extends Component {
       .then(() => {
         return ref.parent.parent.parent.once("value", snapshot => {
           this.props.dispatch(updatePoll(snapshot.val()));
+          this.fetchVoters(snapshot.val().options);
         });
       })
-      .then(() => this.fetchVoters());
   };
 
-
-  renderVoters = (index) => () => {
+  renderVoters = index => () => {
     if (this.state.showIndex.includes(index)) {
       this.setState(prevState => {
         return {
           showIndex: prevState.showIndex.filter(i => i !== index)
-        }
-      })
+        };
+      });
     } else {
       this.fetchVoters();
       this.setState(prevState => {
         return {
-          showIndex: prevState.showIndex.concat([index]),
-        }
-      })
+          showIndex: prevState.showIndex.concat([index])
+        };
+      });
     }
-  }
+  };
 
-  fetchVoters = () => {
-    const { options } = this.props.poll;
+  fetchVoters = (options = this.props.poll.options) => {
     const numOfOptions = options.length;
-    let voters = {}
+    let voters = {};
     for (let i = 0; i < numOfOptions; i++) {
       const usersUID = _.keys(options[i].agree);
       const users = usersUID.map(uid => this.props.group.users[uid]);
       voters[i] = users.join(", ");
     }
     this.setState({ voters });
-  }
+  };
 
   // map each result to this UI
   renderPoll = highestVote => ({ item, index }) => {
@@ -127,12 +122,14 @@ class PollModal extends Component {
                 borderRadius: 10,
                 borderWidth: 2,
                 borderColor: this.props.colors.pollBar,
-                padding: 1,
+                padding: 1
               }}
             >
               <View
                 style={{
-                  backgroundColor: userAgreed ? this.props.colors.pollBar : this.props.colors.lightMain,
+                  backgroundColor: userAgreed
+                    ? this.props.colors.pollBar
+                    : this.props.colors.lightMain,
                   flex: 1,
                   borderRadius: 10
                 }}
@@ -157,7 +154,7 @@ class PollModal extends Component {
                 backgroundColor: this.props.colors.pollBar,
                 flex: 1,
                 borderRadius: 10,
-                width: (length !== 0 ? `${(length / highestVote) * 100}%` : 14)// to be adjusted
+                width: length !== 0 ? `${(length / highestVote) * 100}%` : 14 // to be adjusted
               }}
             />
           </TouchableOpacity>
@@ -174,26 +171,28 @@ class PollModal extends Component {
             </Text>
           </View>
         </View>
-        {this.state.showIndex.includes(index) && (<View style={{ alignItems: "center" }}>
-          <View style={{ width: "75%", marginLeft: 10, marginTop: 2 }}>
-            <Text color={this.props.colors.pollVoter} size={12} left>
-              {this.state.voters[index]}
-            </Text>
+        {this.state.showIndex.includes(index) && (
+          <View style={{ alignItems: "center" }}>
+            <View style={{ width: "75%", marginLeft: 10, marginTop: 2 }}>
+              <Text color="#87A4C6" h5 left>
+                {this.state.voters[index]}
+              </Text>
+            </View>
           </View>
-        </View>)}
+        )}
       </View>
     );
-  }
+  };
 
   popularVote = () => {
     const highestVote = this.props.poll.options
       .map(option => {
         return _.size(option.agree);
       })
-      .reduce((option1, option2) => Math.max(option1, option2), 0)
+      .reduce((option1, option2) => Math.max(option1, option2), 0);
 
     return highestVote;
-  }
+  };
 
   render() {
     const highestVote = this.popularVote();
@@ -202,6 +201,8 @@ class PollModal extends Component {
       <View style={{ flex: 1 }}>
         <Modal
           isVisible={this.props.visibility}
+          onBackdropPress={this.hideModal}
+          onBackButtonPress={this.hideModal}
           swipeDirection="down"
           swipeThreshold={200}
           onSwipeComplete={this.hideModal}
@@ -230,7 +231,8 @@ class PollModal extends Component {
             >
               <MyIcon
                 type="material"
-                name="clear" size={28}
+                name="clear"
+                size={28}
                 color={this.props.colors.pollTitle}
               />
             </TouchableOpacity>
@@ -243,13 +245,13 @@ class PollModal extends Component {
                   flex: 1
                 }}
               >
-                <Text style={{ fontSize: 30, color: this.props.colors.pollTitle }}>
+                <Text
+                  style={{ fontSize: 30, color: this.props.colors.pollTitle }}
+                >
                   {this.props.poll.question}
                 </Text>
               </View>
-              <View style={{ flex: 5 }}>
-                {this.renderPolls(highestVote)}
-              </View>
+              <View style={{ flex: 5 }}>{this.renderPolls(highestVote)}</View>
             </View>
           </SafeAreaView>
         </Modal>
@@ -259,10 +261,10 @@ class PollModal extends Component {
 }
 
 const mapStateToProps = state => {
-  const { modalVisibility, poll } = state.pollModal;
+  const { modalVisibility } = state.pollModal;
   return {
     visibility: modalVisibility,
-    poll,
+    poll: state.pollModal.poll,
     uid: state.authReducer.user.uid,
     colors: state.theme.colors
   };

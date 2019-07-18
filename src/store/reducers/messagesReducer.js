@@ -8,7 +8,6 @@ import _ from "lodash";
 
 export const messagesReducer = (state = {}, action) => {
   if (action.type === FETCH_CONVERSATION) {
-    console.log("fetching conversation");
     const groupID = action.payload.groupID;
     return {
       ...state,

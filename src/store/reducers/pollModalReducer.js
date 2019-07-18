@@ -16,6 +16,7 @@ export const pollModalReducer = (state = initialState, action) => {
         poll: action.payload.poll
       };
     case UPDATE_POLL:
+      console.log(action.payload)
       return {
         ...state,
         poll: action.payload

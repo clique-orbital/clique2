@@ -39,7 +39,6 @@ class GroupDetails extends React.Component {
       ),
       headerTintColor: "#fff",
       headerStyle: {
-        backgroundColor: navigation.getParam("headerColor"),
         borderBottomColor: "transparent",
       },
     };
