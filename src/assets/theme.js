@@ -53,7 +53,8 @@ const lightColors = {
   agendaBackground: "#F2F2F2",
   textSectionTitleColor: "#b6c1cd",
   textDisabledColor: "#d9e1e8",
-  todayColor: "#00adf5"
+  todayColor: "#00adf5",
+  spinnerBg: "#F5FCFF88",
 };
 
 const darkColors = {
@@ -62,7 +63,7 @@ const darkColors = {
   lightMain: "#1F1F1F",
   chatList: "#000",
   textColor: "#fff",
-  chatBackground: "000" || "#151e27",
+  chatBackground: "#000", // "#151e27",
   shadow: "#fff",
   whiteBlack: "#000",
   systemMsgBubble: "#2f3f4f",
@@ -89,7 +90,8 @@ const darkColors = {
   agendaBackground: "#000",
   textSectionTitleColor: "#fff",
   textDisabledColor: "#434343",
-  todayColor: "#70CCCF"
+  todayColor: "#70CCCF",
+  spinnerBg: "#43434388",
 };
 
 const sizes = {

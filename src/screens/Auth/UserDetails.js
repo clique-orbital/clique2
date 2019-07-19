@@ -13,7 +13,10 @@ import defaultPicture from "../../assets/default_profile.png";
 import Spinner from "../../components/Spinner";
 
 class UserDetails extends React.Component {
-  state = { loading: false };
+  state = {
+    loading: false,
+    username: ""
+  };
 
   handleSubmit = values => {
     this.setState({ loading: true });
@@ -48,6 +51,8 @@ class UserDetails extends React.Component {
           name="username"
           component={this.renderInput}
           label="Enter username"
+          value={this.state.username}
+          onChange={text => this.setState({ username: text })}
         />
         <Button
           shadow

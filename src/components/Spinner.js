@@ -1,10 +1,11 @@
 import React from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { connect } from "react-redux";
 
 class Spinner extends React.Component {
   render() {
     return (
-      <View style={styles.loading}>
+      <View style={[styles.loading, { backgroundColor: this.props.backgroundColor }]}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -20,9 +21,14 @@ const styles = StyleSheet.create({
     top: 0,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F5FCFF88",
     elevation: 5
   }
 });
 
-export default Spinner;
+const mapStateToProp = state => {
+  return {
+    backgroundColor: state.theme.colors.spinnerBg
+  }
+}
+
+export default connect(mapStateToProp)(Spinner);

@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
-
 import Text from "../../../components/Text";
 import ContinueButton from "../../../components/ContinueButton";
 import { createGroup, editGroup } from "../../../store/actions/groups";
@@ -64,13 +63,14 @@ class GroupDetails extends React.Component {
   };
 
   handleSubmitEdit = values => {
+    console.log(values);
     this.setState({ loading: true });
     this.props
       .dispatch(
         editGroup(
           this.props.navigation.getParam("groupID"),
-          values.groupname,
-          values.grouppicture.uri,
+          (values.groupname || this.state.groupName),
+          ((values.grouppicture || {}).uri || this.props.group.photoURL),
         )
       )
       .then(group => {
@@ -95,6 +95,7 @@ class GroupDetails extends React.Component {
     return (
       <TextInput
         {...input}
+        keyboardAppearance={this.props.colors.keyboard}
         value={this.state.groupName}
         onChangeText={text => this.setState({ groupName: text })}
         style={[styles.textInput, { marginTop: 5, color: this.props.colors.textColor }]}
@@ -117,14 +118,16 @@ class GroupDetails extends React.Component {
             autoCapitalize="sentences"
             name="grouppicture"
             component={this.renderImagePicker}
-            validate={required}
+            validate={this.props.navigation.getParam("type") === "create" ? required : null}
           />
           <Field
             autoCapitalize="sentences"
             name="groupname"
             component={this.renderInput}
             label="Enter group name"
-            validate={required}
+            validate={this.props.navigation.getParam("type") === "create" ? required : null}
+            value={this.state.groupName}
+            onChange={text => this.setState({ groupName: text })}
           />
         </View>
         <TouchableOpacity
