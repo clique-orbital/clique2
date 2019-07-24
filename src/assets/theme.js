@@ -62,7 +62,7 @@ const darkColors = {
   lightMain: "#1F1F1F",
   chatList: "#000",
   textColor: "#fff",
-  chatBackground: "000" || "#151e27",
+  chatBackground: "#1b1c1e",
   shadow: "#fff",
   whiteBlack: "#000",
   systemMsgBubble: "#2f3f4f",
