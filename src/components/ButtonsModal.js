@@ -18,10 +18,10 @@ class ButtonsModal extends React.Component {
           this.props.setFalse();
           name === "poll"
             ? navigation.navigate("CreatePoll", {
-              groupID,
-              uid,
-              username
-            })
+                groupID,
+                uid,
+                username
+              })
             : navigation.navigate("CreateEvents", { groupID });
         }}
       >
@@ -44,7 +44,7 @@ class ButtonsModal extends React.Component {
           style={{
             width: "100%",
             margin: 0,
-            justifyContent: "flex-end",
+            justifyContent: "flex-end"
           }}
         >
           <SafeAreaView
@@ -54,7 +54,7 @@ class ButtonsModal extends React.Component {
               width: 100,
               backgroundColor: this.props.theme.myMsgBubble,
               borderRadius: 10,
-              bottom: 40 + this.props.heightOfInput,
+              bottom: this.props.heightOfInput,
               left: 5
             }}
           >
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
-    borderColor: "grey",
+    borderColor: "#404040",
     borderWidth: StyleSheet.hairlineWidth
   }
 });
