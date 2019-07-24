@@ -52,7 +52,7 @@ class ButtonsModal extends React.Component {
               flexDirection: "row",
               height: 50,
               width: 100,
-              backgroundColor: this.props.theme.myMsgBubble,
+              backgroundColor: this.props.theme.backgroundColor,
               borderRadius: 10,
               bottom: this.props.heightOfInput,
               left: 5

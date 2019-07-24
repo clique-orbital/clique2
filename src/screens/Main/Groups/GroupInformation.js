@@ -22,15 +22,20 @@ import { removeGroupMessages } from "../../../store/actions/messages";
 class GroupInformation extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const group = navigation.getParam("group");
-    navigation.goBack = () => navigation.navigate("Chat", {
-      group,
-      image: navigation.getParam("image")
-    });
+    navigation.goBack = () =>
+      navigation.navigate("Chat", {
+        group,
+        image: navigation.getParam("image")
+      });
     return {
       gesturesEnabled: false,
       headerTintColor: "#fff",
       headerStyle: {
         borderBottomColor: "transparent",
+        borderBottomWidth: 0,
+        elevation: 0,
+        shadowOffset: 0,
+        shadowColor: "transparent"
       },
       headerLeft: (
         <TouchableOpacity
@@ -38,7 +43,7 @@ class GroupInformation extends React.Component {
             navigation.navigate("Chat", {
               group,
               image: { uri: group.photoURL }
-            });;
+            });
           }}
           style={{ alignSelf: "flex-start", paddingTop: 10, paddingLeft: 10 }}
         >
@@ -47,14 +52,18 @@ class GroupInformation extends React.Component {
       ),
       headerRight: (
         <TouchableOpacity
-          onPress={() => navigation.navigate("GroupDetails", {
-            title: "Edit Group",
-            type: "edit",
-            groupID: group.groupID,
-          })}
+          onPress={() =>
+            navigation.navigate("GroupDetails", {
+              title: "Edit Group",
+              type: "edit",
+              groupID: group.groupID
+            })
+          }
           style={{ paddingTop: 12, paddingRight: 10, alignSelf: "flex-start" }}
         >
-          <Text white style={{ fontSize: 20 }}>Edit</Text>
+          <Text white style={{ fontSize: 20 }}>
+            Edit
+          </Text>
         </TouchableOpacity>
       )
     };
@@ -138,7 +147,10 @@ class GroupInformation extends React.Component {
           <View style={{ paddingLeft: 10 }}>
             <GroupPicture source={{ uri: item.photoURL }} value={0.1} />
           </View>
-          <Text h2 style={{ paddingLeft: "5%", color: this.props.colors.textColor }}>
+          <Text
+            h2
+            style={{ paddingLeft: "5%", color: this.props.colors.textColor }}
+          >
             {item.displayName}
           </Text>
         </View>
@@ -177,7 +189,7 @@ class GroupInformation extends React.Component {
         onPress={() =>
           this.props.navigation.navigate("AddMembers", {
             group: this.props.navigation.getParam("group"),
-            populateState: this.populateState,
+            populateState: this.populateState
           })
         }
         style={{
@@ -189,17 +201,8 @@ class GroupInformation extends React.Component {
           paddingVertical: 20
         }}
       >
-        <MyIcon
-          name="person-add"
-          size={30}
-          color="#1965BC"
-          type="material"
-        />
-        <Text
-          h3
-          color="#1965BC"
-          style={{ paddingLeft: "3%" }}
-        >
+        <MyIcon name="person-add" size={30} color="#1965BC" type="material" />
+        <Text h3 color="#1965BC" style={{ paddingLeft: "3%" }}>
           Add Member
         </Text>
       </TouchableOpacity>
@@ -223,7 +226,13 @@ class GroupInformation extends React.Component {
     const group = this.props.navigation.getParam("group");
 
     return (
-      <View style={{ display: "flex", height: "100%", backgroundColor: this.props.colors.whiteBlack }}>
+      <View
+        style={{
+          display: "flex",
+          height: "100%",
+          backgroundColor: this.props.colors.whiteBlack
+        }}
+      >
         <StatusBar barStyle="light-content" />
         <View
           style={{
@@ -247,7 +256,8 @@ class GroupInformation extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     self: state.authReducer.user,
-    group: state.groupsReducer.groups[ownProps.navigation.getParam("group").groupID],
+    group:
+      state.groupsReducer.groups[ownProps.navigation.getParam("group").groupID],
     colors: state.theme.colors
   };
 };
