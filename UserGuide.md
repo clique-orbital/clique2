@@ -134,6 +134,9 @@ To send a message:
 
 ### 3.4 Notifications
 
+<div align='center'>
+<img src="https://drive.google.com/uc?export=view&id=1ovd8oZs-YubGM3yhqdZ0BscoYorGP0JC" width="24%"></div>
+
 We have now implemented push-notifications and unread messages count into Clique. Push notifications will appear whenever a new message is sent to any of the groups that the user is in. A number will also appear on the **Groups** screen beside every group to indicate the number of unread messages in each group for the user.
 
 ### 3.5 Events
