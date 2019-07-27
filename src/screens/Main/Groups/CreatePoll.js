@@ -130,7 +130,6 @@ class CreatePoll extends React.Component {
           autoCapitalize="sentences"
           name="question"
           left
-          // label="Question"
           component={this.renderInput}
           placeholder="Enter question"
           style={[
