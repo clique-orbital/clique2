@@ -22,17 +22,16 @@ import LoadingView from "../../components/LoadingView";
 import icon from "../../assets/icon.png";
 
 class Auth extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: "",
-      codeInput: "",
-      phoneNumber: "+65", // need to change
-      confirmResult: null,
-      loading: false,
-      splash: true
-    };
+  state = {
+    message: "",
+    codeInput: "",
+    phoneNumber: "+65", // need to change
+    confirmResult: null,
+    loading: false,
+    splash: true
+  };
 
+  componentDidMount() {
     this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
       this.onTokenRefreshListener = firebase
         .messaging()

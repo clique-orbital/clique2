@@ -7,8 +7,6 @@
   <img src="https://drive.google.com/uc?export=view&id=17fQyHI54SuwE3xeHZ6aHjGuCP8_dJaLj" width="24%">
 </div>
 
-  <img src="https://drive.google.com/uc?export=view&id=" width="24%">
-
 Table of Contents
 
 - [1. Introduction](#1-introduction)
@@ -17,8 +15,11 @@ Table of Contents
   - [3.1 Phone Number Sign-in](#31-phone-number-sign-in)
   - [3.2 Groups](#32-groups)
   - [3.3 Messaging](#33-messaging)
-  - [3.4 Events](#34-events)
-  - [3.5 Calendar](#35-calendar)
+  - [3.4 Notifications and Unread Messages Count](#34-notifications)
+  - [3.5 Events](#35-events)
+  - [3.6 Calendar](#36-calendar)
+  - [3.7 Polling](#37-polls)
+  - [3.8 Dark Mode](#38-dark-mode)
 
 ## 1. Introduction
 
@@ -131,7 +132,14 @@ To send a message:
 2. Tap the send button to send the message to the group.
 3. You should see the message be propagated into the group messages.
 
-### 3.4 Events and Group Calendars
+### 3.4 Notifications
+
+<div align='center'>
+<img src="https://drive.google.com/uc?export=view&id=1ovd8oZs-YubGM3yhqdZ0BscoYorGP0JC" width="24%"></div>
+
+We have now implemented push-notifications and unread messages count into Clique. Push notifications will appear whenever a new message is sent to any of the groups that the user is in. A number will also appear on the **Groups** screen beside every group to indicate the number of unread messages in each group for the user.
+
+### 3.5 Events
 
 <div align='center'>
 <img src="https://drive.google.com/uc?export=view&id=1DvNDI7Xk5Pst9T_iH6JYm_Hny88J8rb3" width="24%"></div>
@@ -152,7 +160,7 @@ You can add
 
 To create an event:
 
-1. Tap the '+' button at the bottom right hand corner of the screen from the **Group Calendar Screen**. You will be navigated to a new screen to create the event.
+1. Tap the '+' button at the bottom left hand corner of the screen from the **Chat Screen**. Tap on the calendar icon. You will be navigated to a new screen to create the event.
 2. Here, you can add the title of the event (required), the starting and ending date and time of the event (default is set to current date and time), location of the event (not required), and additional notes (not required).
 3. Tap the 'Publish' button below to publish the event to the group. You will be navigated to the **Chat** screen.
 
@@ -168,9 +176,48 @@ Once created, you are able to
 1. Tap on a Event Bubble on the **Chat** screen to see event details. An Event Modal will pop up, showing all details of the event, including the Attending and Not Attending list of members.
 2. You can respond to the event by pressing the 'Accept' or 'Reject' buttons on the modal. Once you do, you can see your username under the respective lists.
 
-### 3.5 Calendar
+### 3.6 Calendar
 
 <div align='center'>
 <img src="https://drive.google.com/uc?export=view&id=15IbACks2BJluibEwJVAzwW4acBvyOxsC" width="24%"></div>
 
 The Personal Calendar shows all the events that the user has accepted to attend. One can acces the **Personal Calendar** screen by pressing the Calendar icon at the bottom tab navigator. Here, you can see all events that the user has accepted. By tapping on these events, the same Event Modal will pop up to show all details of the event.
+
+### 3.7 Polls
+
+The user can also now create a simple poll in each group chat. Each poll has question component and options component.
+
+<div align="justify">
+  <img src="https://drive.google.com/uc?export=view&id=1OwhaY-0XCwZ21CX0CSmNGndYcCm_x3Ra" width="24%">
+  <img src="https://drive.google.com/uc?export=view&id=1fdnqecn6-w2Li0oY9vxXwqjYQ9evmwSw" width="24%">
+  <img src="https://drive.google.com/uc?export=view&id=16kmdXTEUrPO2dnSblPTKv-8h9pCgAE_4" width="24%">
+  <img src="https://drive.google.com/uc?export=view&id=1FwMtDd5m-okhnd4MlpcTU4zAAUDxbLJB" width="24%">
+</div>
+
+To create a poll:
+
+1. Tap the '+' button at the bottom left hand corner of the screen from the **Chat Screen**. Tap on the poll icon. You will be navigated to a new screen to create the event.
+2. Here, you can add the question of the poll (required)and a number of options for the poll.
+3. Tap the 'Publish' button below to publish the poll to the group. You will be navigated to the **Chat** screen.
+
+Once created, you are able to
+
+- see all the information of the poll
+- tap on any number of poll options
+- see all members who have selected an option
+
+1. Tap on a Poll Bubble on the **Chat** screen to see poll details. A Poll Modal will pop up, showing all details of the poll, including the options and the number of people who have selected the options.
+2. You can respond to the poll tapping on the checkbox beside each option. The number will update immediately.
+
+### 3.8 Dark Mode
+
+<div align="justify">
+  <img src="https://drive.google.com/uc?export=view&id=1bC9dvxQO-W7OQUwVL2TBgnEZ9f5HjzeK" width="24%">
+  <img src="https://drive.google.com/uc?export=view&id=18bya6kWqm9a7Q7KgME1Z96H9vTsrnR7-" width="24%">
+  <img src="https://drive.google.com/uc?export=view&id=16kmdXTEUrPO2dnSblPTKv-8h9pCgAE_4" width="24%">
+  <img src="https://drive.google.com/uc?export=view&id=1o2QlptfQNsoT3QImxWBsqmmuji4F9S6Y" width="24%">
+</div>
+
+Dark mode is a feature that has become really popular recently, with the announcement of dark mode in iOS 13. We intend to support the trend of dark mode by implementing it into our application on an application-wide level.
+
+Dark mode helps the user through better readability of text and reduced eye fatigue, and will therefore be a very welcome feature in any application. We intend to implement this using our application-level state management library, Redux.
