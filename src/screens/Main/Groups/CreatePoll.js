@@ -50,7 +50,6 @@ class CreatePoll extends React.Component {
   };
 
   handleSubmit = formValues => {
-    // const allFieldsFilled = formValues.options.every(field => field.title !== undefined);
     if (this.state.question !== "" && this.state.options["0"] && this.state.options["0"] !== "") {
       const nav = this.props.navigation;
       const groupID = nav.getParam("groupID");
@@ -128,7 +127,7 @@ class CreatePoll extends React.Component {
           ]}
           w={width}
           onChange={this.onChangeQuestion}
-          value={this.state.text}
+          value={this.state.question}
         />
       </View>
     );
@@ -177,7 +176,7 @@ class CreatePoll extends React.Component {
               }}
               key={index}
             >
-              <View style={{ marginRight: 20, marginLeft: 28 }}>
+              <View style={{ marginRight: 20, marginLeft: 27 }}>
                 <MyIcon
                   name="radio-button-unchecked"
                   type="material"
