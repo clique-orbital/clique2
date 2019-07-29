@@ -1,5 +1,13 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert
+} from "react-native";
 import { connect } from "react-redux";
 import { Field, FieldArray, reduxForm } from "redux-form";
 import Text from "../../../components/Text";
@@ -18,7 +26,7 @@ class CreatePoll extends React.Component {
     this.state = {
       question: "",
       options: {}
-    }
+    };
     this.onChangeQuestion = this.onChangeQuestion.bind(this);
   }
 
@@ -26,12 +34,9 @@ class CreatePoll extends React.Component {
     return {
       headerTintColor: "#fff",
       headerTitle: (
-        <View style={{ flexDirection: "row" }}>
-          <MyIcon name="poll" type="material" size={28} color="white" />
-          <Text h2 semibold white style={{ paddingHorizontal: 5 }}>
-            Poll
-          </Text>
-        </View>
+        <Text h2 semibold white style={{ paddingHorizontal: 5 }}>
+          Poll
+        </Text>
       ),
       headerStyle: {
         borderBottomColor: "transparent"
@@ -40,24 +45,33 @@ class CreatePoll extends React.Component {
   };
 
   renderInput = props => {
-    return <Input
-      {...props.input}
-      style={[props.style, { borderBottomColor: this.props.colors.hairlineColor }]}
-      {...props}
-      keyboardAppearance={this.props.colors.keyboard}
-      placeholderTextColor={this.props.colors.placeholderColor}
-    />;
+    return (
+      <Input
+        {...props.input}
+        style={[
+          props.style,
+          { borderBottomColor: this.props.colors.hairlineColor }
+        ]}
+        {...props}
+        keyboardAppearance={this.props.colors.keyboard}
+        placeholderTextColor={this.props.colors.placeholderColor}
+      />
+    );
   };
 
   handleSubmit = formValues => {
-    if (this.state.question !== "" && this.state.options["0"] && this.state.options["0"] !== "") {
+    if (
+      this.state.question !== "" &&
+      this.state.options["0"] &&
+      this.state.options["0"] !== ""
+    ) {
       const nav = this.props.navigation;
       const groupID = nav.getParam("groupID");
       const uid = nav.getParam("uid");
       const username = nav.getParam("username");
       const db = firebase.database();
       let { question, options } = formValues;
-      options = options.filter(option => option.title !== undefined)
+      options = options.filter(option => option.title !== undefined);
       const msgID = db
         .ref("messages")
         .child(`${groupID}`)
@@ -70,8 +84,7 @@ class CreatePoll extends React.Component {
         pollObject,
         username: username
       };
-      db.ref(`messages/${groupID}/${msgID}`)
-        .set(message);
+      db.ref(`messages/${groupID}/${msgID}`).set(message);
       db.ref(`groups/${groupID}/last_message`)
         .set(message)
         .then(() => nav.goBack());
@@ -80,7 +93,7 @@ class CreatePoll extends React.Component {
 
   onChangeQuestion = text => {
     this.setState({ question: text });
-  }
+  };
 
   onChangeOptions = index => text => {
     this.setState({
@@ -88,20 +101,21 @@ class CreatePoll extends React.Component {
         ...this.state.options,
         [index]: text
       }
-    }
-    )
-  }
+    });
+  };
 
   renderQuestion = width => {
     return (
-      <View style={[
-        styles.border,
-        {
-          paddingVertical: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          borderBottomColor: this.props.colors.hairlineColor
-        }]}
+      <View
+        style={[
+          styles.border,
+          {
+            paddingVertical: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            borderBottomColor: this.props.colors.hairlineColor
+          }
+        ]}
       >
         <View style={{ marginHorizontal: 20 }}>
           <MyIcon
@@ -142,11 +156,15 @@ class CreatePoll extends React.Component {
       allFieldsFilled = true;
     }
     return (
-      <TouchableOpacity onPress={() => allFieldsFilled ? fields.push({}) : null}>
-        < View style={{
-          flexDirection: "row",
-          alignItems: "center",
-        }}>
+      <TouchableOpacity
+        onPress={() => (allFieldsFilled ? fields.push({}) : null)}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+        >
           <View style={{ marginHorizontal: 20 }}>
             <MyIcon
               name="add"
@@ -159,7 +177,7 @@ class CreatePoll extends React.Component {
             Add option
           </Text>
         </View>
-      </TouchableOpacity >
+      </TouchableOpacity>
     );
   };
 
@@ -172,7 +190,7 @@ class CreatePoll extends React.Component {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                paddingVertical: 10
+                paddingVertical: 2
               }}
               key={index}
             >
@@ -192,7 +210,11 @@ class CreatePoll extends React.Component {
                 name={`${option}.title`}
                 component={this.renderInput}
                 placeholder={`Option ${index + 1}`}
-                style={{ paddingLeft: 7, fontSize: 19, color: this.props.colors.textColor }}
+                style={{
+                  paddingLeft: 7,
+                  fontSize: 19,
+                  color: this.props.colors.textColor
+                }}
                 onChange={this.onChangeOptions(index)}
                 value={this.state.options[index]}
               />
@@ -222,7 +244,10 @@ class CreatePoll extends React.Component {
           </ScrollView>
           <Button
             shadow
-            style={[styles.publishButton, { backgroundColor: this.props.colors.headerColor }]}
+            style={[
+              styles.publishButton,
+              { backgroundColor: this.props.colors.headerColor }
+            ]}
             onPress={this.props.handleSubmit(this.handleSubmit.bind(this))}
           >
             <Text semibold white center>
@@ -254,8 +279,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    colors: state.theme.colors,
-  }
-}
+    colors: state.theme.colors
+  };
+};
 let form = reduxForm({ form: "createPoll" })(CreatePoll);
 export default connect(mapStateToProps)(form);

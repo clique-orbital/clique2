@@ -50,7 +50,7 @@ class ChatScreen extends Component {
       numOfVisibleMsg: 40,
       isRefreshing: false,
       visible: false,
-      heightOfInput: 0,
+      heightOfInput: 0
     };
     this.convertTime = this.convertTime.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -266,7 +266,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -274,7 +274,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
@@ -293,7 +293,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/notAttending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .set(true);
@@ -301,7 +301,7 @@ class ChatScreen extends Component {
         .database()
         .ref(
           `users/${this.props.uid}/attending/${this.state.groupID}/${
-          event.eventID
+            event.eventID
           }`
         )
         .remove();
@@ -363,13 +363,13 @@ class ChatScreen extends Component {
             { flexDirection: "column" },
             item.sender === this.props.uid
               ? [
-                styles.myMessageBubble,
-                { backgroundColor: this.props.colors.myMsgBubble }
-              ]
+                  styles.myMessageBubble,
+                  { backgroundColor: this.props.colors.myMsgBubble }
+                ]
               : [
-                styles.yourMessageBubble,
-                { backgroundColor: this.props.colors.yourMsgBubble }
-              ]
+                  styles.yourMessageBubble,
+                  { backgroundColor: this.props.colors.yourMsgBubble }
+                ]
           ]}
           uid={this.props.uid}
           convertTime={this.convertTime}
@@ -387,13 +387,13 @@ class ChatScreen extends Component {
           style={
             item.sender === this.props.uid
               ? {
-                ...styles.myEventBubble,
-                backgroundColor: this.props.colors.myMsgBubble
-              }
+                  ...styles.myEventBubble,
+                  backgroundColor: this.props.colors.myMsgBubble
+                }
               : {
-                ...styles.yourEventBubble,
-                backgroundColor: this.props.colors.yourMsgBubble
-              }
+                  ...styles.yourEventBubble,
+                  backgroundColor: this.props.colors.yourMsgBubble
+                }
           }
           showEventModal={this.showEventModal}
           uid={this.props.uid}
@@ -424,15 +424,20 @@ class ChatScreen extends Component {
   increaseNumOfVisibleMsg = () => {
     console.log("refreshing");
     const { groupID, numOfVisibleMsg } = this.state;
-    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 40 }
-      , () => {
-        this.messagesRef.child(`${groupID}`).once("value", snapshot => {
-          this.props.dispatch(
-            fetchConversation(groupID, (this.sort(values(snapshot.val()))).slice(0, this.state.numOfVisibleMsg))
-          );
-        });
-      })
-  }
+    this.setState({ numOfVisibleMsg: numOfVisibleMsg + 40 }, () => {
+      this.messagesRef.child(`${groupID}`).once("value", snapshot => {
+        this.props.dispatch(
+          fetchConversation(
+            groupID,
+            this.sort(values(snapshot.val())).slice(
+              0,
+              this.state.numOfVisibleMsg
+            )
+          )
+        );
+      });
+    });
+  };
 
   render() {
     let height = Dimensions.get("window").height;
@@ -463,24 +468,24 @@ class ChatScreen extends Component {
                 extraData={this.state.numOfVisibleMsg}
               />
             ) : (
-                <KeyboardAwareFlatList
-                  onEndReachedThreshold={0}
-                  onEndReached={this.increaseNumOfVisibleMsg}
-                  ref="messageList"
-                  style={{
-                    padding: 10,
-                    height: height,
-                    backgroundColor: this.props.colors.chatBackground
-                  }}
-                  data={this.props.conversation}
-                  renderItem={this.renderRow}
-                  ListFooterComponent={this.renderFooter}
-                  inverted
-                  keyExtractor={(item, index) => index.toString()}
-                  initialNumToRender={50}
-                  extraData={this.state.numOfVisibleMsg}
-                />
-              )}
+              <KeyboardAwareFlatList
+                onEndReachedThreshold={0}
+                onEndReached={this.increaseNumOfVisibleMsg}
+                ref="messageList"
+                style={{
+                  padding: 10,
+                  height: height,
+                  backgroundColor: this.props.colors.chatBackground
+                }}
+                data={this.props.conversation}
+                renderItem={this.renderRow}
+                ListFooterComponent={this.renderFooter}
+                inverted
+                keyExtractor={(item, index) => index.toString()}
+                initialNumToRender={50}
+                extraData={this.state.numOfVisibleMsg}
+              />
+            )}
           </TouchableWithoutFeedback>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
@@ -497,14 +502,7 @@ class ChatScreen extends Component {
             }}
           >
             <TouchableOpacity
-              onPress={
-                () => this.setState({ visible: true })
-                // this.props.navigation.navigate("CreatePoll", {
-                //   groupID: this.state.groupID,
-                //   uid: this.props.uid,
-                //   username: this.props.username
-                // })
-              }
+              onPress={() => this.setState({ visible: true })}
               style={{ justifyContent: "center" }}
             >
               <MyIcon
@@ -515,7 +513,7 @@ class ChatScreen extends Component {
               />
             </TouchableOpacity>
             <View
-              style={{ flexDirection: "row", flex: 1, }}
+              style={{ flexDirection: "row", flex: 1 }}
               onLayout={event => {
                 const { height } = event.nativeEvent.layout;
                 this.setState({ heightOfInput: height });
@@ -523,7 +521,11 @@ class ChatScreen extends Component {
             >
               <TextInput
                 autoCapitalize="sentences"
-                style={[styles.chatInput, { color: this.props.colors.textColor }]}
+                style={[
+                  styles.chatInput,
+                  { color: this.props.colors.textColor }
+                ]}
+                multiline={true}
                 value={this.state.textMessage}
                 onChangeText={this.handleChange("textMessage")}
                 placeholder="Message"

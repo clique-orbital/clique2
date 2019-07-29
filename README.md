@@ -20,13 +20,13 @@ Many of our group chats we create involve some form of event that will be planne
 - Account validation via phone number SMS authentication
 - Groups and group members CRUD
 - Calendar features (personal and group)
-- Caching photos locally
+- Notifications and Unread Messages Count
+- Dark Mode
+- Group Polling
 
 ## Features to be implemented in the future:
 
 - Unit and Integrated Tests using Jest and Enzyme
-- Events update and delete
-- Dark mode
 - Animations
 
 ## Site Map
