@@ -244,7 +244,7 @@ class EventModal extends Component {
             <View
               style={{
                 height: "5%",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 flexDirection: "row"
               }}
             >
@@ -265,7 +265,7 @@ class EventModal extends Component {
                   color={this.props.colors.pollTitle}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={{ flex: 1, height: 50, flexDirection: "row-reverse" }}
                 onPress={this.handleEditButtonPress}
               >
@@ -279,7 +279,7 @@ class EventModal extends Component {
                 >
                   Edit
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View style={{ height: "50%", justifyContent: "space-between" }}>
               {this.renderTitle()}

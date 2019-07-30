@@ -297,7 +297,7 @@ class CreateEvents extends Component {
                 placeholder="Add location"
                 style={
                   ({ ...styles.input },
-                  { marginLeft: 10, color: this.props.colors.textColor })
+                    { marginLeft: 10, color: this.props.colors.textColor })
                 }
                 value={this.props.location}
                 onChangeText={this.handleTextChange("location")}
@@ -314,7 +314,7 @@ class CreateEvents extends Component {
                 placeholderTextColor={this.props.colors.placeholderColor}
                 style={
                   ({ ...styles.input },
-                  { marginLeft: 10, color: this.props.colors.textColor })
+                    { marginLeft: 10, color: this.props.colors.textColor })
                 }
                 value={this.props.notes}
                 onChangeText={this.handleTextChange("notes")}
@@ -369,8 +369,8 @@ const mapStateToProps = (state, ownProps) => {
       ownProps.navigation.getParam("date") ||
       new Date(),
     toDate:
-      createEventsReducerState.toDate ||
-      ownProps.navigation.getParam("date") ||
+      createEventsReducerState.toDate || 
+      createEventsReducerState.fromDate || //fromDate is a feature, not a bug!
       new Date(),
     location: createEventsReducerState.location,
     notes: createEventsReducerState.notes,
